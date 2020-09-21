@@ -1,0 +1,28 @@
+name: modflow-obs_dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - ipython
+  - jupyter
+  - notebook
+  - ipykernel
+  - matplotlib
+  - numpy
+  - pandas
+  - pytest
+  - codecov
+  - coverage
+  - flake8
+  - sphinx
+  - numpydoc
+  - nbsphinx  # for rendering notebooks in sphinx-generated docs
+  - sphinx-copybutton
+  - sphinx_rtd_theme
+  - twine
+  - pip
+  - pip:
+    - gis-utils
+    - doctr
+    - versioneer
