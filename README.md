@@ -1,7 +1,7 @@
 modflow-obs
 ===========
 
-[![Build Status](https://img.shields.io/travis/aleaf/modflow-obs.svg)](https://travis-ci.org/aleaf/modflow-obs) [![codecov](https://codecov.io/gh/aleaf/modflow-obs/branch/develop/graph/badge.svg)](https://codecov.io/gh/aleaf/modflow-obs)
+[![Build Status](https://img.shields.io/travis/aleaf/modflow-obs.svg)](https://travis-ci.org/aleaf/modflow-obs) [![codecov](https://codecov.io/gh/aleaf/modflow-obs/branch/master/graph/badge.svg)](https://codecov.io/gh/aleaf/modflow-obs)
 
 PEST observation processing for MODFLOW models.
 

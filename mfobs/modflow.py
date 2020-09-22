@@ -130,7 +130,9 @@ def get_mf6_single_variable_obs(perioddata,
     """Read raw MODFLOW-6 observation output from csv table with
     times along the row axis and observations along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
-    in each row. If an input file to the MODFLOW-6 observation utility is included,
+    in each row. If there is more than one time in a stress period, retain only
+    the last time (so that there is one observation per stress period for each site.
+    If an input file to the MODFLOW-6 observation utility is included,
     include the observation layer number in the output.
 
     Parameters
