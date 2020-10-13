@@ -49,7 +49,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     passed to :func:`~mfobs.modflow.get_mf6_single_variable_obs` for assigning observation
     names to the MODFLOW observation output.
 
-    Steady-state observations are created
+    Optionally, a model stress period can be labeled as steady-state (``label_period_as_steady_state``),
+    representing average conditions over a time period bracked by a ``steady_state_period_start`` and
+    ``steady_state_period_end``. In this case, the simulated values for the labeled stress period are
+    matched to average values for the steady-state time period.
 
     Parameters
     ----------
@@ -332,16 +335,25 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # and the observed equivalents
     observed.index = pd.to_datetime(observed.datetime)
     periods = results.groupby('per')
-    simulated_heads = []
     observed_simulated_combined = []
     for per, data in periods:
 
         # get the equivalent observed values
         start, end = perioddata.loc[per, ['start_datetime', 'end_datetime']]
+        suffix = pd.Timestamp(start).strftime(obsnme_date_suffix_format)
+
+        # steady-state observations can represent a period
+        # other than the "modflow time" in the perioddata table
+        if per == label_period_as_steady_state:
+            suffix = 'ss'
+            if steady_state_period_start is not None:
+                start = steady_state_period_start
+            if steady_state_period_end is not None:
+                end = steady_state_period_end
         observed_in_period = observed.loc[start:end].reset_index(drop=True)
-        # exclude steady-state obs computed above
-        observed_in_period = observed_in_period.loc[~observed_in_period.steady].copy()
         if len(observed_in_period) == 0:
+            warnings.warn(('No observations between start and '
+                           'end dates of {} and {}!'.format(start, end)))
             continue
         observed_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
         by_site = observed_in_period.groupby('obsprefix')
@@ -349,19 +361,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         observed_in_period_rs['n'] = by_site.n.sum()
         observed_in_period_rs['datetime'] = pd.Timestamp(start)
         observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
-        obsnames = ['{}_{}'.format(prefix.lower(),
-                                   timestamp.strftime(obsnme_date_suffix_format))
-                    for prefix, timestamp in zip(observed_in_period_rs.obsprefix,
-                                                 observed_in_period_rs.datetime)]
-        observed_in_period_rs['obsnme'] = obsnames
+
         missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)
         for col in missing_cols:
             observed_in_period_rs[col] = by_site[col].first().values
         observed_in_period_rs = observed_in_period_rs[observed_in_period.columns]
-        obsnames = ['{}_{}'.format(prefix.lower(),
-                                   timestamp.strftime(obsnme_date_suffix_format))
-                    for prefix, timestamp in zip(observed_in_period_rs.obsprefix,
-                                                 observed_in_period_rs.datetime)]
+        obsnames = ['{}_{}'.format(prefix.lower(), suffix)
+                    for prefix in observed_in_period_rs.obsprefix]
         observed_in_period_rs['obsnme'] = obsnames
         observed_in_period_rs.index = observed_in_period_rs['obsnme']
 
@@ -437,35 +443,6 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # Combined DataFrame of observed heads and simulated equivalents
     head_obs = pd.concat(observed_simulated_combined)
-
-    # add steady-state observations
-    if steady_state_period_start is not None and steady_state_period_end is not None:
-        observed.index = observed.datetime
-        steady_per = observed.loc[steady_state_period_start: steady_state_period_end]
-        if len(steady_per) == 0:
-            warnings.warn(('No observations between steady-state start and '
-                           'end dates of {} and {}!'.format(steady_state_period_start,
-                                                            steady_state_period_end)))
-        else:
-            steady_obs = steady_per.groupby('obsprefix').mean().reset_index()
-            missing = set(observed.columns).difference({'datetime'}.union(steady_obs))
-            for col in missing:
-                steady_obs[col] = steady_per.groupby('obsprefix')[col].first().values
-            steady_obs['obsnme'] = ['{}_ss'.format(prefix.lower()) for prefix in steady_obs.obsprefix]
-            steady_obs.index = steady_obs.obsnme
-            steady_obs['n'] = steady_per.groupby('obsprefix').n.count().values
-            steady_obs['steady'] = True
-            steady_obs['per'] = label_period_as_steady_state
-
-            steady_results = results.loc[results.per == label_period_as_steady_state]
-            sim_values = []
-            for obsnme, layer in zip(steady_obs.obsnme, steady_obs.layer):
-                obsnme_results = steady_results.loc[obsnme]
-                layer = obsnme_results.iloc[np.argmin(obsnme_results.layer - layer)]['layer']
-                sim_values.append(obsnme_results.iloc[layer][sim_values_column])
-            steady_obs[obs_values_column] = steady_obs[observed_values_obsval_col]
-            steady_obs[sim_values_column] = sim_values
-        head_obs = head_obs.append(steady_obs)
 
     # raise an error if there are duplicates- reindexing below will fail if this is the case
     if head_obs.index.duplicated().any():

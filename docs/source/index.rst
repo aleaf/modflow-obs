@@ -18,7 +18,7 @@ modflow-obs |version|
   :maxdepth: 2
   :caption: User Guide
 
-   More details on how to use the package <usage>
+   Demo of Modflow-obs <notebooks/Example>
 
 .. toctree::
   :maxdepth: 1

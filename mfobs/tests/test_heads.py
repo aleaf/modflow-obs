@@ -73,7 +73,7 @@ def head_obs(head_obs_input):
                             observed_values_file=head_obs_input.head_obs_file,
                             observed_values_metadata_file=head_obs_input.head_obs_info_file,
                             observed_values_obsval_col='head',
-                            observed_values_layer_col='layer',
+                            observed_values_layer_col=None,
                             gwf_obs_input_file=head_obs_input.headobs_input_file,
                             hk_arrays=head_obs_input.hk_arrays,
                             top_array=head_obs_input.top_array,
@@ -85,7 +85,8 @@ def head_obs(head_obs_input):
     return head_obs
 
 
-@pytest.mark.parametrize('observed_values_layer_col,steady', ((None, False),
+@pytest.mark.parametrize('observed_values_layer_col,steady', ((None, True),
+                                                              (None, False),
                                                               ('layer', True)
                                                               ))
 def test_get_head_obs(test_data_path, head_obs_input, head_obs,
@@ -105,9 +106,6 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
 
     # check sorting
     assert np.all(head_obs.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)
-
-    # no negative open intervals
-    assert np
 
     # test with specified layer and T-weighted averaging
     if observed_values_layer_col is not None:
@@ -139,6 +137,8 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
                            write_ins=True, outfile=head_obs_input.outfile)
     assert Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat.ins').unlink()
+
+    # todo: add specific check for steady-state observations
 
 
 @pytest.mark.parametrize('write_ins', (True,
