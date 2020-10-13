@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>The head observations module &mdash; modflow-obs 0.post3.dev0+g95c29c1 documentation</title>
+  <title>The head observations module &mdash; modflow-obs 0.post4.dev0+g8fb79c3 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post3.dev0+g95c29c1
+                0.post4.dev0+g8fb79c3
               </div>
             
           
@@ -426,6 +426,9 @@ By default None, in which case no steady-state observatons are created.</p>
 <dt><strong>steady_state_period_end</strong><span class="classifier">str, optional</span></dt><dd><p>End date for the period representing steady-state conditions.
 By default None, in which case no steady-state observatons are created.</p>
 </dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
 <dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
 </dd>
 </dl>
@@ -480,22 +483,39 @@ to avoid potential case issues.</p>
 
 <dl class="py function">
 <dt id="mfobs.heads.get_spatial_head_differences">
-<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_spatial_head_differences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">head_obs</span></em>, <em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">lake_head_difference_sites</span></em>, <em class="sig-param"><span class="n">head_obs_values_col</span><span class="o">=</span><span class="default_value">'obs_head'</span></em>, <em class="sig-param"><span class="n">head_sim_values_col</span><span class="o">=</span><span class="default_value">'sim_head'</span></em>, <em class="sig-param"><span class="n">obs_diff_value_col</span><span class="o">=</span><span class="default_value">'obsval'</span></em>, <em class="sig-param"><span class="n">sim_diff_values_col</span><span class="o">=</span><span class="default_value">'sim_obsval'</span></em>, <em class="sig-param"><span class="n">use_gradients</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_spatial_head_differences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_spatial_head_differences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes the head_obs dataframe output by get_head_obs_near_lakes, and
-maybe some other input, and creates spatial head difference observations
-at locations where there are vertical head difference, and writes them
-to a csv file in tables/.</p>
+<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_spatial_head_differences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">head_obs</span></em>, <em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">head_difference_sites</span></em>, <em class="sig-param"><span class="n">head_obs_values_col</span><span class="o">=</span><span class="default_value">'obs_head'</span></em>, <em class="sig-param"><span class="n">head_sim_values_col</span><span class="o">=</span><span class="default_value">'sim_head'</span></em>, <em class="sig-param"><span class="n">use_gradients</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'-d-'</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_spatial_head_differences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_spatial_head_differences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the head_obs dataframe output by get_head_obs and creates
+spatial head difference observations. Optionally writes and output csvfile
+and a PEST instruction file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>head_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed head observations</p>
+<dt><strong>head_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed head observations, such as that produced by
+<a class="reference internal" href="#mfobs.heads.get_head_obs" title="mfobs.heads.get_head_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.heads.get_head_obs()</span></code></a></p>
 </dd>
-<dt><strong>lake_head_difference_sites</strong><span class="classifier">dict</span></dt><dd><p>Dictionary of lake site numbers (keys) and gw level sites (values) to compare.
-Values is list of strings; observations containing these strings will be compared
-to lake stage on the date of measurement.</p>
+<dt><strong>head_difference_sites</strong><span class="classifier">dict</span></dt><dd><p>Dictionary of site numbers (keys) and other site numbers to compare to (values).
+Values can be a string for a single site, a list of strings for multiple sites,
+or a string pattern contained in multiple site numbers;
+observations at the sites represented in the values will be compared to the observation
+at the site represented by the key, at times of coincident measurements.</p>
 </dd>
-<dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, use hydraulic gradients, if False, use vertical head differences.
+<dt><strong>head_obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with observed values</p>
+</dd>
+<dt><strong>head_sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with simulated equivalent values</p>
+</dd>
+<dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, use computed hydraulic gradients for the observation values,
+if False, use head differences.
 By default False.</p>
+</dd>
+<dt><strong>sep</strong><span class="classifier">str</span></dt><dd><p>Separator in spatial head difference obsnnames. For example, with
+sites “site1” and “site2” at time “202001”, and sep=’-d-‘, the obsnme
+would be “site1-d-site2_202001”.
+by default, ‘-d-‘</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to. Nan values are filled with -9999.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
 </dd>
 </dl>
 </dd>

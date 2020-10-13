@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post3.dev0+g95c29c1 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post4.dev0+g8fb79c3 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post3.dev0+g95c29c1
+                0.post4.dev0+g8fb79c3
               </div>
             
           
@@ -113,6 +113,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#Spatial-head-differences">Spatial head differences</a></li>
 </ul>
 </li>
 </ul>
@@ -137,6 +138,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#Spatial-head-differences">Spatial head differences</a></li>
 </ul>
 </li>
 </ul>
@@ -732,8 +734,8 @@ Affine(1000.0, 0.0, 500955.0,
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>site_no</th>
       <th>head</th>
+      <th>head_std</th>
       <th>last_head</th>
       <th>n</th>
       <th>aqfr_cd</th>
@@ -743,8 +745,8 @@ Affine(1000.0, 0.0, 500955.0,
       <th>well_depth</th>
       <th>well_el</th>
       <th>...</th>
-      <th>start_dt</th>
       <th>end_dt</th>
+      <th>site_no</th>
       <th>x</th>
       <th>y</th>
       <th>well_botm</th>
@@ -758,9 +760,9 @@ Affine(1000.0, 0.0, 500955.0,
   <tbody>
     <tr>
       <th>0</th>
-      <td>USGS:333034090150501</td>
-      <td>31.56</td>
-      <td>31.56</td>
+      <td>32.00</td>
+      <td>NaN</td>
+      <td>32.00</td>
       <td>1.0</td>
       <td>112MRVA</td>
       <td>N100MSRVVL</td>
@@ -769,8 +771,8 @@ Affine(1000.0, 0.0, 500955.0,
       <td>NaN</td>
       <td>39.05</td>
       <td>...</td>
-      <td>2008-03-01</td>
       <td>2018-10-01</td>
+      <td>USGS:333034090150501</td>
       <td>530104.14</td>
       <td>1176208.54</td>
       <td>NaN</td>
@@ -782,103 +784,103 @@ Affine(1000.0, 0.0, 500955.0,
     </tr>
     <tr>
       <th>1</th>
-      <td>USGS:333116090290101</td>
-      <td>19.41</td>
-      <td>19.41</td>
+      <td>26.21</td>
+      <td>NaN</td>
+      <td>26.21</td>
       <td>1.0</td>
       <td>112MRVA</td>
       <td>N100MSRVVL</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>35.36</td>
+      <td>-3.35</td>
+      <td>14.94</td>
+      <td>136.0</td>
+      <td>38.10</td>
       <td>...</td>
-      <td>2008-04-01</td>
-      <td>2018-10-01</td>
-      <td>508638.90</td>
-      <td>1176240.13</td>
-      <td>NaN</td>
-      <td>4</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>USGS:333116090290101</td>
-      <td>mscha</td>
+      <td>2006-09-01</td>
+      <td>USGS:333040090200601</td>
+      <td>522383.51</td>
+      <td>1175944.23</td>
+      <td>-97.90</td>
+      <td>3</td>
+      <td>-3.35</td>
+      <td>14.94</td>
+      <td>USGS:333040090200601</td>
+      <td>heads</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>USGS:333129090251401</td>
-      <td>19.92</td>
-      <td>19.92</td>
-      <td>1.0</td>
+      <td>33.15</td>
+      <td>0.0</td>
+      <td>33.15</td>
+      <td>1.6</td>
       <td>112MRVA</td>
       <td>N100MSRVVL</td>
-      <td>-80.15</td>
-      <td>-67.96</td>
-      <td>116.0</td>
-      <td>35.85</td>
+      <td>-69.38</td>
+      <td>-57.18</td>
+      <td>109.0</td>
+      <td>39.62</td>
       <td>...</td>
-      <td>2008-03-01</td>
-      <td>2018-10-01</td>
-      <td>514422.63</td>
-      <td>1176982.16</td>
-      <td>-80.15</td>
+      <td>2002-04-01</td>
+      <td>USGS:333050090153001</td>
+      <td>529954.56</td>
+      <td>1176430.50</td>
+      <td>-69.38</td>
       <td>2</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>USGS:333129090251401</td>
-      <td>mscha</td>
+      <td>USGS:333050090153001</td>
+      <td>heads</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>USGS:333135090124402</td>
-      <td>33.63</td>
-      <td>33.63</td>
+      <td>20.73</td>
+      <td>NaN</td>
+      <td>20.73</td>
       <td>1.0</td>
       <td>112MRVA</td>
       <td>N100MSRVVL</td>
-      <td>-55.49</td>
-      <td>-43.29</td>
-      <td>95.0</td>
-      <td>39.51</td>
+      <td>-1.52</td>
+      <td>10.67</td>
+      <td>125.0</td>
+      <td>36.58</td>
       <td>...</td>
-      <td>2008-03-01</td>
-      <td>2018-10-01</td>
-      <td>533847.10</td>
-      <td>1177444.10</td>
-      <td>-55.49</td>
-      <td>2</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>USGS:333135090124402</td>
+      <td>2002-06-01</td>
+      <td>USGS:333113090232001</td>
+      <td>517359.53</td>
+      <td>1176671.36</td>
+      <td>-88.42</td>
+      <td>3</td>
+      <td>-1.52</td>
+      <td>10.67</td>
+      <td>USGS:333113090232001</td>
       <td>heads</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>USGS:333135090245901</td>
-      <td>20.44</td>
-      <td>20.44</td>
+      <td>22.83</td>
+      <td>NaN</td>
+      <td>22.83</td>
       <td>1.0</td>
       <td>112MRVA</td>
       <td>N100MSRVVL</td>
-      <td>-76.76</td>
-      <td>-64.57</td>
-      <td>113.0</td>
-      <td>36.24</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>37.19</td>
       <td>...</td>
-      <td>2008-03-01</td>
-      <td>2018-10-01</td>
-      <td>514795.42</td>
-      <td>1177190.55</td>
-      <td>-76.76</td>
-      <td>2</td>
+      <td>2000-10-01</td>
+      <td>USGS:333113090244701</td>
+      <td>515142.49</td>
+      <td>1176527.26</td>
+      <td>NaN</td>
+      <td>4</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>USGS:333135090245901</td>
-      <td>mscha</td>
+      <td>USGS:333113090244701</td>
+      <td>heads</td>
     </tr>
   </tbody>
 </table>
-<p>5 rows × 22 columns</p>
+<p>5 rows × 23 columns</p>
 </div></div>
 </div>
 <p>Time series of head at the locations in the metadata:</p>
@@ -919,6 +921,7 @@ Affine(1000.0, 0.0, 500955.0,
       <th>datetime</th>
       <th>head</th>
       <th>last_head</th>
+      <th>head_std</th>
       <th>n</th>
       <th>obsprefix</th>
     </tr>
@@ -927,45 +930,50 @@ Affine(1000.0, 0.0, 500955.0,
     <tr>
       <th>0</th>
       <td>USGS:333034090150501</td>
-      <td>2008-03-01</td>
-      <td>31.43</td>
-      <td>31.43</td>
+      <td>1999-04-01</td>
+      <td>32.37</td>
+      <td>32.37</td>
+      <td>NaN</td>
       <td>1</td>
       <td>USGS:333034090150501</td>
     </tr>
     <tr>
       <th>1</th>
       <td>USGS:333034090150501</td>
-      <td>2008-09-01</td>
-      <td>31.61</td>
-      <td>31.61</td>
+      <td>2000-10-01</td>
+      <td>31.54</td>
+      <td>31.54</td>
+      <td>NaN</td>
       <td>1</td>
       <td>USGS:333034090150501</td>
     </tr>
     <tr>
       <th>2</th>
       <td>USGS:333034090150501</td>
-      <td>2009-04-01</td>
-      <td>32.06</td>
-      <td>32.06</td>
+      <td>2001-04-01</td>
+      <td>32.60</td>
+      <td>32.60</td>
+      <td>NaN</td>
       <td>1</td>
       <td>USGS:333034090150501</td>
     </tr>
     <tr>
       <th>3</th>
       <td>USGS:333034090150501</td>
-      <td>2009-09-01</td>
-      <td>31.95</td>
-      <td>31.95</td>
+      <td>2001-10-01</td>
+      <td>31.96</td>
+      <td>31.96</td>
+      <td>NaN</td>
       <td>1</td>
       <td>USGS:333034090150501</td>
     </tr>
     <tr>
       <th>4</th>
       <td>USGS:333034090150501</td>
-      <td>2010-03-01</td>
-      <td>33.03</td>
-      <td>33.03</td>
+      <td>2002-04-01</td>
+      <td>33.35</td>
+      <td>33.35</td>
+      <td>NaN</td>
       <td>1</td>
       <td>USGS:333034090150501</td>
     </tr>
@@ -1093,25 +1101,7 @@ time,USGS:333145090261901,USGS:333145090261901,USGS:333145090261901,USGS:3331450
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
-Dropping 11 sites with no information
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/travis/build/aleaf/modflow-obs/mfobs/heads.py:355: UserWarning: No observations between start and end dates of 1998-04-01 and 2007-04-01!
-  warnings.warn((&#39;No observations between start and &#39;
-/home/travis/build/aleaf/modflow-obs/mfobs/heads.py:355: UserWarning: No observations between start and end dates of 2007-04-01 and 2007-10-01!
-  warnings.warn((&#39;No observations between start and &#39;
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+Dropping 191 sites with no information
 wrote output/processed_head_obs.dat.ins
 </pre></div></div>
 </div>
@@ -1177,7 +1167,7 @@ wrote output/processed_head_obs.dat.ins
       <td>16</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201404</td>
-      <td>20.93</td>
+      <td>20.88</td>
       <td>28.948578</td>
       <td>-16.01</td>
       <td>-28.20</td>
@@ -1188,7 +1178,7 @@ wrote output/processed_head_obs.dat.ins
       <td>17</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201410</td>
-      <td>21.20</td>
+      <td>21.02</td>
       <td>29.135945</td>
       <td>-16.01</td>
       <td>-28.20</td>
@@ -1199,7 +1189,7 @@ wrote output/processed_head_obs.dat.ins
       <td>18</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201504</td>
-      <td>21.20</td>
+      <td>20.98</td>
       <td>29.056208</td>
       <td>-16.01</td>
       <td>-28.20</td>
@@ -1363,11 +1353,11 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>16</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201404d201310</td>
-      <td>20.93</td>
+      <td>20.880</td>
       <td>28.948578</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>0.07</td>
+      <td>0.020000</td>
       <td>-0.067397</td>
       <td>heads_tdiff</td>
     </tr>
@@ -1377,11 +1367,11 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>17</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201410d201404</td>
-      <td>21.20</td>
+      <td>21.020</td>
       <td>29.135945</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>0.27</td>
+      <td>0.140000</td>
       <td>0.187367</td>
       <td>heads_tdiff</td>
     </tr>
@@ -1391,40 +1381,40 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>18</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201504d201410</td>
-      <td>21.20</td>
+      <td>20.980</td>
       <td>29.056208</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>0.00</td>
+      <td>-0.040000</td>
       <td>-0.079737</td>
       <td>heads_tdiff</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>2008-04-01</td>
-      <td>4</td>
+      <td>2007-04-01</td>
+      <td>2</td>
       <td>usgs:333218090271101</td>
-      <td>usgs:333218090271101_200804d200710</td>
-      <td>19.32</td>
-      <td>27.749777</td>
+      <td>usgs:333218090271101_200704d199804</td>
+      <td>19.375</td>
+      <td>27.831801</td>
       <td>-102.15</td>
       <td>-114.34</td>
-      <td>-0.19</td>
-      <td>-0.749017</td>
+      <td>-0.679444</td>
+      <td>-0.329594</td>
       <td>heads_tdiff</td>
     </tr>
     <tr>
       <th>6</th>
-      <td>2008-10-01</td>
-      <td>5</td>
+      <td>2007-10-01</td>
+      <td>3</td>
       <td>usgs:333218090271101</td>
-      <td>usgs:333218090271101_200810d200804</td>
-      <td>19.51</td>
-      <td>28.810415</td>
+      <td>usgs:333218090271101_200710d200704</td>
+      <td>19.330</td>
+      <td>28.498793</td>
       <td>-102.15</td>
       <td>-114.34</td>
-      <td>0.19</td>
-      <td>1.060638</td>
+      <td>-0.045000</td>
+      <td>0.666992</td>
       <td>heads_tdiff</td>
     </tr>
   </tbody>
@@ -1463,6 +1453,252 @@ Text(0, 0.5, &#39;Head change, in meters&#39;)
 <img alt="../_images/notebooks_Example_30_1.png" src="../_images/notebooks_Example_30_1.png" />
 </div>
 </div>
+</div>
+</div>
+<div class="section" id="Spatial-head-differences">
+<h2>Spatial head differences<a class="headerlink" href="#Spatial-head-differences" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, the base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can also be processed into spatial head differences. These may represent nested wells, well-lake differences or simply two nearby wells that represent an important head gradient.</p>
+<ul class="simple">
+<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_head_differences</span></code> function can also write an instruction file in tandem</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_spatial_head_differences</span>
+
+<span class="n">head_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;usgs:333904090123801&#39;</span><span class="p">:</span>  <span class="c1"># well in money, ms</span>
+                         <span class="s1">&#39;usgs:333145090261901&#39;</span>  <span class="c1"># well approx. 15 mi southwest in cone of depression</span>
+                             <span class="p">}</span>
+
+<span class="n">shead_diffs</span> <span class="o">=</span> <span class="n">get_spatial_head_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                           <span class="n">perioddata</span><span class="p">,</span>
+                                           <span class="n">head_difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
+                                           <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                           <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_thead_diff_obs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote output/processed_thead_diff_obs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme1</th>
+      <th>obs_head1</th>
+      <th>sim_head1</th>
+      <th>screen_top1</th>
+      <th>screen_botm1</th>
+      <th>obsnme2</th>
+      <th>obs_head2</th>
+      <th>...</th>
+      <th>obs_dh</th>
+      <th>sim_dh</th>
+      <th>dz</th>
+      <th>obs_grad</th>
+      <th>sim_grad</th>
+      <th>group</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>type</th>
+    </tr>
+    <tr>
+      <th>per</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>15</th>
+      <td>2013-10-01</td>
+      <td>15</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201310</td>
+      <td>35.260000</td>
+      <td>41.222899</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201310</td>
+      <td>20.86</td>
+      <td>...</td>
+      <td>14.400000</td>
+      <td>12.206924</td>
+      <td>39.16</td>
+      <td>0.367722</td>
+      <td>0.311719</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.400000</td>
+      <td>12.206924</td>
+      <td>spatial head difference</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>2014-04-01</td>
+      <td>16</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201404</td>
+      <td>35.167500</td>
+      <td>40.340913</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201404</td>
+      <td>20.88</td>
+      <td>...</td>
+      <td>14.287500</td>
+      <td>11.392335</td>
+      <td>39.16</td>
+      <td>0.364849</td>
+      <td>0.290918</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.287500</td>
+      <td>11.392335</td>
+      <td>spatial head difference</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2014-10-01</td>
+      <td>17</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201410</td>
+      <td>35.314286</td>
+      <td>41.410755</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201410</td>
+      <td>21.02</td>
+      <td>...</td>
+      <td>14.294286</td>
+      <td>12.274810</td>
+      <td>39.16</td>
+      <td>0.365023</td>
+      <td>0.313453</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.294286</td>
+      <td>12.274810</td>
+      <td>spatial head difference</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2015-04-01</td>
+      <td>18</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201504</td>
+      <td>35.308571</td>
+      <td>40.785719</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201504</td>
+      <td>20.98</td>
+      <td>...</td>
+      <td>14.328571</td>
+      <td>11.729510</td>
+      <td>39.16</td>
+      <td>0.365898</td>
+      <td>0.299528</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.328571</td>
+      <td>11.729510</td>
+      <td>spatial head difference</td>
+    </tr>
+  </tbody>
+</table>
+<p>4 rows × 23 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head difference, in meters&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Head difference, in meters&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_34_1.png" src="../_images/notebooks_Example_34_1.png" />
+</div>
+</div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
@@ -1470,7 +1706,6 @@ Text(0, 0.5, &#39;Head change, in meters&#39;)
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span>
 </pre></div>
-</div>
 </div>
 </div>
 </div>

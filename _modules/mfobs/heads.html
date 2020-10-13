@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mfobs.heads &mdash; modflow-obs 0.post3.dev0+g95c29c1 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post4.dev0+g8fb79c3 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.post3.dev0+g95c29c1
+                0.post4.dev0+g8fb79c3
               </div>
             
           
@@ -383,6 +383,9 @@
 <span class="sd">    steady_state_period_end : str, optional</span>
 <span class="sd">        End date for the period representing steady-state conditions.</span>
 <span class="sd">        By default None, in which case no steady-state observatons are created.</span>
+<span class="sd">    outfile : str, optional</span>
+<span class="sd">        CSV file to write output to.</span>
+<span class="sd">        By default, None (no output written)</span>
 <span class="sd">    write_ins : bool, optional</span>
 <span class="sd">        Option to write instruction file, by default False</span>
 
@@ -659,36 +662,54 @@
 
 
 <div class="viewcode-block" id="get_spatial_head_differences"><a class="viewcode-back" href="../../api/mfobs.heads.html#mfobs.heads.get_spatial_head_differences">[docs]</a><span class="k">def</span> <span class="nf">get_spatial_head_differences</span><span class="p">(</span><span class="n">head_obs</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
-                                 <span class="n">lake_head_difference_sites</span><span class="p">,</span>
+                                 <span class="n">head_difference_sites</span><span class="p">,</span>
                                  <span class="n">head_obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
                                  <span class="n">head_sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
-                                 <span class="n">obs_diff_value_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
-                                 <span class="n">sim_diff_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
                                  <span class="n">use_gradients</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;-d-&#39;</span><span class="p">,</span>
                                  <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Takes the head_obs dataframe output by get_head_obs_near_lakes, and</span>
-<span class="sd">    maybe some other input, and creates spatial head difference observations</span>
-<span class="sd">    at locations where there are vertical head difference, and writes them</span>
-<span class="sd">    to a csv file in tables/.</span>
+    <span class="sd">&quot;&quot;&quot;Takes the head_obs dataframe output by get_head_obs and creates</span>
+<span class="sd">    spatial head difference observations. Optionally writes and output csvfile</span>
+<span class="sd">    and a PEST instruction file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    head_obs : DataFrame</span>
-<span class="sd">        Table of preprocessed head observations</span>
-<span class="sd">    lake_head_difference_sites : dict</span>
-<span class="sd">        Dictionary of lake site numbers (keys) and gw level sites (values) to compare.</span>
-<span class="sd">        Values is list of strings; observations containing these strings will be compared</span>
-<span class="sd">        to lake stage on the date of measurement.</span>
+<span class="sd">        Table of preprocessed head observations, such as that produced by</span>
+<span class="sd">        :func:`mfobs.heads.get_head_obs`</span>
+<span class="sd">    head_difference_sites : dict</span>
+<span class="sd">        Dictionary of site numbers (keys) and other site numbers to compare to (values).</span>
+<span class="sd">        Values can be a string for a single site, a list of strings for multiple sites,</span>
+<span class="sd">        or a string pattern contained in multiple site numbers;</span>
+<span class="sd">        observations at the sites represented in the values will be compared to the observation</span>
+<span class="sd">        at the site represented by the key, at times of coincident measurements.</span>
+<span class="sd">    head_obs_values_col : str</span>
+<span class="sd">        Column in head_obs with observed values</span>
+<span class="sd">    head_sim_values_col : str</span>
+<span class="sd">        Column in head_obs with simulated equivalent values</span>
 <span class="sd">    use_gradients : bool</span>
-<span class="sd">        If True, use hydraulic gradients, if False, use vertical head differences.</span>
+<span class="sd">        If True, use computed hydraulic gradients for the observation values,</span>
+<span class="sd">        if False, use head differences.</span>
 <span class="sd">        By default False.</span>
+<span class="sd">    sep : str</span>
+<span class="sd">        Separator in spatial head difference obsnnames. For example, with</span>
+<span class="sd">        sites &quot;site1&quot; and &quot;site2&quot; at time &quot;202001&quot;, and sep=&#39;-d-&#39;, the obsnme</span>
+<span class="sd">        would be &quot;site1-d-site2_202001&quot;.</span>
+<span class="sd">        by default, &#39;-d-&#39;</span>
+<span class="sd">    outfile : str, optional</span>
+<span class="sd">        CSV file to write output to. Nan values are filled with -9999.</span>
+<span class="sd">        By default, None (no output written)</span>
+<span class="sd">    write_ins : bool, optional</span>
+<span class="sd">        Option to write instruction file, by default False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># get subset of head_obs sites to compare to each lake in lake_head_difference_sites</span>
+    <span class="c1"># get subset of head_obs sites to compare to each key site in head_difference_sites</span>
     <span class="n">groups</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">)</span>
     <span class="n">spatial_head_differences</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">lake_site_no</span><span class="p">,</span> <span class="n">patterns</span> <span class="ow">in</span> <span class="n">lake_head_difference_sites</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">key_site_no</span><span class="p">,</span> <span class="n">patterns</span> <span class="ow">in</span> <span class="n">head_difference_sites</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">compare</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patterns</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">patterns</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
             <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">site_name</span> <span class="k">else</span> <span class="kc">False</span>
                        <span class="k">for</span> <span class="n">site_name</span> <span class="ow">in</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
@@ -696,61 +717,88 @@
         <span class="n">compare</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">compare</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">sites</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">compare</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">])</span>
 
-        <span class="c1"># for each site in the subset, compare the values to the lake</span>
+        <span class="c1"># for each site in the subset, compare the values to the keys site</span>
         <span class="c1"># index by stress period</span>
-        <span class="n">lake_values</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">lake_site_no</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">lake_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">lake_values</span><span class="o">.</span><span class="n">per</span>
+        <span class="n">key_values</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">key_site_no</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">key_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">key_values</span><span class="o">.</span><span class="n">per</span>
 
         <span class="k">for</span> <span class="n">obsprefix</span><span class="p">,</span> <span class="n">site_observations</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">obsprefix</span> <span class="ow">in</span> <span class="n">sites</span><span class="p">:</span>
                 <span class="n">site_obs</span> <span class="o">=</span> <span class="n">site_observations</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">site_obs</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">head_obs_values_col</span><span class="p">:</span> <span class="s1">&#39;obs_head2&#39;</span><span class="p">,</span>
+                                         <span class="n">head_sim_values_col</span><span class="p">:</span> <span class="s1">&#39;sim_head2&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;obsnme&#39;</span><span class="p">:</span> <span class="s1">&#39;obsnme2&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;screen_top&#39;</span><span class="p">:</span> <span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;screen_botm&#39;</span><span class="p">:</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">,</span>
+                                         <span class="s1">&#39;layer&#39;</span><span class="p">:</span> <span class="s1">&#39;layer2&#39;</span>
+                                         <span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">site_obs</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_obs</span><span class="o">.</span><span class="n">per</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;other_obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lake_values</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_lake_stage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lake_values</span><span class="p">[</span><span class="n">head_obs_values_col</span><span class="p">]</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_lake_stage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lake_values</span><span class="p">[</span><span class="n">head_sim_values_col</span><span class="p">]</span>
-                <span class="c1"># negative values indicate discharge to the lake</span>
-                <span class="c1"># (lake stage &lt; head)</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_dh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_lake_stage&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">site_obs</span><span class="p">[</span><span class="n">head_obs_values_col</span><span class="p">]</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_dh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_lake_stage&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">site_obs</span><span class="p">[</span><span class="n">head_sim_values_col</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obsnme1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_head1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="n">head_obs_values_col</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_head1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="n">head_sim_values_col</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;screen_botm1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="s1">&#39;layer2&#39;</span> <span class="ow">in</span> <span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;layer1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">]</span>
+                <span class="c1"># negative values indicate gradient towards key site</span>
+                <span class="c1"># (key site head &lt; values site head)</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_dh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_head1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_head2&#39;</span><span class="p">]</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_dh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_head1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_head2&#39;</span><span class="p">]</span>
 
                 <span class="c1"># get a screen midpoint and add gradient</span>
-                <span class="c1"># assume 1 meter between midpoint and lake if there is no open interval info</span>
-                <span class="n">screen_midpoint</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_lake_stage&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">screen_midpoint</span><span class="p">)</span>
+                <span class="n">screen_midpoint1</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[[</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">screen_midpoint2</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[[</span><span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen_midpoint1</span> <span class="o">-</span> <span class="n">screen_midpoint2</span><span class="p">)</span>
                 <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_grad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;obs_dh&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span>
                 <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_grad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;sim_dh&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span>
                 <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">site_obs</span><span class="p">)</span>
     <span class="n">spatial_head_differences</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">spatial_head_differences</span><span class="p">)</span>
 
     <span class="c1"># name the spatial head difference obs as</span>
-    <span class="c1"># &lt;obsprefix&gt;_&lt;obsname suffix&gt;dlake</span>
+    <span class="c1"># &lt;obsprefix1&gt;&lt;sep&gt;&lt;obsprefix2&gt;_&lt;suffix&gt;</span>
     <span class="n">obsnme</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">obsprefix</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-        <span class="n">obs_b_suffix</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">other_obsnme</span>
-        <span class="n">obsnme</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">d</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">obsnme</span><span class="p">,</span> <span class="n">obs_b_suffix</span><span class="p">))</span>
+        <span class="n">prefix1</span><span class="p">,</span> <span class="n">suffix1</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">obsnme1</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="n">prefix2</span><span class="p">,</span> <span class="n">suffix2</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">obsnme2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">suffix1</span> <span class="o">==</span> <span class="n">suffix2</span><span class="p">,</span> <span class="s2">&quot;Observations are at different times! </span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">obsnme1</span><span class="p">,</span>
+                                                                                        <span class="n">r</span><span class="o">.</span><span class="n">obsnme2</span><span class="p">)</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}{}{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix1</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">prefix2</span><span class="p">,</span> <span class="p">)</span>
+        <span class="n">obsnme</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix2</span><span class="p">))</span>
+        <span class="n">obsprefix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
     <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsnme</span>
+    <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsprefix</span>
+    <span class="k">if</span> <span class="s1">&#39;group&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;head&#39;</span>
     <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_sdiff&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
                                          <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]]</span>
 
-    <span class="c1"># drop some columns that aren&#39;t really valid</span>
-    <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme_in_parent&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+    <span class="c1"># clean up columns</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;obsnme1&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_head1&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_top1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm1&#39;</span><span class="p">,</span> <span class="s1">&#39;layer1&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;obsnme2&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_head2&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">,</span> <span class="s1">&#39;layer2&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;obs_dh&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_dh&#39;</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_grad&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_grad&#39;</span><span class="p">,</span> <span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span>
+            <span class="p">]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="n">spatial_head_differences</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="n">cols</span><span class="p">]</span>
 
     <span class="c1"># whether to use gradients for the obsvals, or just head differences</span>
     <span class="k">if</span> <span class="n">use_gradients</span><span class="p">:</span>
         <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obs_grad&#39;</span><span class="p">]</span>
-        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="n">sim_diff_values_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_grad&#39;</span><span class="p">]</span>
+        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_grad&#39;</span><span class="p">]</span>
         <span class="n">obstype</span> <span class="o">=</span> <span class="s1">&#39;vertical head gradients&#39;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obs_dh&#39;</span><span class="p">]</span>
-        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="n">sim_diff_values_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_dh&#39;</span><span class="p">]</span>
-        <span class="n">obstype</span> <span class="o">=</span> <span class="s1">&#39;vertical head difference&#39;</span>
+        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;sim_dh&#39;</span><span class="p">]</span>
+        <span class="n">obstype</span> <span class="o">=</span> <span class="s1">&#39;spatial head difference&#39;</span>
     <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obstype</span>
 
     <span class="c1"># uncertainty column is from head_obs;</span>
     <span class="c1"># assume that spatial head differences have double the uncertainty</span>
     <span class="c1"># (two wells/two measurements per obs)</span>
-    <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
+    <span class="k">if</span> <span class="s1">&#39;uncertainty&#39;</span> <span class="ow">in</span> <span class="n">spatial_head_differences</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">2</span>
 
     <span class="c1"># check for duplicates</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">spatial_head_differences</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
@@ -763,9 +811,9 @@
 
         <span class="c1"># write the instruction file</span>
         <span class="k">if</span> <span class="n">write_ins</span><span class="p">:</span>
-            <span class="n">write_insfile</span><span class="p">(</span><span class="n">spatial_head_differences</span><span class="p">,</span> <span class="n">outfile</span> <span class="o">+</span> <span class="s1">&#39;.ins&#39;</span><span class="p">,</span>
+            <span class="n">write_insfile</span><span class="p">(</span><span class="n">spatial_head_differences</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.ins&#39;</span><span class="p">,</span>
                           <span class="n">obsnme_column</span><span class="o">=</span><span class="s1">&#39;obsnme&#39;</span><span class="p">,</span>
-                          <span class="n">simulated_obsval_column</span><span class="o">=</span><span class="n">sim_diff_values_col</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                          <span class="n">simulated_obsval_column</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">spatial_head_differences</span></div>
 
 
