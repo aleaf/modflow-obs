@@ -1,3 +1,5 @@
+./_images/notebooks_Example_25_1.png
+./_images/notebooks_Example_30_1.png
 ./_modules/index.html
 ./_modules/mfobs/heads.html
 ./_modules/mfobs/modflow.html
@@ -13,7 +15,6 @@
 ./_sources/notebooks/Example.ipynb.txt
 ./_sources/philosophy.rst.txt
 ./_sources/release-history.rst.txt
-./_sources/usage.rst.txt
 ./_static/basic.css
 ./_static/clipboard.min.js
 ./_static/copy-button.svg
@@ -72,4 +73,3 @@
 ./release-history.html
 ./search.html
 ./searchindex.js
-./usage.html

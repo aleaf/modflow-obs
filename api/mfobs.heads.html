@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>The head observations module &mdash; modflow-obs 0.post2.dev0+g4285974 documentation</title>
+  <title>The head observations module &mdash; modflow-obs 0.post3.dev0+g95c29c1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post2.dev0+g4285974
+                0.post3.dev0+g95c29c1
               </div>
             
           
@@ -94,11 +94,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html">Examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../usage.html"> More details on how to use the package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html"> Demo of Modflow-obs</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Code reference</span></p>
 <ul class="current">
@@ -227,7 +227,10 @@ should correspond to observations in the MODFLOW observation input. The date suf
 is formatted using the <code class="docutils literal notranslate"><span class="pre">obsnme_date_suffix_format</span></code> parameter, which is also
 passed to <a class="reference internal" href="mfobs.modflow.html#mfobs.modflow.get_mf6_single_variable_obs" title="mfobs.modflow.get_mf6_single_variable_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_mf6_single_variable_obs()</span></code></a> for assigning observation
 names to the MODFLOW observation output.</p>
-<p>Steady-state observations are created</p>
+<p>Optionally, a model stress period can be labeled as steady-state (<code class="docutils literal notranslate"><span class="pre">label_period_as_steady_state</span></code>),
+representing average conditions over a time period bracked by a <code class="docutils literal notranslate"><span class="pre">steady_state_period_start</span></code> and
+<code class="docutils literal notranslate"><span class="pre">steady_state_period_end</span></code>. In this case, the simulated values for the labeled stress period are
+matched to average values for the steady-state time period.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
