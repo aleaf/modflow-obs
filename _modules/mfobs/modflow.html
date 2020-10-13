@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mfobs.modflow &mdash; modflow-obs 0.post1+g0f0e614 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post2.dev0+g4285974 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.post1+g0f0e614
+                0.post2.dev0+g4285974
               </div>
             
           
@@ -305,7 +305,9 @@
     <span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
 <span class="sd">    (stack) results to be n times x n sites rows, with a single observation value</span>
-<span class="sd">    in each row. If an input file to the MODFLOW-6 observation utility is included,</span>
+<span class="sd">    in each row. If there is more than one time in a stress period, retain only</span>
+<span class="sd">    the last time (so that there is one observation per stress period for each site.</span>
+<span class="sd">    If an input file to the MODFLOW-6 observation utility is included,</span>
 <span class="sd">    include the observation layer number in the output.</span>
 
 <span class="sd">    Parameters</span>
@@ -674,7 +676,7 @@
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Sep 21, 2020.
+        Last updated on Oct 13, 2020.
       </span>
 
     </p>

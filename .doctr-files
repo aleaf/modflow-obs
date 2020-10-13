@@ -1,9 +1,11 @@
 ./_modules/index.html
 ./_modules/mfobs/heads.html
 ./_modules/mfobs/modflow.html
+./_modules/mfobs/utils.html
 ./_sources/api/index.rst.txt
 ./_sources/api/mfobs.heads.rst.txt
 ./_sources/api/mfobs.modflow.rst.txt
+./_sources/api/mfobs.utils.rst.txt
 ./_sources/contributing.rst.txt
 ./_sources/examples.rst.txt
 ./_sources/index.rst.txt
@@ -56,6 +58,7 @@
 ./api/index.html
 ./api/mfobs.heads.html
 ./api/mfobs.modflow.html
+./api/mfobs.utils.html
 ./contributing.html
 ./examples.html
 ./genindex.html
