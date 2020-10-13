@@ -208,6 +208,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     steady_state_period_end : str, optional
         End date for the period representing steady-state conditions.
         By default None, in which case no steady-state observatons are created.
+    outfile : str, optional
+        CSV file to write output to.
+        By default, None (no output written)
     write_ins : bool, optional
         Option to write instruction file, by default False
 
@@ -484,36 +487,54 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
 
 def get_spatial_head_differences(head_obs, perioddata,
-                                 lake_head_difference_sites,
+                                 head_difference_sites,
                                  head_obs_values_col='obs_head',
                                  head_sim_values_col='sim_head',
-                                 obs_diff_value_col='obsval',
-                                 sim_diff_values_col='sim_obsval',
                                  use_gradients=False,
+                                 sep='-d-',
                                  write_ins=False, outfile=None):
-    """Takes the head_obs dataframe output by get_head_obs_near_lakes, and
-    maybe some other input, and creates spatial head difference observations
-    at locations where there are vertical head difference, and writes them
-    to a csv file in tables/.
+    """Takes the head_obs dataframe output by get_head_obs and creates
+    spatial head difference observations. Optionally writes and output csvfile
+    and a PEST instruction file.
 
     Parameters
     ----------
     head_obs : DataFrame
-        Table of preprocessed head observations
-    lake_head_difference_sites : dict
-        Dictionary of lake site numbers (keys) and gw level sites (values) to compare.
-        Values is list of strings; observations containing these strings will be compared
-        to lake stage on the date of measurement.
+        Table of preprocessed head observations, such as that produced by
+        :func:`mfobs.heads.get_head_obs`
+    head_difference_sites : dict
+        Dictionary of site numbers (keys) and other site numbers to compare to (values).
+        Values can be a string for a single site, a list of strings for multiple sites,
+        or a string pattern contained in multiple site numbers;
+        observations at the sites represented in the values will be compared to the observation
+        at the site represented by the key, at times of coincident measurements.
+    head_obs_values_col : str
+        Column in head_obs with observed values
+    head_sim_values_col : str
+        Column in head_obs with simulated equivalent values
     use_gradients : bool
-        If True, use hydraulic gradients, if False, use vertical head differences.
+        If True, use computed hydraulic gradients for the observation values,
+        if False, use head differences.
         By default False.
+    sep : str
+        Separator in spatial head difference obsnnames. For example, with
+        sites "site1" and "site2" at time "202001", and sep='-d-', the obsnme
+        would be "site1-d-site2_202001".
+        by default, '-d-'
+    outfile : str, optional
+        CSV file to write output to. Nan values are filled with -9999.
+        By default, None (no output written)
+    write_ins : bool, optional
+        Option to write instruction file, by default False
     """
 
-    # get subset of head_obs sites to compare to each lake in lake_head_difference_sites
+    # get subset of head_obs sites to compare to each key site in head_difference_sites
     groups = head_obs.groupby('obsprefix')
     spatial_head_differences = []
-    for lake_site_no, patterns in lake_head_difference_sites.items():
+    for key_site_no, patterns in head_difference_sites.items():
         compare = []
+        if isinstance(patterns, str):
+            patterns = [patterns]
         for pattern in patterns:
             matches = [True if pattern in site_name else False
                        for site_name in head_obs.obsprefix]
@@ -521,61 +542,88 @@ def get_spatial_head_differences(head_obs, perioddata,
         compare = np.any(compare, axis=0)
         sites = set(head_obs.loc[compare, 'obsprefix'])
 
-        # for each site in the subset, compare the values to the lake
+        # for each site in the subset, compare the values to the keys site
         # index by stress period
-        lake_values = groups.get_group(lake_site_no).copy()
-        lake_values.index = lake_values.per
+        key_values = groups.get_group(key_site_no).copy()
+        key_values.index = key_values.per
 
         for obsprefix, site_observations in groups:
             if obsprefix in sites:
                 site_obs = site_observations.copy()
+                site_obs.rename(columns={head_obs_values_col: 'obs_head2',
+                                         head_sim_values_col: 'sim_head2',
+                                         'obsnme': 'obsnme2',
+                                         'screen_top': 'screen_top2',
+                                         'screen_botm': 'screen_botm2',
+                                         'layer': 'layer2'
+                                         }, inplace=True)
                 site_obs.index = site_obs.per
-                site_obs['other_obsnme'] = lake_values['obsnme']
-                site_obs['obs_lake_stage'] = lake_values[head_obs_values_col]
-                site_obs['sim_lake_stage'] = lake_values[head_sim_values_col]
-                # negative values indicate discharge to the lake
-                # (lake stage < head)
-                site_obs['obs_dh'] = site_obs['obs_lake_stage'] - site_obs[head_obs_values_col]
-                site_obs['sim_dh'] = site_obs['sim_lake_stage'] - site_obs[head_sim_values_col]
+                site_obs['obsnme1'] = key_values['obsnme']
+                site_obs['obs_head1'] = key_values[head_obs_values_col]
+                site_obs['sim_head1'] = key_values[head_sim_values_col]
+                site_obs['screen_top1'] = key_values['screen_top']
+                site_obs['screen_botm1'] = key_values['screen_botm']
+                if 'layer2' in site_obs.columns:
+                    site_obs['layer1'] = key_values['layer']
+                # negative values indicate gradient towards key site
+                # (key site head < values site head)
+                site_obs['obs_dh'] = site_obs['obs_head1'] - site_obs['obs_head2']
+                site_obs['sim_dh'] = site_obs['sim_head1'] - site_obs['sim_head2']
 
                 # get a screen midpoint and add gradient
-                # assume 1 meter between midpoint and lake if there is no open interval info
-                screen_midpoint = site_obs[['screen_top', 'screen_botm']].mean(axis=1).fillna(1)
-                site_obs['dz'] = (site_obs['obs_lake_stage'] - screen_midpoint)
+                screen_midpoint1 = site_obs[['screen_top1', 'screen_botm1']].mean(axis=1)
+                screen_midpoint2 = site_obs[['screen_top2', 'screen_botm2']].mean(axis=1)
+                site_obs['dz'] = (screen_midpoint1 - screen_midpoint2)
                 site_obs['obs_grad'] = site_obs['obs_dh'] / site_obs['dz']
                 site_obs['sim_grad'] = site_obs['sim_dh'] / site_obs['dz']
                 spatial_head_differences.append(site_obs)
     spatial_head_differences = pd.concat(spatial_head_differences)
 
     # name the spatial head difference obs as
-    # <obsprefix>_<obsname suffix>dlake
+    # <obsprefix1><sep><obsprefix2>_<suffix>
     obsnme = []
+    obsprefix = []
     for i, r in spatial_head_differences.iterrows():
-        obs_b_suffix = r.other_obsnme
-        obsnme.append('{}d{}'.format(r.obsnme, obs_b_suffix))
+        prefix1, suffix1 = r.obsnme1.split('_')
+        prefix2, suffix2 = r.obsnme2.split('_')
+        assert suffix1 == suffix2, "Observations are at different times! {}, {}".format(r.obsnme1,
+                                                                                        r.obsnme2)
+        prefix = '{}{}{}'.format(prefix1, sep, prefix2, )
+        obsnme.append('{}_{}'.format(prefix, suffix2))
+        obsprefix.append(prefix)
     spatial_head_differences['obsnme'] = obsnme
+    spatial_head_differences['obsprefix'] = obsprefix
+    if 'group' not in spatial_head_differences.columns:
+        spatial_head_differences['group'] = 'head'
     spatial_head_differences['group'] = ['{}_sdiff'.format(g)
                                          for g in spatial_head_differences['group']]
 
-    # drop some columns that aren't really valid
-    spatial_head_differences.drop(['n', 'obsnme_in_parent'], axis=1, inplace=True, errors='ignore')
+    # clean up columns
+    cols = ['datetime', 'per', 'obsprefix',
+            'obsnme1', 'obs_head1', 'sim_head1', 'screen_top1', 'screen_botm1', 'layer1',
+            'obsnme2', 'obs_head2', 'sim_head2', 'screen_top2', 'screen_botm2', 'layer2',
+            'obs_dh', 'sim_dh', 'dz', 'obs_grad', 'sim_grad', 'group', 'obsnme'
+            ]
+    cols = [c for c in cols if c in spatial_head_differences.columns]
+    spatial_head_differences = spatial_head_differences[cols]
 
     # whether to use gradients for the obsvals, or just head differences
     if use_gradients:
         spatial_head_differences['obsval'] = spatial_head_differences['obs_grad']
-        spatial_head_differences[sim_diff_values_col] = spatial_head_differences['sim_grad']
+        spatial_head_differences['sim_obsval'] = spatial_head_differences['sim_grad']
         obstype = 'vertical head gradients'
     else:
         spatial_head_differences['obsval'] = spatial_head_differences['obs_dh']
-        spatial_head_differences[sim_diff_values_col] = spatial_head_differences['sim_dh']
-        obstype = 'vertical head difference'
+        spatial_head_differences['sim_obsval'] = spatial_head_differences['sim_dh']
+        obstype = 'spatial head difference'
     spatial_head_differences.dropna(axis=0, subset=['obsval'], inplace=True)
     spatial_head_differences['type'] = obstype
 
     # uncertainty column is from head_obs;
     # assume that spatial head differences have double the uncertainty
     # (two wells/two measurements per obs)
-    spatial_head_differences['uncertainty'] *= 2
+    if 'uncertainty' in spatial_head_differences.columns:
+        spatial_head_differences['uncertainty'] *= 2
 
     # check for duplicates
     assert not spatial_head_differences['obsnme'].duplicated().any()
@@ -588,9 +636,9 @@ def get_spatial_head_differences(head_obs, perioddata,
 
         # write the instruction file
         if write_ins:
-            write_insfile(spatial_head_differences, outfile + '.ins',
+            write_insfile(spatial_head_differences, str(outfile) + '.ins',
                           obsnme_column='obsnme',
-                          simulated_obsval_column=sim_diff_values_col, index=False)
+                          simulated_obsval_column='sim_obsval', index=False)
     return spatial_head_differences
 
 

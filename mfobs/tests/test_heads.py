@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import affine
-from mfobs.heads import get_head_obs, get_temporal_head_difference_obs
+from mfobs.heads import get_head_obs, get_temporal_head_difference_obs, get_spatial_head_differences
 from mfobs.modflow import get_modelgrid_transform
 
 
@@ -58,6 +58,7 @@ def head_obs_input(shellmound_data_path, shellmound_grid_transform,
                      for i in range(13)]
         outfile = shellmound_output_path / 'processed_head_obs.dat'
         inset_thead_diff_obs_outfile = shellmound_output_path / 'processed_thead_diff_obs.dat'
+        inset_shead_diff_obs_outfile = shellmound_output_path / 'processed_shead_diff_obs.dat'
         label_period_as_steady_state = 4
         steady_state_period_start = '2008-04-01'
         steady_state_period_end = '2008-9-30'
@@ -167,3 +168,40 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert results.obsnme.str.islower().all()
     suffixes = np.ravel([obsnme.split('_')[1].split('d') for obsnme in results.obsnme])
     assert 'ss' not in suffixes
+
+
+@pytest.mark.parametrize('write_ins', (True,
+                                       False
+                                       ))
+def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
+    head_difference_sites = {'usgs:333904090123801':  # well in money, ms
+                                 'usgs:333145090261901'
+                             }
+    results = get_spatial_head_differences(head_obs, head_obs_input.perioddata,
+                                           head_difference_sites,
+                                           head_obs_values_col='obs_head',
+                                           head_sim_values_col='sim_head',
+                                           use_gradients=False,
+                                           write_ins=write_ins,
+                                           outfile=head_obs_input.inset_shead_diff_obs_outfile)
+    assert head_obs_input.inset_shead_diff_obs_outfile.exists()
+    insfile = Path(str(head_obs_input.inset_shead_diff_obs_outfile) + '.ins')
+    if not write_ins:
+        assert not insfile.exists()
+    else:
+        assert insfile.exists()
+        insfile.unlink()
+    head_obs_input.inset_shead_diff_obs_outfile.unlink()  # delete it
+
+    assert np.all(results.columns ==
+                  ['datetime', 'per', 'obsprefix',
+                   'obsnme1', 'obs_head1', 'sim_head1', 'screen_top1', 'screen_botm1', 'layer1',
+                   'obsnme2', 'obs_head2', 'sim_head2', 'screen_top2', 'screen_botm2', 'layer2',
+                   'obs_dh', 'sim_dh', 'dz', 'obs_grad', 'sim_grad', 'group', 'obsnme',
+                   'obsval', 'sim_obsval', 'type'
+                   ])
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
+    j=2
