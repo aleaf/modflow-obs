@@ -15,7 +15,6 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  gwf_obs_input_file,
                  observed_values_metadata_file=None,
                  variable_name='head',
-                 outfile='processed_head_obs.dat',
                  observed_values_site_id_col='obsprefix',
                  observed_values_datetime_col='datetime',
                  obsnme_date_suffix_format='%Y%m',
@@ -32,7 +31,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  hk_arrays=None, top_array=None, botm_arrays=None,
                  label_period_as_steady_state=None, steady_state_period_start=None,
                  steady_state_period_end=None,
-                 write_ins=False):
+                 write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
     using get_mf6_single_variable_obs(). General paradigm is to include all model
@@ -130,9 +129,6 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     variable_name : str, optional
         Column with simulated output will be named "sim_<variable_name",
         by default 'head'
-    outfile : str, optional
-        Output file of values to be read by PEST,
-        by default 'processed_head_obs.dat'
     observed_values_site_id_col : str, optional
         Column name in observed_values_file with site identifiers,
         by default 'obsprefix'
@@ -244,7 +240,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
 
     """
-    outpath = Path(outfile).parent
+    outpath = Path('.')
+    if outfile is not None:
+        outpath = Path(outfile).parent
 
     obs_values_column = 'obs_' + variable_name  # output column with observed values
     sim_values_column = 'sim_' + variable_name  # output column with simulated equivalents to observed values
@@ -258,7 +256,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                                           obsnme_date_suffix_format=obsnme_date_suffix_format,
                                           label_period_as_steady_state=label_period_as_steady_state)
 
-    # rename required columns to their defaults
+    # rename columns to their defaults
     renames = {observed_values_site_id_col: 'obsprefix',
                observed_values_datetime_col: 'datetime',
                observed_values_x_col: 'x',
@@ -271,7 +269,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                }
 
     if not isinstance(observed_values_file, pd.DataFrame):
-        observed = pd.read_csv(observed_values_file)
+        observed = pd.read_csv(observed_values_file,
+                               dtype={observed_values_site_id_col: object})
     else:
         observed = observed_values_file
     observed.rename(columns=renames, inplace=True)
@@ -279,7 +278,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # read in the observed values metadata
     if observed_values_metadata_file is not None:
         if not isinstance(observed_values_metadata_file, pd.DataFrame):
-            metadata = pd.read_csv(observed_values_metadata_file)
+            metadata = pd.read_csv(observed_values_metadata_file,
+                               dtype={observed_values_site_id_col: object})
         else:
             metadata = observed_values_metadata_file
         metadata.rename(columns=renames, inplace=True)
@@ -355,10 +355,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 end = steady_state_period_end
         observed_in_period = observed.loc[start:end].reset_index(drop=True)
         if len(observed_in_period) == 0:
-            warnings.warn(('No observations between start and '
-                           'end dates of {} and {}!'.format(start, end)))
+            warnings.warn(('Stress period {}: No observations between start and '
+                           'end dates of {} and {}!'.format(per, start, end)))
             continue
         observed_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
+        if 'n' not in observed_in_period.columns:
+            observed_in_period['n'] = 1
         by_site = observed_in_period.groupby('obsprefix')
         observed_in_period_rs = getattr(by_site, aggregrate_observed_values_by)()
         observed_in_period_rs['n'] = by_site.n.sum()

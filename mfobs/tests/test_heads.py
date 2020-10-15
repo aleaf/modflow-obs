@@ -17,19 +17,6 @@ def shellmound_grid_transform(shellmound_data_path):
 
 
 @pytest.fixture
-def shellmound_data_path(test_data_path):
-    return test_data_path / 'shellmound'
-
-
-@pytest.fixture
-def shellmound_output_path(test_output_folder):
-    output_path = test_output_folder / 'shellmound'
-    if not output_path.exists():
-        output_path.mkdir()
-    return output_path
-
-
-@pytest.fixture
 def head_obs_input(shellmound_data_path, shellmound_grid_transform,
                    shellmound_output_path):
 
@@ -103,7 +90,7 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     assert np.all(head_obs.columns == expected_columns)
     assert len(set(head_obs.obsnme)) == len(head_obs)
     assert not head_obs.obs_head.isna().any()
-    assert head_obs.obsnme.str.islower().all()
+    assert not head_obs.obsnme.str.isupper().any()
 
     # check sorting
     assert np.all(head_obs.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)

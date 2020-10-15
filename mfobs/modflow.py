@@ -245,8 +245,13 @@ def get_mf6_single_variable_obs(perioddata,
     # (for example, an initial steady-state period that isn't being used for observations
     # and a subsequent transient period with the same start date)
     # first make temp obsnames that include layer
-    unique_obsnames = ['{}_{}'.format(name, layer)
-                       for name, layer in zip(stacked.obsnme, stacked.layer)]
+    # steady state periods that are being used for observations (label_period_as_steady_state=True)
+    # won't be dropped because their obs will have an "ss" suffix instead of a date suffix
+    if gwf_obs_input_file is not None:
+        unique_obsnames = ['{}_{}'.format(name, layer)
+                           for name, layer in zip(stacked.obsnme, stacked.layer)]
+    else:
+        unique_obsnames = stacked.obsnme.to_list()
     are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values
     if any(are_duplicates):
         #duplicated_obsnames = set(stacked.loc[are_duplicates.values, 'obsnme'])

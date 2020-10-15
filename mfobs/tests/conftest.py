@@ -30,3 +30,16 @@ def test_output_folder(project_root_path):
             shutil.rmtree(folder)
         folder.mkdir(parents=True)
     return folder
+
+
+@pytest.fixture
+def shellmound_data_path(test_data_path):
+    return test_data_path / 'shellmound'
+
+
+@pytest.fixture
+def shellmound_output_path(test_output_folder):
+    output_path = test_output_folder / 'shellmound'
+    if not output_path.exists():
+        output_path.mkdir()
+    return output_path
