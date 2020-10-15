@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mfobs.modflow &mdash; modflow-obs 0.post4.dev0+g8fb79c3 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.post4.dev0+g8fb79c3
+                0.post5+g4c097e0
               </div>
             
           
@@ -420,8 +420,13 @@
     <span class="c1"># (for example, an initial steady-state period that isn&#39;t being used for observations</span>
     <span class="c1"># and a subsequent transient period with the same start date)</span>
     <span class="c1"># first make temp obsnames that include layer</span>
-    <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span>
-                       <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">layer</span><span class="p">)]</span>
+    <span class="c1"># steady state periods that are being used for observations (label_period_as_steady_state=True)</span>
+    <span class="c1"># won&#39;t be dropped because their obs will have an &quot;ss&quot; suffix instead of a date suffix</span>
+    <span class="k">if</span> <span class="n">gwf_obs_input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span>
+                           <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">layer</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
     <span class="n">are_duplicates</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">unique_obsnames</span><span class="p">)</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
     <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">are_duplicates</span><span class="p">):</span>
         <span class="c1">#duplicated_obsnames = set(stacked.loc[are_duplicates.values, &#39;obsnme&#39;])</span>
@@ -676,7 +681,7 @@
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 13, 2020.
+        Last updated on Oct 15, 2020.
       </span>
 
     </p>

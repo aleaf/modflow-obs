@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>mfobs.heads &mdash; modflow-obs 0.post4.dev0+g8fb79c3 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.post4.dev0+g8fb79c3
+                0.post5+g4c097e0
               </div>
             
           
@@ -190,7 +190,6 @@
                  <span class="n">gwf_obs_input_file</span><span class="p">,</span>
                  <span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
-                 <span class="n">outfile</span><span class="o">=</span><span class="s1">&#39;processed_head_obs.dat&#39;</span><span class="p">,</span>
                  <span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
                  <span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
                  <span class="n">obsnme_date_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m&#39;</span><span class="p">,</span>
@@ -207,7 +206,7 @@
                  <span class="n">hk_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">botm_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steady_state_period_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">steady_state_period_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                 <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Post-processes model output to be read by PEST, and optionally,</span>
 <span class="sd">    writes a corresponding PEST instruction file. Reads model output</span>
 <span class="sd">    using get_mf6_single_variable_obs(). General paradigm is to include all model</span>
@@ -305,9 +304,6 @@
 <span class="sd">    variable_name : str, optional</span>
 <span class="sd">        Column with simulated output will be named &quot;sim_&lt;variable_name&quot;,</span>
 <span class="sd">        by default &#39;head&#39;</span>
-<span class="sd">    outfile : str, optional</span>
-<span class="sd">        Output file of values to be read by PEST,</span>
-<span class="sd">        by default &#39;processed_head_obs.dat&#39;</span>
 <span class="sd">    observed_values_site_id_col : str, optional</span>
 <span class="sd">        Column name in observed_values_file with site identifiers,</span>
 <span class="sd">        by default &#39;obsprefix&#39;</span>
@@ -419,7 +415,9 @@
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">outpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">outfile</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
 
     <span class="n">obs_values_column</span> <span class="o">=</span> <span class="s1">&#39;obs_&#39;</span> <span class="o">+</span> <span class="n">variable_name</span>  <span class="c1"># output column with observed values</span>
     <span class="n">sim_values_column</span> <span class="o">=</span> <span class="s1">&#39;sim_&#39;</span> <span class="o">+</span> <span class="n">variable_name</span>  <span class="c1"># output column with simulated equivalents to observed values</span>
@@ -433,7 +431,7 @@
                                           <span class="n">obsnme_date_suffix_format</span><span class="o">=</span><span class="n">obsnme_date_suffix_format</span><span class="p">,</span>
                                           <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="n">label_period_as_steady_state</span><span class="p">)</span>
 
-    <span class="c1"># rename required columns to their defaults</span>
+    <span class="c1"># rename columns to their defaults</span>
     <span class="n">renames</span> <span class="o">=</span> <span class="p">{</span><span class="n">observed_values_site_id_col</span><span class="p">:</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
                <span class="n">observed_values_datetime_col</span><span class="p">:</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
                <span class="n">observed_values_x_col</span><span class="p">:</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span>
@@ -446,7 +444,8 @@
                <span class="p">}</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observed_values_file</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-        <span class="n">observed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">observed_values_file</span><span class="p">)</span>
+        <span class="n">observed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">observed_values_file</span><span class="p">,</span>
+                               <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="n">observed_values_site_id_col</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">observed</span> <span class="o">=</span> <span class="n">observed_values_file</span>
     <span class="n">observed</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">renames</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -454,7 +453,8 @@
     <span class="c1"># read in the observed values metadata</span>
     <span class="k">if</span> <span class="n">observed_values_metadata_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">observed_values_metadata_file</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">observed_values_metadata_file</span><span class="p">)</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">observed_values_metadata_file</span><span class="p">,</span>
+                               <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="n">observed_values_site_id_col</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="n">observed_values_metadata_file</span>
         <span class="n">metadata</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">renames</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -530,10 +530,12 @@
                 <span class="n">end</span> <span class="o">=</span> <span class="n">steady_state_period_end</span>
         <span class="n">observed_in_period</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;No observations between start and &#39;</span>
-                           <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No observations between start and &#39;</span>
+                           <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">per</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
             <span class="k">continue</span>
         <span class="n">observed_in_period</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;n&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">observed_in_period</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">by_site</span> <span class="o">=</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">)</span>
         <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">by_site</span><span class="p">,</span> <span class="n">aggregrate_observed_values_by</span><span class="p">)()</span>
         <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -933,7 +935,7 @@
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 13, 2020.
+        Last updated on Oct 15, 2020.
       </span>
 
     </p>
