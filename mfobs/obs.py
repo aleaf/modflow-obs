@@ -16,7 +16,7 @@ def get_spatial_differences(base_data, perioddata,
                             sep='-d-',
                             write_ins=False, outfile=None):
     """Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates
-    spatial difference observations. Optionally writes and output csvfile
+    spatial difference observations. Optionally writes an output csvfile
     and a PEST instruction file.
 
     Parameters
@@ -24,12 +24,18 @@ def get_spatial_differences(base_data, perioddata,
     base_data : DataFrame
         Table of preprocessed observations, such as that produced by
         :func:`mfobs.obs.get_obs`
+    perioddata : DataFrame
+        DataFrame with start/end dates for stress periods. Must have columns
+        'time' (modflow time, in days), 'start_datetime' (start date for the stress period)
+        and 'end_datetime' (end date for the stress period).
     difference_sites : dict
         Dictionary of site numbers (keys) and other site numbers to compare to (values).
         Values can be a string for a single site, a list of strings for multiple sites,
         or a string pattern contained in multiple site numbers;
         observations at the sites represented in the values will be compared to the observation
-        at the site represented by the key, at times of coincident measurements.
+        at the site represented by the key, at times of coincident measurements. Differences
+        are computed by subtracting the values site(s) from the key site, so for example,
+        to represent a gain in streamflow as positive, the downstream site should be key site.
     obs_values_col : str
         Column in ``base_data`` with observed values
     sim_values_col : str
@@ -86,6 +92,8 @@ def get_spatial_differences(base_data, perioddata,
         sim_grad          simulated equivalent vertical hydraulic gradient between obsnme1 and obsnme2*
         group             observation group
         obsnme            spatial difference observation name
+        obsval            observation value (i.e. for PEST control file)
+        sim_obsval        simulated equivalent (i.e. for PEST instruction file)
         type              description of spatial difference observations
         uncertainty       (loosely) error-based uncertainty, assumed to be 2x that of obsnme2
         ================= ===================================================================================
@@ -161,6 +169,7 @@ def get_spatial_differences(base_data, perioddata,
                         site_obs['sim_grad'] = site_obs['sim_diff'] / site_obs['dz']
                 spatial_differences.append(site_obs)
     spatial_differences = pd.concat(spatial_differences)
+    spatial_differences.dropna(subset=['obs_diff', 'sim_diff'], axis=0, inplace=True)
 
     # name the spatial head difference obs as
     # <obsprefix1><sep><obsprefix2>_<suffix>
@@ -223,3 +232,115 @@ def get_spatial_differences(base_data, perioddata,
                           obsnme_column='obsnme',
                           simulated_obsval_column='sim_obsval', index=False)
     return spatial_differences
+
+
+def get_temporal_differences(base_data, perioddata,
+                             obs_values_col='obs_head',
+                             sim_values_col='sim_head',
+                             obstype='head',
+                             obsnme_date_suffix_format='%Y%m',
+                             exclude_suffix='ss',
+                             outfile=None,
+                             write_ins=False):
+    """Takes the base_data dataframe output by :func:`mfobs.obs.get_obs`,
+    creates temporal difference observations. Optionally writes an output csvfile
+    and a PEST instruction file.
+
+    Parameters
+    ----------
+    base_data : DataFrame
+        Head observation data with same column structure as
+        output from :func:`mfobs.obs.get_obs`
+    perioddata : DataFrame
+        DataFrame with start/end dates for stress periods. Must have columns
+        'time' (modflow time, in days), 'start_datetime' (start date for the stress period)
+        and 'end_datetime' (end date for the stress period).
+    obs_values_col : str
+        Column in ``base_data`` with observed values
+    sim_values_col : str
+        Column in `base_data`` with simulated equivalent values
+    obstype : str  {'head', 'flux', or other}
+        Type of observation being processed. Simulated and observed values
+        columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
+        respectively. If there is no 'group' column in ``base_data``,
+        ``obstype`` is also used as a default base group name.
+    obsnme_date_suffix_format : str, optional
+        Format for date suffix of obsnmes. By default, '%Y%m',
+        which would yield '202001' for a Jan, 2020 observation.
+        Observation names are created following the format of
+        <obsprefix>_<date suffix>
+    exclude_suffix : str or list-like
+        Option to exclude observations from differencing by suffix;
+        e.g. 'ss' to include steady-state observations.
+        By default, 'ss'
+    outfile : str, optional
+        CSV file to write output to.
+        By default, None (no output written)
+    write_ins : bool, optional
+        Option to write instruction file, by default False
+
+    Returns
+    -------
+    period_diffs : DataFrame
+
+    Notes
+    -----
+    Differences are computed by subtracting the previous time from the current,
+    so a positive value indicates an increase.
+    """
+    # only compute differences on transient obs
+    if isinstance(exclude_suffix, str):
+        exclude_suffix = [exclude_suffix]
+    suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
+    keep = ~np.in1d(suffix, exclude_suffix)
+    base_data = base_data.loc[keep].copy()
+
+    # group observations by site (prefix)
+    sites = base_data.groupby('obsprefix')
+    period_diffs = []
+    for site_no, values in sites:
+        values = values.sort_values(by=['per'])
+
+        # compute the differences
+        values['obsval'] = values[obs_values_col].diff()
+        values['sim_obsval'] = values[sim_values_col].diff()
+
+        # todo: is there a general uncertainty approach for temporal differences that makes sense?
+
+        period_diffs.append(values)
+    period_diffs = pd.concat(period_diffs).reset_index(drop=True)
+    period_diffs['datetime'] = pd.to_datetime(period_diffs['datetime'])
+
+    # name the temporal difference obs as
+    # <obsprefix>_<obsname1 suffix>d<obsname2 suffix>
+    # where the obsval = obsname2 - obsname1
+    obsnme = []
+    for i, r in period_diffs.iterrows():
+        obsname2_suffix = ''
+        if i > 0:
+            obsname2_suffix = period_diffs.loc[i - 1, 'datetime'].strftime(obsnme_date_suffix_format)
+        obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
+    period_diffs['obsnme'] = obsnme
+    if 'group' not in period_diffs.columns:
+        period_diffs['group'] = obstype
+    period_diffs['group'] = [f'{g}_sdiff' for g in period_diffs['group']]
+    period_diffs['type'] = f'temporal {obstype} difference'
+
+    # drop some columns that aren't really valid; if they exist
+    period_diffs.drop(['n'], axis=1, inplace=True, errors='ignore')
+
+    # drop observations with no difference (first observations at each site)
+    period_diffs.dropna(axis=0, subset=['obsval', 'sim_obsval'], inplace=True)
+
+    # fill NaT (not a time) datetimes
+    fill_nats(period_diffs, perioddata)
+
+    if outfile is not None:
+        period_diffs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+
+        # write the instruction file
+        if write_ins:
+            write_insfile(period_diffs, str(outfile) + '.ins',
+                          obsnme_column='obsnme', simulated_obsval_column='sim_obsval',
+                          index=False)
+    return period_diffs

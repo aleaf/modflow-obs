@@ -7,9 +7,9 @@ import numpy as np
 import pandas as pd
 import pytest
 import affine
-from mfobs.heads import get_head_obs, get_temporal_head_difference_obs, get_spatial_head_differences
+from mfobs.heads import get_head_obs
 from mfobs.modflow import get_modelgrid_transform
-from mfobs.obs import get_spatial_differences
+from mfobs.obs import get_spatial_differences, get_temporal_differences
 
 
 @pytest.fixture
@@ -134,10 +134,13 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
                                        False
                                        ))
 def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
-    results = get_temporal_head_difference_obs(head_obs,
-                                               head_obs_input.perioddata,
-                                               write_ins=write_ins,
-                                               outfile=head_obs_input.thead_diff_obs_outfile)
+    results = get_temporal_differences(head_obs,
+                                       head_obs_input.perioddata,
+                                       obs_values_col='obs_head',
+                                       sim_values_col='sim_head',
+                                       obstype='head',
+                                       write_ins=write_ins,
+                                       outfile=head_obs_input.thead_diff_obs_outfile)
     assert head_obs_input.thead_diff_obs_outfile.exists()
     insfile = Path(str(head_obs_input.thead_diff_obs_outfile) + '.ins')
     if not write_ins:
@@ -150,9 +153,11 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix', 'obsnme',
                    'obs_head', 'sim_head', 'screen_top', 'screen_botm', 'layer',
-                   'obsval', 'sim_obsval', 'group'])
+                   'obsval', 'sim_obsval', 'group', 'type']
+                  )
     assert len(set(results.obsnme)) == len(results)
-    assert not results.obs_head.isna().any()
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
     suffixes = np.ravel([obsnme.split('_')[1].split('d') for obsnme in results.obsnme])
     assert 'ss' not in suffixes
