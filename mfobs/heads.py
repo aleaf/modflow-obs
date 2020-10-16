@@ -102,7 +102,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         ============= ========================
 
         If supplied, observation group an uncertainty information will be
-        passed through to the output ``head_obs`` DataFrame:
+        passed through to the output ``base_data`` DataFrame:
 
         ============= ==================================
         group         observation group
@@ -162,11 +162,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         by default None
     observed_values_group_column : str, optional
         Column name in observed_values_file with observation group information.
-        Passed through to output ``head_obs`` DataFrame, otherwise not required.
+        Passed through to output ``base_data`` DataFrame, otherwise not required.
         by default 'group'
     observed_values_unc_column : str, optional
         Column name in observed_values_file with observation uncertainty values.
-        Passed through to output ``head_obs`` DataFrame, otherwise not required.
+        Passed through to output ``base_data`` DataFrame, otherwise not required.
         by default 'uncertainty'
     aggregrate_observed_values_by : str
         Method for aggregating observed values to the model stress periods,
@@ -212,7 +212,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     Returns
     -------
-    head_obs : DataFrame
+    base_data : DataFrame
         With the following columns:
 
         ===================== ====================================================
@@ -495,7 +495,7 @@ def get_spatial_head_differences(head_obs, perioddata,
                                  use_gradients=False,
                                  sep='-d-',
                                  write_ins=False, outfile=None):
-    """Takes the head_obs dataframe output by get_head_obs and creates
+    """Takes the base_data dataframe output by get_head_obs and creates
     spatial head difference observations. Optionally writes and output csvfile
     and a PEST instruction file.
 
@@ -511,9 +511,9 @@ def get_spatial_head_differences(head_obs, perioddata,
         observations at the sites represented in the values will be compared to the observation
         at the site represented by the key, at times of coincident measurements.
     head_obs_values_col : str
-        Column in head_obs with observed values
+        Column in base_data with observed values
     head_sim_values_col : str
-        Column in head_obs with simulated equivalent values
+        Column in base_data with simulated equivalent values
     use_gradients : bool
         If True, use computed hydraulic gradients for the observation values,
         if False, use head differences.
@@ -530,7 +530,7 @@ def get_spatial_head_differences(head_obs, perioddata,
         Option to write instruction file, by default False
     """
 
-    # get subset of head_obs sites to compare to each key site in head_difference_sites
+    # get subset of base_data sites to compare to each key site in difference_sites
     groups = head_obs.groupby('obsprefix')
     spatial_head_differences = []
     for key_site_no, patterns in head_difference_sites.items():
@@ -621,7 +621,7 @@ def get_spatial_head_differences(head_obs, perioddata,
     spatial_head_differences.dropna(axis=0, subset=['obsval'], inplace=True)
     spatial_head_differences['type'] = obstype
 
-    # uncertainty column is from head_obs;
+    # uncertainty column is from base_data;
     # assume that spatial head differences have double the uncertainty
     # (two wells/two measurements per obs)
     if 'uncertainty' in spatial_head_differences.columns:
@@ -652,7 +652,7 @@ def get_temporal_head_difference_obs(head_obs, perioddata,
                                      exclude_suffix='ss',
                                      outfile=None,
                                      write_ins=False):
-    """Takes the head_obs dataframe output by get_head_obs,
+    """Takes the base_data dataframe output by get_head_obs,
     creates temporal head difference observations.
 
     Parameters
@@ -661,10 +661,10 @@ def get_temporal_head_difference_obs(head_obs, perioddata,
         Head observation data with same column structure as
         output from :func:`mfobs.heads.get_head_obs`
     head_obs_values_col : str
-        Column in head_obs with observed values to difference.
+        Column in base_data with observed values to difference.
         By default, 'obs_head'
     head_sim_values_col : str
-        Column in head_obs with simulated values to difference.
+        Column in base_data with simulated values to difference.
         By default, 'sim_head`
     obs_diff_value_col : str
         Name of column with computed observed differences.

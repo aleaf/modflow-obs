@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
+from mfobs.obs import get_spatial_differences
 from mfobs.swflows import get_flux_obs
 
 
@@ -15,11 +16,13 @@ def flux_obs_input(shellmound_data_path):
         perioddata = pd.read_csv(shellmound_data_path / 'tables/stress_period_data.csv')
         model_output_file = shellmound_data_path / 'shellmound.sfr.obs.output.csv'
         observed_values_file = shellmound_data_path / 'tables/processed_flow_obs.csv'
+        tflux_diff_obs_outfile = shellmound_data_path / 'tables/processed_flow_obs_tdiffs.csv'
+        sflux_diff_obs_outfile = shellmound_data_path / 'tables/processed_flow_obs_sdiffs.csv'
     return FluxObsInput
 
 
-def test_get_flux_obs(flux_obs_input):
-
+@pytest.fixture
+def flux_obs(flux_obs_input):
     results = get_flux_obs(flux_obs_input.perioddata,
                            model_output_file=flux_obs_input.model_output_file,
                            observed_values_file=flux_obs_input.observed_values_file,
@@ -28,7 +31,12 @@ def test_get_flux_obs(flux_obs_input):
                            variable_name='flux',
                            outfile=None,
                            write_ins=False)
+    return results
 
+
+def test_get_flux_obs(flux_obs_input, flux_obs):
+
+    results = flux_obs
     expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
                         'obs_flux', 'sim_flux']
     assert np.all(results.columns == expected_columns)
@@ -38,3 +46,40 @@ def test_get_flux_obs(flux_obs_input):
 
     # check sorting
     assert np.all(results.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)
+
+
+@pytest.mark.parametrize('write_ins', (True,
+                                       False
+                                       ))
+def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, write_ins):
+    flux_difference_sites = {'07288280':  # sunflower r. at merigold
+                             '07288500'   # sunflower r. at sunflower
+                             }
+    results = get_spatial_differences(flux_obs, flux_obs_input.perioddata,
+                                      flux_difference_sites,
+                                      obs_values_col='obs_flux',
+                                      sim_values_col='sim_flux',
+                                      obstype='flux',
+                                      use_gradients=False,
+                                      write_ins=write_ins,
+                                      outfile=flux_obs_input.sflux_diff_obs_outfile)
+    assert flux_obs_input.sflux_diff_obs_outfile.exists()
+    insfile = Path(str(flux_obs_input.sflux_diff_obs_outfile) + '.ins')
+    if not write_ins:
+        assert not insfile.exists()
+    else:
+        assert insfile.exists()
+        insfile.unlink()
+    flux_obs_input.sflux_diff_obs_outfile.unlink()  # delete it
+
+    assert np.all(results.columns ==
+                  ['datetime', 'per', 'obsprefix',
+                   'obsnme1', 'obs_flux1', 'sim_flux1',
+                   'obsnme2', 'obs_flux2', 'sim_flux2',
+                   'obs_diff', 'sim_diff', 'group', 'obsnme',
+                   'obsval', 'sim_obsval', 'type']
+                  )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
