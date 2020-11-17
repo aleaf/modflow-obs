@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post5+g4c097e0
+                0.post8+g07d6cf1
               </div>
             
           
@@ -110,12 +110,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#plot-base-data-for-a-site">plot base data for a site</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Temporal-head-differences">Temporal head differences</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-head-through-time">Changes in head through time</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Spatial-head-differences">Spatial head differences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Head-differences-between-sites">Head differences between sites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-flux-observations">Create a base set of flux observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-streamflow-through-time">Changes in streamflow through time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Change-in-streamflow-between-two-sites">Change in streamflow between two sites</a></li>
 </ul>
 </li>
 </ul>
@@ -137,12 +139,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#plot-base-data-for-a-site">plot base data for a site</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Temporal-head-differences">Temporal head differences</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-head-through-time">Changes in head through time</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#Spatial-head-differences">Spatial head differences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Head-differences-between-sites">Head differences between sites</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-flux-observations">Create a base set of flux observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-streamflow-through-time">Changes in streamflow through time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Change-in-streamflow-between-two-sites">Change in streamflow between two sites</a></li>
 </ul>
 </li>
 </ul>
@@ -1189,10 +1193,10 @@ time,USGS:333145090261901,USGS:333145090261901,USGS:333145090261901,USGS:3331450
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-time,07288580,07288500,07281600
-1,-1805.6,0,-8.203e+06
-30.0038,-901.46,0,-8.2845e+06
-73.5094,0,0,-8.2622e+06
+time,07288280,07288580,07288500,07281600
+1,0,-1805.6,0,-8.203e+06
+30.0038,0,-901.46,0,-8.2845e+06
+73.5094,0,0,0,-8.2622e+06
 
 </pre></div></div>
 </div>
@@ -1281,9 +1285,13 @@ wrote output/processed_head_obs.dat.ins
       <th>sim_head</th>
       <th>screen_top</th>
       <th>screen_botm</th>
+      <th>obsval</th>
+      <th>obgnme</th>
     </tr>
     <tr>
       <th>obsnme</th>
+      <th></th>
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -1305,6 +1313,8 @@ wrote output/processed_head_obs.dat.ins
       <td>29.015975</td>
       <td>-16.01</td>
       <td>-28.20</td>
+      <td>20.86</td>
+      <td>head</td>
     </tr>
     <tr>
       <th>usgs:333145090261901_201404</th>
@@ -1316,6 +1326,8 @@ wrote output/processed_head_obs.dat.ins
       <td>28.948578</td>
       <td>-16.01</td>
       <td>-28.20</td>
+      <td>20.88</td>
+      <td>head</td>
     </tr>
     <tr>
       <th>usgs:333145090261901_201410</th>
@@ -1327,6 +1339,8 @@ wrote output/processed_head_obs.dat.ins
       <td>29.135945</td>
       <td>-16.01</td>
       <td>-28.20</td>
+      <td>21.02</td>
+      <td>head</td>
     </tr>
     <tr>
       <th>usgs:333145090261901_201504</th>
@@ -1338,6 +1352,8 @@ wrote output/processed_head_obs.dat.ins
       <td>29.056208</td>
       <td>-16.01</td>
       <td>-28.20</td>
+      <td>20.98</td>
+      <td>head</td>
     </tr>
     <tr>
       <th>usgs:333218090271101_ss</th>
@@ -1349,6 +1365,8 @@ wrote output/processed_head_obs.dat.ins
       <td>30.279858</td>
       <td>-102.15</td>
       <td>-114.34</td>
+      <td>19.32</td>
+      <td>head</td>
     </tr>
   </tbody>
 </table>
@@ -1378,8 +1396,8 @@ wrote output/processed_head_obs.dat.ins
 <div class="highlight"><pre>
 pif @
 @obsnme@
-l1 w w w w w !usgs:333145090261901_201310! w w
-l1 w w w w w !usgs:333145090261901_201404! w w
+l1 w w w w w !usgs:333145090261901_201310! w w w w
+l1 w w w w w !usgs:333145090261901_201404! w w w w
 
 </pre></div></div>
 </div>
@@ -1418,23 +1436,27 @@ Text(0, 0.5, &#39;Head, in meters above sea level&#39;)
 </div>
 </div>
 </div>
-<div class="section" id="Temporal-head-differences">
-<h2>Temporal head differences<a class="headerlink" href="#Temporal-head-differences" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Changes-in-head-through-time">
+<h2>Changes in head through time<a class="headerlink" href="#Changes-in-head-through-time" title="Permalink to this headline">¶</a></h2>
 <p>The base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can be processed further into temporal head differences:</p>
 <ul class="simple">
-<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_temporal_head_difference_obs</span></code> function can also write an instruction file in tandem</p></li>
+<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also write an instruction file in tandem</p></li>
+<li><p>Differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
 </ul>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_temporal_head_difference_obs</span>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_temporal_differences</span>
 
-<span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_head_difference_obs</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
-                                               <span class="n">perioddata</span><span class="p">,</span>
-                                               <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                               <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_thead_diff_obs.dat&#39;</span><span class="p">)</span>
+<span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                       <span class="n">perioddata</span><span class="p">,</span>
+                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
+                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
+                                       <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_tdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1443,7 +1465,7 @@ Text(0, 0.5, &#39;Head, in meters above sea level&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-wrote output/processed_thead_diff_obs.dat.ins
+wrote output/processed_head_obs_tdiffs.dat.ins
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1488,7 +1510,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <th>screen_botm</th>
       <th>obsval</th>
       <th>sim_obsval</th>
-      <th>group</th>
+      <th>obgnme</th>
+      <th>type</th>
     </tr>
   </thead>
   <tbody>
@@ -1504,7 +1527,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>-28.20</td>
       <td>0.020000</td>
       <td>-0.067397</td>
-      <td>heads_tdiff</td>
+      <td>head_tdiff</td>
+      <td>temporal head difference</td>
     </tr>
     <tr>
       <th>2</th>
@@ -1518,7 +1542,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>-28.20</td>
       <td>0.140000</td>
       <td>0.187367</td>
-      <td>heads_tdiff</td>
+      <td>head_tdiff</td>
+      <td>temporal head difference</td>
     </tr>
     <tr>
       <th>3</th>
@@ -1532,7 +1557,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>-28.20</td>
       <td>-0.040000</td>
       <td>-0.079737</td>
-      <td>heads_tdiff</td>
+      <td>head_tdiff</td>
+      <td>temporal head difference</td>
     </tr>
     <tr>
       <th>5</th>
@@ -1546,7 +1572,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>-114.34</td>
       <td>-0.679444</td>
       <td>-0.329594</td>
-      <td>heads_tdiff</td>
+      <td>head_tdiff</td>
+      <td>temporal head difference</td>
     </tr>
     <tr>
       <th>6</th>
@@ -1560,7 +1587,8 @@ wrote output/processed_thead_diff_obs.dat.ins
       <td>-114.34</td>
       <td>-0.045000</td>
       <td>0.666992</td>
-      <td>heads_tdiff</td>
+      <td>head_tdiff</td>
+      <td>temporal head difference</td>
     </tr>
   </tbody>
 </table>
@@ -1600,28 +1628,31 @@ Text(0, 0.5, &#39;Head change, in meters&#39;)
 </div>
 </div>
 </div>
-<div class="section" id="Spatial-head-differences">
-<h2>Spatial head differences<a class="headerlink" href="#Spatial-head-differences" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Head-differences-between-sites">
+<h2>Head differences between sites<a class="headerlink" href="#Head-differences-between-sites" title="Permalink to this headline">¶</a></h2>
 <p>Similarly, the base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can also be processed into spatial head differences. These may represent nested wells, well-lake differences or simply two nearby wells that represent an important head gradient.</p>
 <ul class="simple">
-<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_head_differences</span></code> function can also write an instruction file in tandem</p></li>
+<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can also write an instruction file in tandem</p></li>
 </ul>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_spatial_head_differences</span>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
 
 <span class="n">head_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;usgs:333904090123801&#39;</span><span class="p">:</span>  <span class="c1"># well in money, ms</span>
                          <span class="s1">&#39;usgs:333145090261901&#39;</span>  <span class="c1"># well approx. 15 mi southwest in cone of depression</span>
                              <span class="p">}</span>
 
-<span class="n">shead_diffs</span> <span class="o">=</span> <span class="n">get_spatial_head_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
-                                           <span class="n">perioddata</span><span class="p">,</span>
-                                           <span class="n">head_difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
-                                           <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                           <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_thead_diff_obs.dat&#39;</span><span class="p">)</span>
+<span class="n">shead_diffs</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                      <span class="n">perioddata</span><span class="p">,</span>
+                                      <span class="n">difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
+                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_sdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1630,7 +1661,7 @@ Text(0, 0.5, &#39;Head change, in meters&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-wrote output/processed_thead_diff_obs.dat.ins
+wrote output/processed_head_obs_sdiffs.dat.ins
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1676,12 +1707,12 @@ wrote output/processed_thead_diff_obs.dat.ins
       <th>obsnme2</th>
       <th>obs_head2</th>
       <th>...</th>
-      <th>obs_dh</th>
-      <th>sim_dh</th>
+      <th>obs_diff</th>
+      <th>sim_diff</th>
       <th>dz</th>
       <th>obs_grad</th>
       <th>sim_grad</th>
-      <th>group</th>
+      <th>obgnme</th>
       <th>obsnme</th>
       <th>obsval</th>
       <th>sim_obsval</th>
@@ -1889,24 +1920,6 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv...
 Dropping 1 sites with no information
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/Users/aleaf/Documents/GitHub/modflow-obs/mfobs/swflows.py:146: UserWarning: Stress period 1: No observations between start and end dates of 1998-04-01 and 2007-04-01!
-  warnings.warn((&#39;Stress period {}: No observations between start and &#39;
-/Users/aleaf/Documents/GitHub/modflow-obs/mfobs/swflows.py:146: UserWarning: Stress period 2: No observations between start and end dates of 2007-04-01 and 2007-10-01!
-  warnings.warn((&#39;Stress period {}: No observations between start and &#39;
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
 wrote output/processed_flux_obs.dat.ins
 </pre></div></div>
 </div>
@@ -2015,7 +2028,7 @@ wrote output/processed_flux_obs.dat.ins
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([&#39;07281600&#39;, &#39;07288500&#39;], dtype=object)
+array([&#39;07281600&#39;, &#39;07288280&#39;, &#39;07288500&#39;], dtype=object)
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -2046,6 +2059,409 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
 </div>
 <div class="output_area docutils container">
 <img alt="../_images/notebooks_Example_43_1.png" src="../_images/notebooks_Example_43_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Changes-in-streamflow-through-time">
+<h2>Changes in streamflow through time<a class="headerlink" href="#Changes-in-streamflow-through-time" title="Permalink to this headline">¶</a></h2>
+<p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can be used to create observations of the changes in streamflow through time at each site.</p>
+<ul class="simple">
+<li><p>Differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span>
+                                      <span class="n">perioddata</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
+                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_tdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote output/processed_flux_obs_tdiffs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obs_flux</th>
+      <th>sim_flux</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>obgnme</th>
+      <th>type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>2008-04-01</td>
+      <td>4</td>
+      <td>07281600</td>
+      <td>07281600_200804d200710</td>
+      <td>1.342051e+07</td>
+      <td>6290400.0</td>
+      <td>3.646197e+06</td>
+      <td>-865400.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2008-10-01</td>
+      <td>5</td>
+      <td>07281600</td>
+      <td>07281600_200810d200804</td>
+      <td>1.450570e+07</td>
+      <td>6740000.0</td>
+      <td>1.085183e+06</td>
+      <td>449600.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2009-04-01</td>
+      <td>6</td>
+      <td>07281600</td>
+      <td>07281600_200904d200810</td>
+      <td>1.455552e+07</td>
+      <td>7182900.0</td>
+      <td>4.982143e+04</td>
+      <td>442900.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2009-10-01</td>
+      <td>7</td>
+      <td>07281600</td>
+      <td>07281600_200910d200904</td>
+      <td>2.973510e+07</td>
+      <td>7544900.0</td>
+      <td>1.517958e+07</td>
+      <td>362000.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2010-04-01</td>
+      <td>8</td>
+      <td>07281600</td>
+      <td>07281600_201004d200910</td>
+      <td>1.096492e+07</td>
+      <td>6223100.0</td>
+      <td>-1.877018e+07</td>
+      <td>-1321800.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
+<span class="n">site_data</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_data</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Change in streamflow, $m^3/d$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_47_1.png" src="../_images/notebooks_Example_47_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Change-in-streamflow-between-two-sites">
+<h2>Change in streamflow between two sites<a class="headerlink" href="#Change-in-streamflow-between-two-sites" title="Permalink to this headline">¶</a></h2>
+<p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can be used to difference stream flows between sites to create observations of stream flow gain or loss.</p>
+<ul class="simple">
+<li><p>Differences are computed by subtracting the values site(s) from the key site, so for example, to represent a gain in streamflow as positive, the downstream site should be key site.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;07288500&#39;</span><span class="p">:</span>   <span class="c1"># sunflower r. at sunflower</span>
+                         <span class="s1">&#39;07288280&#39;</span>  <span class="c1"># sunflower r. at merigold</span>
+                         <span class="p">}</span>
+
+<span class="n">flux_sdiff</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
+                                     <span class="n">flux_difference_sites</span><span class="p">,</span>
+                                     <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
+                                     <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
+                                     <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                     <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_sdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote output/processed_flux_obs_sdiffs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme1</th>
+      <th>obs_flux1</th>
+      <th>sim_flux1</th>
+      <th>obsnme2</th>
+      <th>obs_flux2</th>
+      <th>sim_flux2</th>
+      <th>obs_diff</th>
+      <th>sim_diff</th>
+      <th>obgnme</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>type</th>
+    </tr>
+    <tr>
+      <th>per</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2008-04-01</td>
+      <td>0</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_ss</td>
+      <td>8.167170e+05</td>
+      <td>0.0</td>
+      <td>07288280_ss</td>
+      <td>2.745655e+05</td>
+      <td>0.0</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_ss</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2007-10-01</td>
+      <td>3</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200710</td>
+      <td>4.006000e+05</td>
+      <td>0.0</td>
+      <td>07288280_200710</td>
+      <td>2.479950e+05</td>
+      <td>0.0</td>
+      <td>152605.014286</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200710</td>
+      <td>152605.014286</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008-04-01</td>
+      <td>4</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200804</td>
+      <td>7.153030e+05</td>
+      <td>0.0</td>
+      <td>07288280_200804</td>
+      <td>2.495376e+05</td>
+      <td>0.0</td>
+      <td>465765.414286</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200804</td>
+      <td>465765.414286</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2008-10-01</td>
+      <td>5</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200810</td>
+      <td>4.671031e+05</td>
+      <td>0.0</td>
+      <td>07288280_200810</td>
+      <td>2.972966e+05</td>
+      <td>0.0</td>
+      <td>169806.571429</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200810</td>
+      <td>169806.571429</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2009-04-01</td>
+      <td>6</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200904</td>
+      <td>1.778990e+06</td>
+      <td>0.0</td>
+      <td>07288280_200904</td>
+      <td>1.083209e+06</td>
+      <td>0.0</td>
+      <td>695781.285714</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200904</td>
+      <td>695781.285714</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="p">[[</span><span class="s1">&#39;obs_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_diff&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gain in streamflow, $m^3/d$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_51_1.png" src="../_images/notebooks_Example_51_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -2081,7 +2497,7 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 15, 2020.
+        Last updated on Nov 17, 2020.
       </span>
 
     </p>

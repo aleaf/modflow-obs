@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>The head observations module &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
+  <title>The head observations module &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post5+g4c097e0
+                0.post8+g07d6cf1
               </div>
             
           
@@ -105,6 +105,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Head observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.obs.html">General observation processing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
 </ul>
 </li>
@@ -212,7 +213,7 @@
 <p>Functions for processing head observations</p>
 <dl class="py function">
 <dt id="mfobs.heads.get_head_obs">
-<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_head_obs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">modelgrid_transform</span></em>, <em class="sig-param"><span class="n">model_output_file</span></em>, <em class="sig-param"><span class="n">observed_values_file</span></em>, <em class="sig-param"><span class="n">gwf_obs_input_file</span></em>, <em class="sig-param"><span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable_name</span><span class="o">=</span><span class="default_value">'head'</span></em>, <em class="sig-param"><span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="default_value">'obsprefix'</span></em>, <em class="sig-param"><span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="default_value">'datetime'</span></em>, <em class="sig-param"><span class="n">obsnme_date_suffix_format</span><span class="o">=</span><span class="default_value">'%Y%m'</span></em>, <em class="sig-param"><span class="n">observed_values_obsval_col</span><span class="o">=</span><span class="default_value">'obsval'</span></em>, <em class="sig-param"><span class="n">observed_values_x_col</span><span class="o">=</span><span class="default_value">'x'</span></em>, <em class="sig-param"><span class="n">observed_values_y_col</span><span class="o">=</span><span class="default_value">'y'</span></em>, <em class="sig-param"><span class="n">observed_values_screen_top_col</span><span class="o">=</span><span class="default_value">'screen_top'</span></em>, <em class="sig-param"><span class="n">observed_values_screen_botm_col</span><span class="o">=</span><span class="default_value">'screen_botm'</span></em>, <em class="sig-param"><span class="n">observed_values_layer_col</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">observed_values_group_column</span><span class="o">=</span><span class="default_value">'group'</span></em>, <em class="sig-param"><span class="n">observed_values_unc_column</span><span class="o">=</span><span class="default_value">'uncertainty'</span></em>, <em class="sig-param"><span class="n">aggregrate_observed_values_by</span><span class="o">=</span><span class="default_value">'mean'</span></em>, <em class="sig-param"><span class="n">drop_groups</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hk_arrays</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">top_array</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">botm_arrays</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">steady_state_period_start</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">steady_state_period_end</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_head_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_head_obs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_head_obs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">modelgrid_transform</span></em>, <em class="sig-param"><span class="n">model_output_file</span></em>, <em class="sig-param"><span class="n">observed_values_file</span></em>, <em class="sig-param"><span class="n">gwf_obs_input_file</span></em>, <em class="sig-param"><span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">variable_name</span><span class="o">=</span><span class="default_value">'head'</span></em>, <em class="sig-param"><span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="default_value">'obsprefix'</span></em>, <em class="sig-param"><span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="default_value">'datetime'</span></em>, <em class="sig-param"><span class="n">obsnme_date_suffix_format</span><span class="o">=</span><span class="default_value">'%Y%m'</span></em>, <em class="sig-param"><span class="n">observed_values_obsval_col</span><span class="o">=</span><span class="default_value">'obsval'</span></em>, <em class="sig-param"><span class="n">observed_values_x_col</span><span class="o">=</span><span class="default_value">'x'</span></em>, <em class="sig-param"><span class="n">observed_values_y_col</span><span class="o">=</span><span class="default_value">'y'</span></em>, <em class="sig-param"><span class="n">observed_values_screen_top_col</span><span class="o">=</span><span class="default_value">'screen_top'</span></em>, <em class="sig-param"><span class="n">observed_values_screen_botm_col</span><span class="o">=</span><span class="default_value">'screen_botm'</span></em>, <em class="sig-param"><span class="n">observed_values_layer_col</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">observed_values_group_column</span><span class="o">=</span><span class="default_value">'obgnme'</span></em>, <em class="sig-param"><span class="n">observed_values_unc_column</span><span class="o">=</span><span class="default_value">'uncertainty'</span></em>, <em class="sig-param"><span class="n">aggregrate_observed_values_by</span><span class="o">=</span><span class="default_value">'mean'</span></em>, <em class="sig-param"><span class="n">drop_groups</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">hk_arrays</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">top_array</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">botm_arrays</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">steady_state_period_start</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">steady_state_period_end</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_head_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_head_obs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Post-processes model output to be read by PEST, and optionally,
 writes a corresponding PEST instruction file. Reads model output
 using get_mf6_single_variable_obs(). General paradigm is to include all model
@@ -239,8 +240,8 @@ matched to average values for the steady-state time period.</p>
 and ‘end_datetime’ (end date for the stress period).</p>
 </dd>
 <dt><strong>modelgrid_transform</strong><span class="classifier">str</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
-of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
-via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
+of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
 </pre></div>
@@ -300,15 +301,15 @@ in an observed_values_metadata_file, which will be joined on site_id</p>
 </tr>
 </tbody>
 </table>
-<p>If supplied, observation group an uncertainty information will be
-passed through to the output <code class="docutils literal notranslate"><span class="pre">head_obs</span></code> DataFrame:</p>
+<p>If supplied, observation group and uncertainty information will be
+passed through to the output <code class="docutils literal notranslate"><span class="pre">base_data</span></code> DataFrame:</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 28%" />
 <col style="width: 72%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p>group</p></td>
+<tr class="row-odd"><td><p>obgnme</p></td>
 <td><p>observation group</p></td>
 </tr>
 <tr class="row-even"><td><p>uncertainty</p></td>
@@ -380,11 +381,11 @@ of zero-based layer numbers.
 by default None</p>
 </dd>
 <dt><strong>observed_values_group_column</strong><span class="classifier">str, optional</span></dt><dd><p>Column name in observed_values_file with observation group information.
-Passed through to output <code class="docutils literal notranslate"><span class="pre">head_obs</span></code> DataFrame, otherwise not required.
-by default ‘group’</p>
+Passed through to output <code class="docutils literal notranslate"><span class="pre">base_data</span></code> DataFrame, otherwise not required.
+by default ‘obgnme’</p>
 </dd>
 <dt><strong>observed_values_unc_column</strong><span class="classifier">str, optional</span></dt><dd><p>Column name in observed_values_file with observation uncertainty values.
-Passed through to output <code class="docutils literal notranslate"><span class="pre">head_obs</span></code> DataFrame, otherwise not required.
+Passed through to output <code class="docutils literal notranslate"><span class="pre">base_data</span></code> DataFrame, otherwise not required.
 by default ‘uncertainty’</p>
 </dd>
 <dt><strong>aggregrate_observed_values_by</strong><span class="classifier">str</span></dt><dd><p>Method for aggregating observed values to the model stress periods,
@@ -432,7 +433,7 @@ By default, None (no output written)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><dl>
-<dt><strong>head_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns:</p>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns:</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 28%" />
@@ -478,89 +479,6 @@ e.g. site1000_ss</p>
 to avoid potential case issues.</p>
 </dd></dl>
 
-<dl class="py function">
-<dt id="mfobs.heads.get_spatial_head_differences">
-<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_spatial_head_differences</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">head_obs</span></em>, <em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">head_difference_sites</span></em>, <em class="sig-param"><span class="n">head_obs_values_col</span><span class="o">=</span><span class="default_value">'obs_head'</span></em>, <em class="sig-param"><span class="n">head_sim_values_col</span><span class="o">=</span><span class="default_value">'sim_head'</span></em>, <em class="sig-param"><span class="n">use_gradients</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sep</span><span class="o">=</span><span class="default_value">'-d-'</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_spatial_head_differences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_spatial_head_differences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes the head_obs dataframe output by get_head_obs and creates
-spatial head difference observations. Optionally writes and output csvfile
-and a PEST instruction file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>head_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed head observations, such as that produced by
-<a class="reference internal" href="#mfobs.heads.get_head_obs" title="mfobs.heads.get_head_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.heads.get_head_obs()</span></code></a></p>
-</dd>
-<dt><strong>head_difference_sites</strong><span class="classifier">dict</span></dt><dd><p>Dictionary of site numbers (keys) and other site numbers to compare to (values).
-Values can be a string for a single site, a list of strings for multiple sites,
-or a string pattern contained in multiple site numbers;
-observations at the sites represented in the values will be compared to the observation
-at the site represented by the key, at times of coincident measurements.</p>
-</dd>
-<dt><strong>head_obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with observed values</p>
-</dd>
-<dt><strong>head_sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with simulated equivalent values</p>
-</dd>
-<dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, use computed hydraulic gradients for the observation values,
-if False, use head differences.
-By default False.</p>
-</dd>
-<dt><strong>sep</strong><span class="classifier">str</span></dt><dd><p>Separator in spatial head difference obsnnames. For example, with
-sites “site1” and “site2” at time “202001”, and sep=’-d-‘, the obsnme
-would be “site1-d-site2_202001”.
-by default, ‘-d-‘</p>
-</dd>
-<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to. Nan values are filled with -9999.
-By default, None (no output written)</p>
-</dd>
-<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="mfobs.heads.get_temporal_head_difference_obs">
-<code class="sig-prename descclassname">mfobs.heads.</code><code class="sig-name descname">get_temporal_head_difference_obs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">head_obs</span></em>, <em class="sig-param"><span class="n">perioddata</span></em>, <em class="sig-param"><span class="n">head_obs_values_col</span><span class="o">=</span><span class="default_value">'obs_head'</span></em>, <em class="sig-param"><span class="n">head_sim_values_col</span><span class="o">=</span><span class="default_value">'sim_head'</span></em>, <em class="sig-param"><span class="n">obs_diff_value_col</span><span class="o">=</span><span class="default_value">'obsval'</span></em>, <em class="sig-param"><span class="n">sim_diff_values_col</span><span class="o">=</span><span class="default_value">'sim_obsval'</span></em>, <em class="sig-param"><span class="n">exclude_suffix</span><span class="o">=</span><span class="default_value">'ss'</span></em>, <em class="sig-param"><span class="n">outfile</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">write_ins</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_temporal_head_difference_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#mfobs.heads.get_temporal_head_difference_obs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes the head_obs dataframe output by get_head_obs,
-creates temporal head difference observations.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><strong>head_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>Head observation data with same column structure as
-output from <a class="reference internal" href="#mfobs.heads.get_head_obs" title="mfobs.heads.get_head_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.heads.get_head_obs()</span></code></a></p>
-</dd>
-<dt><strong>head_obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with observed values to difference.
-By default, ‘obs_head’</p>
-</dd>
-<dt><strong>head_sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in head_obs with simulated values to difference.
-By default, ‘sim_head`</p>
-</dd>
-<dt><strong>obs_diff_value_col</strong><span class="classifier">str</span></dt><dd><p>Name of column with computed observed differences.
-By default, ‘obsval’</p>
-</dd>
-<dt><strong>sim_diff_values_col</strong><span class="classifier">str</span></dt><dd><p>Name of column with computed simulated differences.
-By default, ‘sim_obsval’</p>
-</dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
-e.g. ‘ss’ to include steady-state observations.
-By default, ‘ss’</p>
-</dd>
-<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
-By default, None (no output written)</p>
-</dd>
-<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
-</dd>
-</dl>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><dl class="simple">
-<dt><strong>period_diffs</strong><span class="classifier">DataFrame</span></dt><dd></dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 
 
@@ -584,7 +502,7 @@ By default, None (no output written)</p>
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 15, 2020.
+        Last updated on Nov 17, 2020.
       </span>
 
     </p>

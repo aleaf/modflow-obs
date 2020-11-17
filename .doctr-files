@@ -2,13 +2,17 @@
 ./_images/notebooks_Example_35_1.png
 ./_images/notebooks_Example_39_1.png
 ./_images/notebooks_Example_43_1.png
+./_images/notebooks_Example_47_1.png
+./_images/notebooks_Example_51_1.png
 ./_modules/index.html
 ./_modules/mfobs/heads.html
 ./_modules/mfobs/modflow.html
+./_modules/mfobs/obs.html
 ./_modules/mfobs/utils.html
 ./_sources/api/index.rst.txt
 ./_sources/api/mfobs.heads.rst.txt
 ./_sources/api/mfobs.modflow.rst.txt
+./_sources/api/mfobs.obs.rst.txt
 ./_sources/api/mfobs.utils.rst.txt
 ./_sources/contributing.rst.txt
 ./_sources/examples.rst.txt
@@ -61,6 +65,7 @@
 ./api/index.html
 ./api/mfobs.heads.html
 ./api/mfobs.modflow.html
+./api/mfobs.obs.html
 ./api/mfobs.utils.html
 ./contributing.html
 ./examples.html

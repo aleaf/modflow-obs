@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>MODFLOW-related functions &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
+  <title>MODFLOW-related functions &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
   
 
   
@@ -40,7 +40,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Utility functions" href="mfobs.utils.html" />
+    <link rel="next" title="The general observation processing module" href="mfobs.obs.html" />
     <link rel="prev" title="The head observations module" href="mfobs.heads.html" /> 
 </head>
 
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post5+g4c097e0
+                0.post8+g07d6cf1
               </div>
             
           
@@ -105,6 +105,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">MODFLOW-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.obs.html">General observation processing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
 </ul>
 </li>
@@ -238,8 +239,8 @@ in real-world coordinates. Uses the affine package. Basically,</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>transform</strong><span class="classifier">affine.Affine instance</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
-of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
-via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
+of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
 </pre></div>
@@ -438,8 +439,8 @@ If x and y are specified, a modelgrid_transform must also be provided.</p>
 </dd>
 <dt><strong>modelgrid_transform</strong><span class="classifier">affine.Affine instance, optional</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
 of the model grid. Only required for getting i, j if x and y are specified.
-Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
-via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post51+gd4dca5a)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
+Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+via the <a class="reference external" href="https://aleaf.github.io/modflow-setup/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid.transform" title="(in modflow-setup v0.post50+g874634e)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code></a> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
 </pre></div>
@@ -486,7 +487,7 @@ grid JSON file via the <a class="reference internal" href="#mfobs.modflow.get_mo
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="mfobs.utils.html" class="btn btn-neutral float-right" title="Utility functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="mfobs.obs.html" class="btn btn-neutral float-right" title="The general observation processing module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="mfobs.heads.html" class="btn btn-neutral float-left" title="The head observations module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
@@ -499,7 +500,7 @@ grid JSON file via the <a class="reference internal" href="#mfobs.modflow.get_mo
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 15, 2020.
+        Last updated on Nov 17, 2020.
       </span>
 
     </p>

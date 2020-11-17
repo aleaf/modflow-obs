@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utility functions &mdash; modflow-obs 0.post5+g4c097e0 documentation</title>
+  <title>Utility functions &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Release History" href="../release-history.html" />
-    <link rel="prev" title="MODFLOW-related functions" href="mfobs.modflow.html" /> 
+    <link rel="prev" title="The general observation processing module" href="mfobs.obs.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post5+g4c097e0
+                0.post8+g07d6cf1
               </div>
             
           
@@ -105,6 +105,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.obs.html">General observation processing</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Utility functions</a></li>
 </ul>
 </li>
@@ -241,7 +242,7 @@ with date and ‘per’ column with stress period.</p>
 For example given two consecutive periods start dates of 3/1/2020 and 4/1/2020,
 the end dates should be 3/31/2020 and 4/30/2020. If the end dates were 4/1/2020
 and 5/1/2020, the periods would overlap with the first day of the next period,
-due to the behavior of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.loc.html#pandas.DataFrame.loc" title="(in pandas v1.1.3)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.loc()</span></code></a></p>
+due to the behavior of <a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.loc.html#pandas.DataFrame.loc" title="(in pandas v1.1.4)"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pandas.DataFrame.loc()</span></code></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -273,7 +274,7 @@ due to the behavior of <a class="reference external" href="https://pandas.pydata
         <a href="../release-history.html" class="btn btn-neutral float-right" title="Release History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="mfobs.modflow.html" class="btn btn-neutral float-left" title="MODFLOW-related functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mfobs.obs.html" class="btn btn-neutral float-left" title="The general observation processing module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -283,7 +284,7 @@ due to the behavior of <a class="reference external" href="https://pandas.pydata
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Oct 15, 2020.
+        Last updated on Nov 17, 2020.
       </span>
 
     </p>
