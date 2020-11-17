@@ -24,7 +24,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  observed_values_screen_top_col='screen_top',
                  observed_values_screen_botm_col='screen_botm',
                  observed_values_layer_col=None,
-                 observed_values_group_column='group',
+                 observed_values_group_column='obgnme',
                  observed_values_unc_column='uncertainty',
                  aggregrate_observed_values_by='mean',
                  drop_groups=None,
@@ -101,11 +101,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         screen_botm   screen bottom elevation
         ============= ========================
 
-        If supplied, observation group an uncertainty information will be
+        If supplied, observation group and uncertainty information will be
         passed through to the output ``base_data`` DataFrame:
 
         ============= ==================================
-        group         observation group
+        obgnme         observation group
         uncertainty   estimated measurement uncertainty
         ============= ==================================
 
@@ -163,7 +163,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     observed_values_group_column : str, optional
         Column name in observed_values_file with observation group information.
         Passed through to output ``base_data`` DataFrame, otherwise not required.
-        by default 'group'
+        by default 'obgnme'
     observed_values_unc_column : str, optional
         Column name in observed_values_file with observation uncertainty values.
         Passed through to output ``base_data`` DataFrame, otherwise not required.
@@ -264,7 +264,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                observed_values_screen_top_col: 'screen_top',
                observed_values_screen_botm_col: 'screen_botm',
                observed_values_layer_col: 'layer',
-               observed_values_group_column: 'group',
+               observed_values_group_column: 'obgnme',
                observed_values_unc_column: 'uncertainty'
                }
 
@@ -459,16 +459,21 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # drop any observations in specified groups
     # (e.g. lake stages that should be compared with lake package output)
-    if drop_groups is not None and 'group' in head_obs.columns:
-        head_obs = head_obs.loc[~head_obs.group.isin(drop_groups)].copy()
+    if drop_groups is not None and 'obgnme' in head_obs.columns:
+        head_obs = head_obs.loc[~head_obs.obgnme.isin(drop_groups)].copy()
 
     # nans are where sites don't have observation values for that period
     # or sites that are in other model (inset or parent)
     head_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
+    # add standard obsval and obgmne columns
+    head_obs['obsval'] = head_obs[obs_values_column]
+    if 'obgnme' not in head_obs.columns:
+        head_obs['obgnme'] = variable_name
+
     # reorder the columns
     columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
-               'group', 'uncertainty', 'screen_top', 'screen_botm', 'layer']
+               'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 'obsval', 'obgnme']
     columns = [c for c in columns if c in head_obs.columns]
     head_obs = head_obs[columns].copy()
     if 'layer' in columns:

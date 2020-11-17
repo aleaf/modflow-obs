@@ -86,7 +86,8 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     assert not Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat').unlink()  # delete it
     expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
-                        'obs_head', 'sim_head', 'screen_top', 'screen_botm', 'layer'
+                        'obs_head', 'sim_head', 'n', 'screen_top', 'screen_botm', 'layer',
+                        'obsval', 'obgnme'
                         ]
     assert np.all(head_obs.columns == expected_columns)
     assert len(set(head_obs.obsnme)) == len(head_obs)
@@ -153,7 +154,7 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix', 'obsnme',
                    'obs_head', 'sim_head', 'screen_top', 'screen_botm', 'layer',
-                   'obsval', 'sim_obsval', 'group', 'type']
+                   'obsval', 'sim_obsval', 'obgnme', 'type']
                   )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -161,6 +162,7 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert results.obsnme.str.islower().all()
     suffixes = np.ravel([obsnme.split('_')[1].split('d') for obsnme in results.obsnme])
     assert 'ss' not in suffixes
+    assert results.obgnme.unique().tolist() == ['head_tdiff']
 
 
 @pytest.mark.parametrize('write_ins', (True,
@@ -191,9 +193,10 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
                   ['datetime', 'per', 'obsprefix',
                    'obsnme1', 'obs_head1', 'sim_head1', 'screen_top1', 'screen_botm1', 'layer1',
                    'obsnme2', 'obs_head2', 'sim_head2', 'screen_top2', 'screen_botm2', 'layer2',
-                   'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'group', 'obsnme',
+                   'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obgnme', 'obsnme',
                    'obsval', 'sim_obsval', 'type'])
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
+    assert results.obgnme.unique().tolist() == ['head_sdiff']

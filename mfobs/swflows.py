@@ -19,7 +19,7 @@ def get_flux_obs(perioddata,
                  observed_values_datetime_col='datetime',
                  obsnme_date_suffix_format='%Y%m',
                  observed_values_obsval_col='obsval',
-                 observed_values_group_column='group',
+                 observed_values_group_column='obgnme',
                  observed_values_unc_column='uncertainty',
                  aggregrate_observed_values_by='mean',
                  drop_groups=None,
@@ -72,7 +72,7 @@ def get_flux_obs(perioddata,
     # rename columns to their defaults
     renames = {observed_values_site_id_col: 'obsprefix',
                observed_values_datetime_col: 'datetime',
-               observed_values_group_column: 'group',
+               observed_values_group_column: 'obgnme',
                observed_values_unc_column: 'uncertainty'
                }
 
@@ -199,16 +199,21 @@ def get_flux_obs(perioddata,
 
     # drop any observations in specified groups
     # (e.g. lake stages that should be compared with lake package output)
-    if drop_groups is not None and 'group' in obsdata.columns:
-        obsdata = obsdata.loc[~obsdata.group.isin(drop_groups)].copy()
+    if drop_groups is not None and 'obgnme' in obsdata.columns:
+        obsdata = obsdata.loc[~obsdata.obgnme.isin(drop_groups)].copy()
 
     # nans are where sites don't have observation values for that period
     # or sites that are in other model (inset or parent)
     obsdata.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
+    # add standard obsval and obgmne columns
+    obsdata['obsval'] = obsdata[obs_values_column]
+    if 'obgnme' not in obsdata.columns:
+        obsdata['obgnme'] = variable_name
+
     # reorder the columns
     columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
-               'group', 'uncertainty']
+               'uncertainty', 'obsval', 'obgnme']
     columns = [c for c in columns if c in obsdata.columns]
     obsdata = obsdata[columns].copy()
     if 'layer' in columns:

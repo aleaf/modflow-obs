@@ -28,6 +28,7 @@ def flux_obs(flux_obs_input):
                            observed_values_file=flux_obs_input.observed_values_file,
                            observed_values_site_id_col='site_no',
                            observed_values_obsval_col='obsval',
+                           observed_values_group_column='category',
                            variable_name='flux',
                            outfile=None,
                            write_ins=False)
@@ -38,7 +39,7 @@ def test_get_flux_obs(flux_obs_input, flux_obs):
 
     results = flux_obs
     expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
-                        'obs_flux', 'sim_flux']
+                        'obs_flux', 'sim_flux', 'obsval', 'obgnme']
     assert np.all(results.columns == expected_columns)
     assert len(set(results.obsnme)) == len(results)
     assert not results.obs_flux.isna().any()
@@ -71,7 +72,7 @@ def test_get_temporal_flux_differences(flux_obs, flux_obs_input, write_ins):
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix', 'obsnme',
                    'obs_flux', 'sim_flux',
-                   'obsval', 'sim_obsval', 'group', 'type']
+                   'obsval', 'sim_obsval', 'obgnme', 'type']
                   )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -109,7 +110,7 @@ def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_differen
                   ['datetime', 'per', 'obsprefix',
                    'obsnme1', 'obs_flux1', 'sim_flux1',
                    'obsnme2', 'obs_flux2', 'sim_flux2',
-                   'obs_diff', 'sim_diff', 'group', 'obsnme',
+                   'obs_diff', 'sim_diff', 'obgnme', 'obsnme',
                    'obsval', 'sim_obsval', 'type']
                   )
     assert len(set(results.obsnme)) == len(results)

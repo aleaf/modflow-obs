@@ -43,7 +43,7 @@ def get_spatial_differences(base_data, perioddata,
     obstype : str  {'head', 'flux', or other}
         Type of observation being processed. Simulated and observed values
         columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
-        respectively. If there is no 'group' column in ``base_data``,
+        respectively. If there is no 'obgnme' column in ``base_data``,
         ``obstype`` is also used as a default base group name. Finally,
         a 'type' column is included in the output with the label
         'vertical <obstype> gradient' or '<obstype> difference', depending on whether
@@ -90,7 +90,7 @@ def get_spatial_differences(base_data, perioddata,
         dz                distance between well screen midpoints for obsnme1 and obsnme2*
         obs_grad          observed vertical hydraulic gradient between obsnme1 and obsnme2*
         sim_grad          simulated equivalent vertical hydraulic gradient between obsnme1 and obsnme2*
-        group             observation group
+        obgnme            observation group
         obsnme            spatial difference observation name
         obsval            observation value (i.e. for PEST control file)
         sim_obsval        simulated equivalent (i.e. for PEST instruction file)
@@ -185,16 +185,16 @@ def get_spatial_differences(base_data, perioddata,
         obsprefix.append(prefix)
     spatial_differences['obsnme'] = obsnme
     spatial_differences['obsprefix'] = obsprefix
-    if 'group' not in spatial_differences.columns:
-        spatial_differences['group'] = obstype
-    spatial_differences['group'] = ['{}_sdiff'.format(g)
-                                         for g in spatial_differences['group']]
+    if 'obgnme' not in spatial_differences.columns:
+        spatial_differences['obgnme'] = obstype
+    spatial_differences['obgnme'] = ['{}_sdiff'.format(g)
+                                         for g in spatial_differences['obgnme']]
 
     # clean up columns
     cols = ['datetime', 'per', 'obsprefix',
             'obsnme1', f"{obs_values_col}1", f"{sim_values_col}1", 'screen_top1', 'screen_botm1', 'layer1',
             'obsnme2', f"{obs_values_col}2", f"{sim_values_col}2", 'screen_top2', 'screen_botm2', 'layer2',
-            'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'group', 'obsnme'
+            'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obgnme', 'obsnme'
             ]
     cols = [c for c in cols if c in spatial_differences.columns]
     spatial_differences = spatial_differences[cols]
@@ -262,7 +262,7 @@ def get_temporal_differences(base_data, perioddata,
     obstype : str  {'head', 'flux', or other}
         Type of observation being processed. Simulated and observed values
         columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
-        respectively. If there is no 'group' column in ``base_data``,
+        respectively. If there is no 'obgnme' column in ``base_data``,
         ``obstype`` is also used as a default base group name.
     obsnme_date_suffix_format : str, optional
         Format for date suffix of obsnmes. By default, '%Y%m',
@@ -321,13 +321,20 @@ def get_temporal_differences(base_data, perioddata,
             obsname2_suffix = period_diffs.loc[i - 1, 'datetime'].strftime(obsnme_date_suffix_format)
         obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
     period_diffs['obsnme'] = obsnme
-    if 'group' not in period_diffs.columns:
-        period_diffs['group'] = obstype
-    period_diffs['group'] = [f'{g}_sdiff' for g in period_diffs['group']]
+    if 'obgnme' not in period_diffs.columns:
+        period_diffs['obgnme'] = obstype
+    period_diffs['obgnme'] = [f'{g}_tdiff' for g in period_diffs['obgnme']]
     period_diffs['type'] = f'temporal {obstype} difference'
 
     # drop some columns that aren't really valid; if they exist
     period_diffs.drop(['n'], axis=1, inplace=True, errors='ignore')
+
+    # clean up columns
+    cols = ['datetime', 'per', 'obsprefix', 'obsnme',
+            f'obs_{obstype}', f'sim_{obstype}', 'screen_top', 'screen_botm', 'layer',
+            'obsval', 'sim_obsval', 'obgnme', 'type']
+    cols = [c for c in cols if c in period_diffs.columns]
+    period_diffs = period_diffs[cols]
 
     # drop observations with no difference (first observations at each site)
     period_diffs.dropna(axis=0, subset=['obsval', 'sim_obsval'], inplace=True)
