@@ -1,0 +1,15 @@
+name: modflow-obs
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python
+  - ipython
+  - jupyter
+  - notebook
+  - ipykernel
+  - matplotlib
+  - numpy
+  - pandas
+  - pip:
+    - affine

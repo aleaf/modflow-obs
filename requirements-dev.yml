@@ -23,6 +23,6 @@ dependencies:
   - twine
   - pip
   - pip:
-    - gis-utils
+    - affine
     - doctr
     - versioneer
