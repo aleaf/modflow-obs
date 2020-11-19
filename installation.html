@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
+  <title>Installation &mdash; modflow-obs 0.post9+g19dd761 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post8+g07d6cf1
+                0.post9+g19dd761
               </div>
             
           
@@ -93,7 +93,12 @@
               <p class="caption"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#python-dependencies">Python dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-modflow-obs-using-pip">Installing Modflow-obs using pip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-the-modflow-obs-source-code-in-place">Installing the Modflow-obs source code in-place</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/Example.html">Examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">User Guide</span></p>
@@ -202,9 +207,47 @@
 </style>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>At the command line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install modflow-obs
+<div class="section" id="python-dependencies">
+<h2>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Modflow-obs requires <a class="reference external" href="https://numpy.org/">numpy</a>, <a class="reference external" href="http://pandas.pydata.org">pandas</a> and the <a class="reference external" href="https://github.com/sgillies/affine">affine</a> library. The easiest way to
+install these is using conda and pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c conda-forge numpy pandas
+pip install affine
 </pre></div>
+</div>
+</div>
+<div class="section" id="installing-modflow-obs-using-pip">
+<h2>Installing Modflow-obs using pip<a class="headerlink" href="#installing-modflow-obs-using-pip" title="Permalink to this headline">¶</a></h2>
+<p>Pip can be used to fetch Modflow-obs directly from GitHub:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+git://github.com/aleaf/modflow-obs@master
+</pre></div>
+</div>
+<p>Subsequent updates can then be made with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip uninstall modflow-obs
+pip install git+git://github.com/aleaf/modflow-obs@master
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-the-modflow-obs-source-code-in-place">
+<h2>Installing the Modflow-obs source code in-place<a class="headerlink" href="#installing-the-modflow-obs-source-code-in-place" title="Permalink to this headline">¶</a></h2>
+<p>Alternatively, if you intend to contribute to Modflow-obs (please do!) or update your install frequently, the best route is probably to clone the source code from git and install it in place.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/aleaf/modflow-obs.git
+<span class="nb">cd</span> modflow-obs
+pip install -e .
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Don’t forget the <code class="docutils literal notranslate"><span class="pre">.</span></code> after <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span></code>!</p>
+</div>
+<p>Your local copy of the Modflow-obs repository can then be subsequently updated with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git pull origin master
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are making local changes to Modflow-obs that you want to contribute, the workflow is slightly different. See the <a class="reference internal" href="contributing.html#contributing-to-modflow-obs"><span class="std std-ref">Contributing to Modflow-obs</span></a> page for more details.</p>
+</div>
 </div>
 </div>
 
@@ -229,7 +272,7 @@
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Nov 17, 2020.
+        Last updated on Nov 19, 2020.
       </span>
 
     </p>

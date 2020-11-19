@@ -1,4 +1,4 @@
-Contributing to modflow-obs
+Contributing to Modflow-obs
 ================================================================================================
 
 (Note: much of this page was cribbed from the `geopandas <https://geopandas.org/>`_ project,

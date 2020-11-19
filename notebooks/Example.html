@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post8+g07d6cf1 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post9+g19dd761 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.post8+g07d6cf1
+                0.post9+g19dd761
               </div>
             
           
@@ -1283,6 +1283,7 @@ wrote output/processed_head_obs.dat.ins
       <th>obsnme</th>
       <th>obs_head</th>
       <th>sim_head</th>
+      <th>n</th>
       <th>screen_top</th>
       <th>screen_botm</th>
       <th>obsval</th>
@@ -1290,6 +1291,7 @@ wrote output/processed_head_obs.dat.ins
     </tr>
     <tr>
       <th>obsnme</th>
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -1311,6 +1313,7 @@ wrote output/processed_head_obs.dat.ins
       <td>usgs:333145090261901_201310</td>
       <td>20.86</td>
       <td>29.015975</td>
+      <td>1</td>
       <td>-16.01</td>
       <td>-28.20</td>
       <td>20.86</td>
@@ -1324,6 +1327,7 @@ wrote output/processed_head_obs.dat.ins
       <td>usgs:333145090261901_201404</td>
       <td>20.88</td>
       <td>28.948578</td>
+      <td>58</td>
       <td>-16.01</td>
       <td>-28.20</td>
       <td>20.88</td>
@@ -1337,6 +1341,7 @@ wrote output/processed_head_obs.dat.ins
       <td>usgs:333145090261901_201410</td>
       <td>21.02</td>
       <td>29.135945</td>
+      <td>210</td>
       <td>-16.01</td>
       <td>-28.20</td>
       <td>21.02</td>
@@ -1350,6 +1355,7 @@ wrote output/processed_head_obs.dat.ins
       <td>usgs:333145090261901_201504</td>
       <td>20.98</td>
       <td>29.056208</td>
+      <td>211</td>
       <td>-16.01</td>
       <td>-28.20</td>
       <td>20.98</td>
@@ -1363,6 +1369,7 @@ wrote output/processed_head_obs.dat.ins
       <td>usgs:333218090271101_ss</td>
       <td>19.32</td>
       <td>30.279858</td>
+      <td>2</td>
       <td>-102.15</td>
       <td>-114.34</td>
       <td>19.32</td>
@@ -1396,8 +1403,8 @@ wrote output/processed_head_obs.dat.ins
 <div class="highlight"><pre>
 pif @
 @obsnme@
-l1 w w w w w !usgs:333145090261901_201310! w w w w
-l1 w w w w w !usgs:333145090261901_201404! w w w w
+l1 w w w w w !usgs:333145090261901_201310! w w w w w
+l1 w w w w w !usgs:333145090261901_201404! w w w w w
 
 </pre></div></div>
 </div>
@@ -1952,9 +1959,13 @@ wrote output/processed_flux_obs.dat.ins
       <th>obsnme</th>
       <th>obs_flux</th>
       <th>sim_flux</th>
+      <th>obsval</th>
+      <th>obgnme</th>
     </tr>
     <tr>
       <th>obsnme</th>
+      <th></th>
+      <th></th>
       <th></th>
       <th></th>
       <th></th>
@@ -1972,6 +1983,8 @@ wrote output/processed_flux_obs.dat.ins
       <td>07281600_ss</td>
       <td>1.349688e+07</td>
       <td>8203000.0</td>
+      <td>1.349688e+07</td>
+      <td>flux</td>
     </tr>
     <tr>
       <th>07281600_200710</th>
@@ -1981,6 +1994,8 @@ wrote output/processed_flux_obs.dat.ins
       <td>07281600_200710</td>
       <td>9.774318e+06</td>
       <td>7155800.0</td>
+      <td>9.774318e+06</td>
+      <td>flux</td>
     </tr>
     <tr>
       <th>07281600_200804</th>
@@ -1990,6 +2005,8 @@ wrote output/processed_flux_obs.dat.ins
       <td>07281600_200804</td>
       <td>1.342051e+07</td>
       <td>6290400.0</td>
+      <td>1.342051e+07</td>
+      <td>flux</td>
     </tr>
     <tr>
       <th>07281600_200810</th>
@@ -1999,6 +2016,8 @@ wrote output/processed_flux_obs.dat.ins
       <td>07281600_200810</td>
       <td>1.450570e+07</td>
       <td>6740000.0</td>
+      <td>1.450570e+07</td>
+      <td>flux</td>
     </tr>
     <tr>
       <th>07281600_200904</th>
@@ -2008,6 +2027,8 @@ wrote output/processed_flux_obs.dat.ins
       <td>07281600_200904</td>
       <td>1.455552e+07</td>
       <td>7182900.0</td>
+      <td>1.455552e+07</td>
+      <td>flux</td>
     </tr>
   </tbody>
 </table>
@@ -2497,7 +2518,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
   <div role="contentinfo">
     <p>
       <span class="lastupdated">
-        Last updated on Nov 17, 2020.
+        Last updated on Nov 19, 2020.
       </span>
 
     </p>
