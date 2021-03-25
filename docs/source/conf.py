@@ -211,5 +211,5 @@ intersphinx_mapping = {
     'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
     'pandas': ('https://pandas.pydata.org/pandas-docs/stable', None),
     'matplotlib': ('https://matplotlib.org', None),
-    'modflow-setup': ('https://aleaf.github.io/modflow-setup/', None)
+    'modflow-setup': ('https://aleaf.github.io/modflow-setup/latest', None)
 }
