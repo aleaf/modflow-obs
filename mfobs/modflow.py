@@ -79,8 +79,12 @@ def get_ij(transform, x, y):
     """
 
     j, i = ~transform * (x, y)
-    i = np.round(i, 0).astype(int)
-    j = np.round(j, 0).astype(int)
+    # decrement so that points within a cell (pixel)
+    # round to the cell center
+    # (transform returns fractional row/column positions 
+    # relative to the upper left corner)
+    i = np.round(i - 0.5, 0).astype(int)
+    j = np.round(j - 0.5, 0).astype(int)
     return i, j
 
 
