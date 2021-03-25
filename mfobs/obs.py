@@ -114,9 +114,16 @@ def get_spatial_differences(base_data, perioddata,
     perioddata.index = perioddata.per
 
     # get subset of base_data sites to compare to each key site in difference_sites
+    base_data_sites = set(base_data.obsprefix)
     groups = base_data.groupby('obsprefix')
     spatial_differences = []
     for key_site_no, patterns in difference_sites.items():
+        
+        if key_site_no not in base_data_sites:
+            print((f'warning: site {key_site_no} not in base_data. '
+                   'Skipping spatial differencing.'))
+            continue
+        
         compare = []
         if isinstance(patterns, str):
             patterns = [patterns]
@@ -178,6 +185,7 @@ def get_spatial_differences(base_data, perioddata,
     for i, r in spatial_differences.iterrows():
         prefix1, suffix1 = r.obsnme1.split('_')
         prefix2, suffix2 = r.obsnme2.split('_')
+
         assert suffix1 == suffix2, "Observations are at different times! {}, {}".format(r.obsnme1,
                                                                                         r.obsnme2)
         prefix = '{}{}{}'.format(prefix1, sep, prefix2, )
