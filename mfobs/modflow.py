@@ -143,7 +143,8 @@ def get_mf6_single_variable_obs(perioddata,
     ----------
     perioddata : str
         Path to csv file with start/end dates for stress periods. Must have columns
-        'time' (modflow time, in days), 'start_datetime' (start date for the stress period)
+        'per' (stress period number), 'time' (modflow time, in days), 
+        'start_datetime' (start date for the stress period)
         and 'end_datetime' (end date for the stress period).
     model_output_file : str
         Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).
@@ -189,7 +190,12 @@ def get_mf6_single_variable_obs(perioddata,
 
 
     """
-    perioddata = perioddata.copy()
+    if perioddata.index.name == 'per':
+        perioddata = perioddata.sort_index()
+    else:
+        perioddata = perioddata.sort_values(by='per')
+    if 'perlen' not in perioddata.columns:
+        perioddata['perlen'] = perioddata['time'].diff().fillna(0).tolist()
     print('reading model output from {}...'.format(model_output_file))
     model_output = pd.read_csv(model_output_file)
 
@@ -219,8 +225,17 @@ def get_mf6_single_variable_obs(perioddata,
         stacked[simval_col] = stacked[simval_col].abs()
 
     # add dates
-    period_start_dates = dict(zip(perioddata.per, perioddata.start_datetime))
-    stacked['datetime'] = pd.to_datetime([period_start_dates.get(per) for per in stacked.per])
+    #perlen = dict(zip(perioddata.per, perioddata.perlen))
+    #period_start_dates = dict(zip(perioddata.per, perioddata.start_datetime))
+    period_end_dates = dict(zip(perioddata.per, perioddata.end_datetime))
+    stacked['datetime'] = pd.to_datetime([period_end_dates.get(per) for per in stacked.per])
+    # get the start date of the next period
+    # so that suffix for an observation would be consistent with the start date of the next obs
+    #next_period_start = [period_start_dates.get(per) for per in stacked.per][1:]
+    #last_per = perioddata.per.max()
+    #last_end_date = pd.Timestamp(period_start_dates[last_per]) + \
+    #    pd.Timedelta(perlen[last_per], unit='d')
+    #next_period_start.append(last_end_date)
 
     # parse the layers from the column positions (prior to stacking)
     if gwf_obs_input_file is not None:

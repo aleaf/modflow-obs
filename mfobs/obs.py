@@ -233,6 +233,7 @@ def get_spatial_differences(base_data, perioddata,
 
     if outfile is not None:
         spatial_differences.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {outfile}')
 
         # write the instruction file
         if write_ins:
@@ -352,6 +353,7 @@ def get_temporal_differences(base_data, perioddata,
 
     if outfile is not None:
         period_diffs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {outfile}')
 
         # write the instruction file
         if write_ins:

@@ -131,7 +131,7 @@ def get_flux_obs(perioddata,
 
         # get the equivalent observed values
         start, end = perioddata.loc[per, ['start_datetime', 'end_datetime']]
-        suffix = pd.Timestamp(start).strftime(obsnme_date_suffix_format)
+        suffix = pd.Timestamp(end).strftime(obsnme_date_suffix_format)
 
         # steady-state observations can represent a period
         # other than the "modflow time" in the perioddata table
@@ -152,7 +152,7 @@ def get_flux_obs(perioddata,
         by_site = observed_in_period.groupby('obsprefix')
         observed_in_period_rs = getattr(by_site, aggregrate_observed_values_by)()
         observed_in_period_rs['n'] = by_site.n.sum()
-        observed_in_period_rs['datetime'] = pd.Timestamp(start)
+        observed_in_period_rs['datetime'] = pd.Timestamp(end)
         observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
 
         missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)
@@ -225,6 +225,7 @@ def get_flux_obs(perioddata,
     obsdata.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
         obsdata.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {outfile}')
 
         # write the instruction file
         if write_ins:
