@@ -1,7 +1,9 @@
 """Tests for the modflow module.
 """
+import numpy as np
+import pandas as pd
 from affine import Affine
-from mfobs.modflow import get_ij
+from mfobs.modflow import get_ij, get_perioddata
 
 
 def test_get_ij():
@@ -28,4 +30,14 @@ def test_get_ij():
                   xul + spacing * expected_i, 
                   yul - spacing * expected_j
                   )
-    assert (i, j) == (expected_i, expected_j)    
+    assert (i, j) == (expected_i, expected_j)  
+    
+    
+def test_get_perioddata(test_data_path):
+    tdis_file = test_data_path / 'shellmound/mfsim.tdis'
+    sto_file = test_data_path / 'shellmound/shellmound.sto'
+    results = get_perioddata(tdis_file, sto_file)
+    elapsed_time = np.cumsum(results['perlen'].values) -1
+    elapsed_time[0] = 1
+    assert all(results['end_datetime'] == \
+        results['start_datetime'][0] + pd.to_timedelta(elapsed_time -1, unit='d'))

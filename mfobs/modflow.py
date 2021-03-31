@@ -512,3 +512,119 @@ def get_transmissivities(heads, hk, top, botm,
     # compute transmissivities
     T = thick * hk2d
     return T
+
+
+def read_mf6_block(filename, blockname):
+    blockname = blockname.lower()
+    data = {}
+    read = False
+    per = None
+    with open(filename) as src:
+        for line in src:
+            line = line.lower()
+            if 'begin' in line and blockname in line:
+                if blockname == 'period':
+                    per = int(line.strip().split()[-1])
+                    data[per] = []
+                elif blockname == 'continuous':
+                    fname = line.strip().split()[-1]
+                    data[fname] = []
+                elif blockname == 'packagedata':
+                    data['packagedata'] = []
+                else:
+                    blockname = line.strip().split()[-1]
+                    data[blockname] = []
+                read = blockname
+                continue
+            if 'end' in line and blockname in line:
+                per = None
+                read = False
+                #break
+            if read == 'options':
+                line = line.strip().split()
+                data[line[0]] = line[1:]
+            elif read == 'packages':
+                pckg, fname, ext = line.strip().split()
+                data[pckg] = fname
+            elif read == 'period':
+                data[per].append(' '.join(line.strip().split()))
+            elif read == 'continuous':
+                data[fname].append(' '.join(line.strip().split()))
+            elif read == 'packagedata':
+                data['packagedata'].append(' '.join(line.strip().split()))
+            elif read == blockname:
+                data[blockname].append(' '.join(line.strip().split()))
+    return data
+
+
+def get_perioddata(tdis_file, sto_file=None):
+    """Make the perioddata table required by other modflow-obs
+    functions from a MODFLOW-6 Temporal Discretization (TDIS) file.
+
+    Parameters
+    ----------
+    tdis_file : str
+        TDIS Package file
+        
+    Returns
+    -------
+    perioddata : DataFrame
+    """
+    options = read_mf6_block(tdis_file, 'options')
+    perioddata = read_mf6_block(tdis_file, 'perioddata')
+    steady_period_blocks = None
+    if sto_file is not None:
+        steady_period_blocks = read_mf6_block(sto_file, 'period')
+    
+    start_datetime = options['start_date_time']
+    if len(start_datetime) > 0:
+        start_datetime = pd.to_datetime(start_datetime[0])
+    else:
+        msg = (f'No start_date_time in {tdis_file};' 
+                'start_date_time is needed to construct perioddata.')
+        raise ValueError(msg)
+    time_units = options['time_units']
+    if len(time_units) > 0:
+        time_units = time_units[0]
+    else:
+        msg = (f'No time_units in {tdis_file};' 
+                'time_units is needed to construct perioddata.')
+        raise ValueError(msg)
+    perlen = []
+    nstp = []
+    tsmult = []
+    for row in perioddata['perioddata']:
+        if row.strip().startswith('#'):
+            continue
+        rperlen, rnstp, rtsmult = row.split('#')[0].split()
+        perlen.append(float(rperlen))
+        nstp.append(int(rnstp))
+        tsmult.append(float(rtsmult))
+        
+    if steady_period_blocks is not None:
+        steady = [True if 'steady' in steady_period_blocks[i+1][0] 
+                  else False for i in range(len(perlen))]
+    else:
+        steady = True
+        
+    perlen = np.array(perlen)
+    actual_period_length = perlen.copy()
+    if not np.isscalar(steady) and steady[0]:
+        actual_period_length[0] = 0
+    elapsed_time = np.cumsum(actual_period_length).tolist()
+    # modflow time (includes length of initial steady-state period)
+    mf_time = np.cumsum(perlen)
+    start_elapsed_times = [0] + elapsed_time[:-1]
+    start_datetimes = start_datetime + pd.to_timedelta(start_elapsed_times, unit=time_units)
+    end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
+    
+    perioddata = pd.DataFrame({'start_datetime': start_datetimes,
+                               'end_datetime': end_datetimes,
+                               'time': mf_time,
+                               'per': np.arange(len(perlen)),
+                               'perlen': perlen,
+                               'nstp': nstp,
+                               'tsmult': tsmult,
+                               'steady': steady
+                               })
+    return perioddata
