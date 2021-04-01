@@ -55,6 +55,7 @@ def get_lake_stage_obs(lake_obs_files, perioddata, observed_values_file,
     # write output
     if outfile is not None:
         df.to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {len(df)} observations to {outfile}')
 
         # write the instruction file
         if write_ins:
@@ -152,5 +153,6 @@ def get_lake_in_out_gw_fluxes(cell_budget_file, perioddata, precision='double',
 
     if outfile is not None:
         df.to_csv(outfile, index=False)
+        print(f'wrote {len(df)} observations to {outfile}')
     return df
 

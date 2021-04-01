@@ -5,11 +5,12 @@ import warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import write_insfile
 from mfobs.modflow import get_mf6_single_variable_obs
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
-
+# todo: consolidate get_flux_obs with get_head_obs
 def get_flux_obs(perioddata,
                  model_output_file='meras3_1L.sfr.obs.output.csv',
                  observed_values_file='../tables/flux_obs.csv',
@@ -17,7 +18,8 @@ def get_flux_obs(perioddata,
                  variable_name='flux',
                  observed_values_site_id_col='obsprefix',
                  observed_values_datetime_col='datetime',
-                 obsnme_date_suffix_format='%Y%m',
+                 obsnme_date_suffix=True,
+                 obsnme_suffix_format='%Y%m',
                  observed_values_obsval_col='obsval',
                  observed_values_group_column='obgnme',
                  observed_values_unc_column='uncertainty',
@@ -41,6 +43,18 @@ def get_flux_obs(perioddata,
         [description], by default '../tables/flow_obs_by_stress_period.csv'
     observed_values_column : str, optional
         Column in obs_values_file with measured flux values
+    obsnme_date_suffix : bool
+        If true, give observations a date-based suffix. Otherwise, assign a 
+        stress period-based suffix. In either case, the format of the suffix
+        is controlled by obsnme_suffix_format.
+        by default True
+    obsnme_suffix_format : str, optional
+        Format for suffix of obsnmes. Observation names are created following the format of
+        <obsprefix>_<date or stress period suffix>. By default, ``'%Y%m'``,
+        which would yield ``'202001'`` for a Jan, 2020 observation 
+        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+        should be a decimal format in the "new-style" string format
+        (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
     variable_name : str, optional
         [description], by default 'measured'
     outfile : str, optional
@@ -53,6 +67,10 @@ def get_flux_obs(perioddata,
     [type]
         [description]
     """
+    # validation checks
+    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+                        function_name='get_head_obs')
+    
     outpath = Path('.')
     if outfile is not None:
         outpath = Path(outfile).parent
@@ -66,7 +84,8 @@ def get_flux_obs(perioddata,
 
     results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output_file,
                                           variable_name=variable_name,
-                                          obsnme_date_suffix_format=obsnme_date_suffix_format,
+                                          obsnme_date_suffix=obsnme_date_suffix,
+                                          obsnme_suffix_format=obsnme_suffix_format,
                                           label_period_as_steady_state=label_period_as_steady_state)
 
     # rename columns to their defaults
@@ -131,7 +150,12 @@ def get_flux_obs(perioddata,
 
         # get the equivalent observed values
         start, end = perioddata.loc[per, ['start_datetime', 'end_datetime']]
-        suffix = pd.Timestamp(end).strftime(obsnme_date_suffix_format)
+        # date-based suffix
+        if obsnme_date_suffix:  
+            suffix = pd.Timestamp(end).strftime(obsnme_suffix_format)
+        # stress period-based suffix
+        else:  
+            suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
 
         # steady-state observations can represent a period
         # other than the "modflow time" in the perioddata table
@@ -141,7 +165,7 @@ def get_flux_obs(perioddata,
                 start = steady_state_period_start
             if steady_state_period_end is not None:
                 end = steady_state_period_end
-        observed_in_period = observed.loc[start:end].reset_index(drop=True)
+        observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
         if len(observed_in_period) == 0:
             warnings.warn(('Stress period {}: No observations between start and '
                            'end dates of {} and {}!'.format(per, start, end)))
@@ -225,7 +249,7 @@ def get_flux_obs(perioddata,
     obsdata.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
         obsdata.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {outfile}')
+        print(f'wrote {len(obsdata):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:

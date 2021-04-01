@@ -9,6 +9,7 @@ try:
     import flopy
 except:
     flopy = False
+from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import write_insfile
 
 
@@ -128,7 +129,8 @@ def get_mf6_single_variable_obs(perioddata,
                                 model_output_file,
                                 gwf_obs_input_file=None,
                                 variable_name='values',
-                                obsnme_date_suffix_format='%Y%m',
+                                obsnme_date_suffix=True,
+                                obsnme_suffix_format='%Y%m',
                                 label_period_as_steady_state=None,
                                 abs=True):
     """Read raw MODFLOW-6 observation output from csv table with
@@ -153,11 +155,18 @@ def get_mf6_single_variable_obs(perioddata,
     variable_name : str, optional
         Column with simulated output will be named "sim_<variable_name",
         by default 'head'
-    obsnme_date_suffix_format : str, optional
-        Format for date suffix of obsnmes. By default, '%Y%m',
-        which would yield '202001' for a Jan, 2020 observation.
-        Observation names are created following the format of
-        <obsprefix>_<date suffix>
+    obsnme_date_suffix : bool
+        If true, give observations a date-based suffix. Otherwise, assign a 
+        stress period-based suffix. In either case, the format of the suffix
+        is controlled by obsnme_suffix_format.
+        by default True
+    obsnme_suffix_format : str, optional
+        Format for suffix of obsnmes. Observation names are created following the format of
+        <obsprefix>_<date or stress period suffix>. By default, ``'%Y%m'``,
+        which would yield ``'202001'`` for a Jan, 2020 observation 
+        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+        should be a decimal format in the "new-style" string format
+        (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
     label_period_as_steady_state : int, optional
         Zero-based model stress period where observations will be
         assigned the suffix 'ss' instead of a date suffix.
@@ -183,13 +192,20 @@ def get_mf6_single_variable_obs(perioddata,
 
         Example observation names:
 
-        site1000_202001, for a Jan. 2020 observation at site1000
+        site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)
+        
+        site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)
 
-        steady-state stress periods are given the suffix of 'ss'
+        a steady-state stress period specified with label_period_as_steady_state 
+        is given the suffix of 'ss'
         e.g. site1000_ss
 
 
     """
+    # validation checks
+    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+                        function_name='get_mf6_single_variable_obs')
+    
     if perioddata.index.name == 'per':
         perioddata = perioddata.sort_index()
     else:
@@ -252,9 +268,12 @@ def get_mf6_single_variable_obs(perioddata,
     obsnames = []
     for prefix, per, dt in zip(stacked.obsprefix, stacked.per, stacked.datetime):
         if per == label_period_as_steady_state:
-            name = '{}_ss'.format(prefix)
-        elif not pd.isnull(dt):
-            name = '{}_{}'.format(prefix, dt.strftime(obsnme_date_suffix_format))
+            name = f"{prefix}_ss"
+        elif obsnme_date_suffix and not pd.isnull(dt):
+            name = f"{prefix}_{dt.strftime(obsnme_suffix_format)}"
+        elif not obsnme_date_suffix:
+            suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
+            name = f"{prefix}_{suffix}"
         else:
             name = prefix
         obsnames.append(name)
@@ -271,14 +290,29 @@ def get_mf6_single_variable_obs(perioddata,
                            for name, layer in zip(stacked.obsnme, stacked.layer)]
     else:
         unique_obsnames = stacked.obsnme.to_list()
-    are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values
+    stacked['unique_obsnames'] = unique_obsnames
+    are_duplicates = stacked['unique_obsnames'].duplicated(keep=False)
+    #are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values
     if any(are_duplicates):
         #duplicated_obsnames = set(stacked.loc[are_duplicates.values, 'obsnme'])
         steady_obs = stacked.per.isin(perioddata.loc[perioddata.steady, 'per'].values)
         drop = are_duplicates & steady_obs
         stacked = stacked.loc[~drop]
-        unique_obsnames = np.array(unique_obsnames)[~drop]
-        assert not any(pd.Series(unique_obsnames).duplicated())
+        #unique_obsnames = np.array(unique_obsnames)[~drop]
+        #assert not any(pd.Series(unique_obsnames).duplicated())
+    if stacked['unique_obsnames'].duplicated().any():
+        duplicates = stacked.loc[stacked['unique_obsnames']. \
+            duplicated(keep=False)].sort_values(by='unique_obsnames')
+        msg = ("mfobs.modflow.get_mf6_single_variable_obs:"
+               "Duplicate observation names. If obsnme_date_suffix=True, "
+               "you may need a more specific obsnme_suffix_format, e.g. '%Y%m%d\n"
+               "Or there may be a mismatch between the model results (e.g. perlen) "
+               "and start and end dates in the stress period data table (perioddata).\n"
+               "In the latter case, you may need to re-run the model "
+               f"and possibly the model setup.\nDuplicated obs:{duplicates}"
+               ""
+               )
+        raise ValueError(msg)
 
     stacked.index = stacked['obsnme']
     sort_cols = [c for c in ['obsprefix', 'per', 'layer'] if c in stacked.columns]
@@ -317,6 +351,7 @@ def get_modflow_mass_balance(modroot, outfile=None, write_ins=True):
     outdf['group'] = 'percent_discrep'
     outdf['obsval'] = 0
     outdf.to_csv(outfile, index=False, sep=' ')
+    print(f'wrote {len(outdf):,} observations to {outfile}')
     if write_ins:
         write_insfile(outdf, outfile + '.ins', obsnme_column='obsnme',
                       simulated_obsval_column='PERCENT_DISCREPANCY', index=False)
@@ -618,8 +653,8 @@ def get_perioddata(tdis_file, sto_file=None):
     start_datetimes = start_datetime + pd.to_timedelta(start_elapsed_times, unit=time_units)
     end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
     
-    perioddata = pd.DataFrame({'start_datetime': start_datetimes,
-                               'end_datetime': end_datetimes,
+    perioddata = pd.DataFrame({'start_datetime': start_datetimes.strftime('%Y-%m-%d'),
+                               'end_datetime': end_datetimes.strftime('%Y-%m-%d'),
                                'time': mf_time,
                                'per': np.arange(len(perlen)),
                                'perlen': perlen,

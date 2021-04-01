@@ -70,4 +70,4 @@ def write_insfile(results_dataframe, outfile, obsnme_column='obsnme',
     with open(outfile, 'w', newline="") as dest:
         dest.write('pif @\n@{}@\n'.format(obsnme_column))
         ins.to_csv(dest, sep=' ', index=True, header=False)
-        print('wrote {}'.format(outfile))
+        print(f'wrote {len(ins):,} observation instructions to {outfile}')

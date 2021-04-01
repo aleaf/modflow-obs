@@ -5,6 +5,7 @@ import warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import load_array, write_insfile
 from mfobs.modflow import get_mf6_single_variable_obs, get_transmissivities
 from mfobs.utils import fill_nats, set_period_start_end_dates
@@ -17,7 +18,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  variable_name='head',
                  observed_values_site_id_col='obsprefix',
                  observed_values_datetime_col='datetime',
-                 obsnme_date_suffix_format='%Y%m',
+                 obsnme_date_suffix=True,
+                 obsnme_suffix_format='%Y%m',
                  observed_values_obsval_col='obsval',
                  observed_values_x_col='x',
                  observed_values_y_col='y',
@@ -135,11 +137,18 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     observed_values_datetime_col : str, optional
         Column name in observed_values_file with observation date/times,
         by default 'datetime'
-    obsnme_date_suffix_format : str, optional
-        Format for date suffix of obsnmes. By default, '%Y%m',
-        which would yield '202001' for a Jan, 2020 observation.
-        Observation names are created following the format of
-        <obsprefix>_<date suffix>
+    obsnme_date_suffix : bool
+        If true, give observations a date-based suffix. Otherwise, assign a 
+        stress period-based suffix. In either case, the format of the suffix
+        is controlled by obsnme_suffix_format.
+        by default True
+    obsnme_suffix_format : str, optional
+        Format for suffix of obsnmes. Observation names are created following the format of
+        <obsprefix>_<date or stress period suffix>. By default, ``'%Y%m'``,
+        which would yield ``'202001'`` for a Jan, 2020 observation 
+        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+        should be a decimal format in the "new-style" string format
+        (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
     observed_values_obsval_col : str, optional
         Column name in observed_values_file with observed values,
         by default 'obsval'
@@ -228,9 +237,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
         Example observation names:
 
-        site1000_202001, for a Jan. 2020 observation at site1000
+        site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)
+        
+        site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)
 
-        steady-state stress periods are given the suffix of 'ss'
+        a steady-state stress period specified with label_period_as_steady_state 
+        is given the suffix of 'ss'
         e.g. site1000_ss
 
     Notes
@@ -240,6 +252,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
 
     """
+    # validation checks
+    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+                        function_name='get_head_obs')
+    
     outpath = Path('.')
     if outfile is not None:
         outpath = Path(outfile).parent
@@ -253,7 +269,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           variable_name=variable_name,
-                                          obsnme_date_suffix_format=obsnme_date_suffix_format,
+                                          obsnme_date_suffix=obsnme_date_suffix,
+                                          obsnme_suffix_format=obsnme_suffix_format,
                                           label_period_as_steady_state=label_period_as_steady_state)
 
     # rename columns to their defaults
@@ -343,7 +360,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
         # get the equivalent observed values
         start, end = perioddata.loc[per, ['start_datetime', 'end_datetime']]
-        suffix = pd.Timestamp(end).strftime(obsnme_date_suffix_format)
+        # date-based suffix
+        if obsnme_date_suffix:  
+            suffix = pd.Timestamp(end).strftime(obsnme_suffix_format)
+        # stress period-based suffix
+        else:  
+            suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
 
         # steady-state observations can represent a period
         # other than the "modflow time" in the perioddata table
@@ -353,7 +375,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 start = steady_state_period_start
             if steady_state_period_end is not None:
                 end = steady_state_period_end
-        observed_in_period = observed.loc[start:end].reset_index(drop=True)
+        observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
         if len(observed_in_period) == 0:
             warnings.warn(('Stress period {}: No observations between start and '
                            'end dates of {} and {}!'.format(per, start, end)))
@@ -485,7 +507,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     head_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
         head_obs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {outfile}')
+        print(f'wrote {len(head_obs):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:

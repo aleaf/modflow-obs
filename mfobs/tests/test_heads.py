@@ -2,6 +2,7 @@
 Tests for the heads.py module
 
 """
+from datetime import datetime
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -74,12 +75,17 @@ def head_obs(head_obs_input):
     return head_obs
 
 
-@pytest.mark.parametrize('observed_values_layer_col,steady', ((None, True),
-                                                              (None, False),
-                                                              ('layer', True)
-                                                              ))
+@pytest.mark.parametrize(('observed_values_layer_col,'
+                          'steady,obsnme_date_suffix,'
+                          'obsnme_suffix_format'), 
+                         ((None, True, False, '03d'),
+                          (None, False, False, '{:03d}'),
+                          ('layer', True, True, '%Y%m'),
+                          ('layer', True, True, '%Y%m%d'),
+                          ))
 def test_get_head_obs(test_data_path, head_obs_input, head_obs,
-                      shellmound_output_path, observed_values_layer_col, steady):
+                      shellmound_output_path, observed_values_layer_col, steady,
+                      obsnme_date_suffix, obsnme_suffix_format):
 
     # fixture generates base_data without writing ins
     assert Path(shellmound_output_path, 'processed_head_obs.dat').exists()
@@ -117,6 +123,8 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
                            observed_values_metadata_file=head_obs_input.head_obs_info_file,
                            observed_values_obsval_col='head',
                            observed_values_layer_col=observed_values_layer_col,
+                           obsnme_date_suffix=obsnme_date_suffix,
+                           obsnme_suffix_format=obsnme_suffix_format,
                            gwf_obs_input_file=head_obs_input.headobs_input_file,
                            hk_arrays=head_obs_input.hk_arrays,
                            top_array=head_obs_input.top_array,
@@ -127,7 +135,26 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
                            write_ins=True, outfile=head_obs_input.outfile)
     assert Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat.ins').unlink()
-
+    
+    # test observation name suffixes
+    is_trans = [False if obsnme.split('_')[1] == 'ss' else True 
+                for obsnme in results['obsnme']]
+    # test steady-state suffixes
+    if head_obs_input.label_period_as_steady_state:
+        assert np.all(results.loc[~np.array(is_trans), 'per'] == \
+            head_obs_input.label_period_as_steady_state)
+    # stress period-based suffixes
+    if not obsnme_date_suffix:
+        parsed_periods = [int(obsnme.split('_')[1]) for obsnme in results.loc[is_trans, 'obsnme']]
+        assert np.array_equal(parsed_periods, results.loc[is_trans, 'per'].values)
+    # date-based suffixes
+    else:
+        timestamps = [pd.Timestamp(datetime.strptime(obsnme.split('_')[1], obsnme_suffix_format)) 
+                      for obsnme in results.loc[is_trans, 'obsnme']]
+        years = [ts.year for ts in timestamps]
+        months = [ts.month for ts in timestamps]
+        assert np.array_equal(years, results.loc[is_trans, 'datetime'].dt.year.values)
+        assert np.array_equal(months, results.loc[is_trans, 'datetime'].dt.month.values)
     # todo: add specific check for steady-state observations
 
 

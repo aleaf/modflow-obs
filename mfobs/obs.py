@@ -3,6 +3,7 @@ General functions that apply to multiple types of observations
 """
 import numpy as np
 import pandas as pd
+from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import write_insfile
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
@@ -233,7 +234,7 @@ def get_spatial_differences(base_data, perioddata,
 
     if outfile is not None:
         spatial_differences.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {outfile}')
+        print(f'wrote {len(spatial_differences):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:
@@ -247,7 +248,8 @@ def get_temporal_differences(base_data, perioddata,
                              obs_values_col='obs_head',
                              sim_values_col='sim_head',
                              obstype='head',
-                             obsnme_date_suffix_format='%Y%m',
+                             obsnme_date_suffix=True,
+                             obsnme_suffix_format='%Y%m',
                              exclude_suffix='ss',
                              outfile=None,
                              write_ins=False):
@@ -273,11 +275,18 @@ def get_temporal_differences(base_data, perioddata,
         columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
         respectively. If there is no 'obgnme' column in ``base_data``,
         ``obstype`` is also used as a default base group name.
-    obsnme_date_suffix_format : str, optional
-        Format for date suffix of obsnmes. By default, '%Y%m',
-        which would yield '202001' for a Jan, 2020 observation.
-        Observation names are created following the format of
-        <obsprefix>_<date suffix>
+    obsnme_date_suffix : bool
+        If true, give observations a date-based suffix. Otherwise, assign a 
+        stress period-based suffix. In either case, the format of the suffix
+        is controlled by obsnme_suffix_format.
+        by default True
+    obsnme_suffix_format : str, optional
+        Format for suffix of obsnmes. Observation names are created following the format of
+        <obsprefix>_<date or stress period suffix>. By default, ``'%Y%m'``,
+        which would yield ``'202001'`` for a Jan, 2020 observation 
+        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+        should be a decimal format in the "new-style" string format
+        (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
     exclude_suffix : str or list-like
         Option to exclude observations from differencing by suffix;
         e.g. 'ss' to include steady-state observations.
@@ -297,6 +306,10 @@ def get_temporal_differences(base_data, perioddata,
     Differences are computed by subtracting the previous time from the current,
     so a positive value indicates an increase.
     """
+    # validation checks
+    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+                        function_name='get_head_obs', obsdata=base_data)
+    
     # only compute differences on transient obs
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
@@ -327,7 +340,13 @@ def get_temporal_differences(base_data, perioddata,
     for i, r in period_diffs.iterrows():
         obsname2_suffix = ''
         if i > 0:
-            obsname2_suffix = period_diffs.loc[i - 1, 'datetime'].strftime(obsnme_date_suffix_format)
+            # date-based suffixes
+            if obsnme_date_suffix:
+                obsname2_suffix = period_diffs.loc[i - 1, 'datetime'].strftime(obsnme_suffix_format)
+            # stress period-based suffixes
+            else:
+                per = period_diffs.loc[i - 1, 'per']
+                obsname2_suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
         obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
     period_diffs['obsnme'] = obsnme
     if 'obgnme' not in period_diffs.columns:
@@ -353,7 +372,7 @@ def get_temporal_differences(base_data, perioddata,
 
     if outfile is not None:
         period_diffs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {outfile}')
+        print(f'wrote {len(period_diffs):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:
