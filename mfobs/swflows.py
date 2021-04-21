@@ -89,7 +89,7 @@ def get_flux_obs(perioddata,
                                           label_period_as_steady_state=label_period_as_steady_state)
 
     # rename columns to their defaults
-    renames = {observed_values_site_id_col: 'obsprefix',
+    renames = {#observed_values_site_id_col: 'obsprefix',
                observed_values_datetime_col: 'datetime',
                observed_values_group_column: 'obgnme',
                observed_values_unc_column: 'uncertainty'
@@ -101,6 +101,8 @@ def get_flux_obs(perioddata,
     else:
         observed = observed_values_file
     observed.rename(columns=renames, inplace=True)
+    if 'obsprefix' not in observed.columns:
+        observed['obsprefix'] = observed[observed_values_site_id_col]
     #observed.index = observed['obsnme']
 
     # read in the observed values metadata
@@ -111,6 +113,8 @@ def get_flux_obs(perioddata,
         else:
             metadata = observed_values_metadata_file
         metadata.rename(columns=renames, inplace=True)
+        if 'obsprefix' not in metadata.columns:
+            metadata['obsprefix'] = metadata[observed_values_site_id_col]
 
         # join the metadata to the observed data
         metadata.index = metadata['obsprefix'].values
