@@ -248,6 +248,8 @@ def get_temporal_differences(base_data, perioddata,
                              obs_values_col='obs_head',
                              sim_values_col='sim_head',
                              obstype='head',
+                             get_displacements=False,
+                             displacement_from=None,
                              obsnme_date_suffix=True,
                              obsnme_suffix_format='%Y%m',
                              exclude_suffix='ss',
@@ -275,6 +277,18 @@ def get_temporal_differences(base_data, perioddata,
         columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
         respectively. If there is no 'obgnme' column in ``base_data``,
         ``obstype`` is also used as a default base group name.
+    get_displacements : bool
+        If True, compute the displacement of each observation from 
+        a datum (specified by ``displacement_from``). If False, difference
+        each observation with the previous observation.
+        by default, False
+    displacement_from : str or date-like
+        Datum for computing displacements. Must be in a format that can be
+        used for time slicing in pandas (e.g. '2010-01-01', which would result
+        in displacements from the first observation on or after '2010-01-01' at each site,
+        or None, which would result in displacements from the first observation 
+        at each site. By default, None
+    non-zero weighted observation
     obsnme_date_suffix : bool
         If true, give observations a date-based suffix. Otherwise, assign a 
         stress period-based suffix. In either case, the format of the suffix
@@ -321,11 +335,51 @@ def get_temporal_differences(base_data, perioddata,
     sites = base_data.groupby('obsprefix')
     period_diffs = []
     for site_no, values in sites:
-        values = values.sort_values(by=['per'])
+        values = values.sort_values(by=['per']).copy()
+        values.index = values['datetime']
 
         # compute the differences
-        values['obsval'] = values[obs_values_col].diff()
-        values['sim_obsval'] = values[sim_values_col].diff()
+        if get_displacements:
+            values = values.loc[displacement_from:]
+            
+            # some sites may not have any measurements
+            # after displacement datum; skip these
+            if len(values) <= 1:
+                continue
+            values['obsval'] = values[obs_values_col] - \
+                values[obs_values_col].iloc[0]
+            values['sim_obsval'] = values[sim_values_col] - \
+                values[sim_values_col].iloc[0]
+            # assign np.nan to starting displacements (of 0) 
+            # (so they get dropped later on, 
+            # consistent with workflow for sequential difference obs)
+            values['obsval'].iloc[0] = np.nan
+            values['sim_obsval'].iloc[0] = np.nan
+        else:
+            values['obsval'] = values[obs_values_col].diff()
+            values['sim_obsval'] = values[sim_values_col].diff()
+
+        # name the temporal difference obs as
+        # <obsprefix>_<obsname1 suffix>d<obsname2 suffix>
+        # where the obsval = obsname2 - obsname1
+        obsnme = []
+        for i, (idx, r) in enumerate(values.iterrows()):
+            obsname2_suffix = ''
+            if i > 0:
+                if get_displacements:
+                    obsname_2_loc = 0
+                else:
+                    obsname_2_loc = i - 1
+                # date-based suffixes
+                if obsnme_date_suffix:
+                    obsname2_suffix = values.iloc[obsname_2_loc] \
+                    ['datetime'].strftime(obsnme_suffix_format)
+                # stress period-based suffixes
+                else:
+                    per = values.iloc[obsname_2_loc]['per']
+                    obsname2_suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
+            obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
+        values['obsnme'] = obsnme
 
         # todo: is there a general uncertainty approach for temporal differences that makes sense?
 
@@ -336,19 +390,24 @@ def get_temporal_differences(base_data, perioddata,
     # name the temporal difference obs as
     # <obsprefix>_<obsname1 suffix>d<obsname2 suffix>
     # where the obsval = obsname2 - obsname1
-    obsnme = []
-    for i, r in period_diffs.iterrows():
-        obsname2_suffix = ''
-        if i > 0:
-            # date-based suffixes
-            if obsnme_date_suffix:
-                obsname2_suffix = period_diffs.loc[i - 1, 'datetime'].strftime(obsnme_suffix_format)
-            # stress period-based suffixes
-            else:
-                per = period_diffs.loc[i - 1, 'per']
-                obsname2_suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
-        obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
-    period_diffs['obsnme'] = obsnme
+    #obsnme = []
+    #for i, r in period_diffs.iterrows():
+    #    obsname2_suffix = ''
+    #    if i > 0:
+    #        if get_displacements:
+    #            obsname_2_loc = 0
+    #        else:
+    #            obsname_2_loc = i - 1
+    #        # date-based suffixes
+    #        if obsnme_date_suffix:
+    #            obsname2_suffix = period_diffs.loc[obsname_2_loc, 
+    #                                               'datetime'].strftime(obsnme_suffix_format)
+    #        # stress period-based suffixes
+    #        else:
+    #            per = period_diffs.loc[obsname_2_loc, 'per']
+    #            obsname2_suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
+    #    obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
+    #period_diffs['obsnme'] = obsnme
     if 'obgnme' not in period_diffs.columns:
         period_diffs['obgnme'] = obstype
     period_diffs['obgnme'] = [f'{g}_tdiff' for g in period_diffs['obgnme']]

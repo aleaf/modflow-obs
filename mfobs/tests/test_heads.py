@@ -10,7 +10,9 @@ import pytest
 import affine
 from mfobs.heads import get_head_obs
 from mfobs.modflow import get_modelgrid_transform
-from mfobs.obs import get_spatial_differences, get_temporal_differences
+from mfobs.obs import (get_spatial_differences, 
+                       get_temporal_differences, 
+                       )
 
 
 @pytest.fixture
@@ -158,15 +160,21 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     # todo: add specific check for steady-state observations
 
 
-@pytest.mark.parametrize('write_ins', (True,
-                                       False
+@pytest.mark.parametrize('write_ins,get_displacements,displacement_from', 
+                         ((True, True, '2010-01-01'),
+                          (False, True, None),
+                          (False, False, None)
                                        ))
-def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
+def test_get_temporal_head_difference_obs(head_obs, head_obs_input, 
+                                          write_ins, get_displacements, 
+                                          displacement_from):
     results = get_temporal_differences(head_obs,
                                        head_obs_input.perioddata,
                                        obs_values_col='obs_head',
                                        sim_values_col='sim_head',
                                        obstype='head',
+                                       get_displacements=get_displacements,
+                                       displacement_from=displacement_from,
                                        write_ins=write_ins,
                                        outfile=head_obs_input.thead_diff_obs_outfile)
     assert head_obs_input.thead_diff_obs_outfile.exists()
@@ -190,6 +198,22 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input, write_ins):
     suffixes = np.ravel([obsnme.split('_')[1].split('d') for obsnme in results.obsnme])
     assert 'ss' not in suffixes
     assert results.obgnme.unique().tolist() == ['head_tdiff']
+    
+    # check displacement obs
+    if get_displacements:
+        first_obs = results.groupby(['per', 'obsprefix']).first()
+        datums = set([obsnme.split('d')[1] for obsnme in first_obs.obsnme])
+        if displacement_from is not None:
+            loc = head_obs.datetime > displacement_from
+        else:
+            loc = slice(None, None)
+        first_head_obs = head_obs.loc[loc].groupby(['obsprefix']).first()
+        multiple_obs = head_obs.groupby(['obsprefix']).per.count() > 1
+        first_head_obs = first_head_obs.loc[multiple_obs]
+        
+        expected_datums = set([obsnme.split('_')[1] for obsnme in first_head_obs.obsnme])
+        assert datums == expected_datums
+
 
 
 @pytest.mark.parametrize('write_ins', (True,

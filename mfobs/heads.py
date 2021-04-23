@@ -323,12 +323,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # these include sites outside of the model (i.e. in the inset when looking at the parent)
     no_info_sites = set(results.obsprefix).symmetric_difference(observed.obsprefix)
     # dump these out to a csv
-    print('Dropping {} sites with no information'.format(len(no_info_sites)))
-    dropped_obs_outfile = outpath / 'dropped_head_observation_sites.csv'
-    results.loc[results.obsprefix.isin(no_info_sites)].to_csv(dropped_obs_outfile,
+    if len(no_info_sites) > 0:
+        print('Dropping {} sites with no information'.format(len(no_info_sites)))
+        dropped_obs_outfile = outpath / 'dropped_head_observation_sites.csv'
+        results.loc[results.obsprefix.isin(no_info_sites)].to_csv(dropped_obs_outfile,
                                                               index=False)
-    results = results.loc[~results.obsprefix.isin(no_info_sites)].copy()
-    observed = observed.loc[~observed.obsprefix.isin(no_info_sites)].copy()
+        results = results.loc[~results.obsprefix.isin(no_info_sites)].copy()
+        observed = observed.loc[~observed.obsprefix.isin(no_info_sites)].copy()
 
     # get_mf6_single_variable_obs returns values for each layer
     # collapse these into one value for each location, time

@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 def check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format,
-                        function_name, obsdata=None):
+                        function_name, obsdata=None, ignore_suffixes={'ss'}):
     format_type = 'date-based suffix'
     if not obsnme_date_suffix:
         format_type = 'stress period-based suffix'
@@ -26,6 +26,8 @@ def check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format,
     if obsdata is not None:
         prefixes, suffixes = zip(*obsdata['obsnme'].str.split('_'))
         for suffix in suffixes:
+            if suffix in ignore_suffixes:
+                continue
             if obsnme_date_suffix:
                 try:
                     datetime.strptime(suffix, obsnme_suffix_format)
