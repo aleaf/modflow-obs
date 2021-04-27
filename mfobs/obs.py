@@ -253,6 +253,7 @@ def get_temporal_differences(base_data, perioddata,
                              obsnme_date_suffix=True,
                              obsnme_suffix_format='%Y%m',
                              exclude_suffix='ss',
+                             exclude_obs=None,
                              outfile=None,
                              write_ins=False):
     """Takes the base_data dataframe output by :func:`mfobs.obs.get_obs`,
@@ -305,6 +306,11 @@ def get_temporal_differences(base_data, perioddata,
         Option to exclude observations from differencing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
+    exclude_obs : list-like
+        Sequence of observation names to exclude from return/written dataset. For example,
+        if sequential head differences are also being computed, the first displacement observation
+        after the reference observation will be a duplicate of the first sequential head difference
+        observation. By default, None (no observations excluded).
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -430,6 +436,12 @@ def get_temporal_differences(base_data, perioddata,
 
     # drop observations with no difference (first observations at each site)
     period_diffs.dropna(axis=0, subset=['obsval', 'sim_obsval'], inplace=True)
+    
+    # drop any excluded obs
+    if exclude_obs is not None:
+        exclude_obs = set(exclude_obs)
+        print(f"dropping {len(exclude_obs)} observations specified with exclude_obs")
+        period_diffs = period_diffs.loc[~period_diffs['obsnme'].isin(exclude_obs)]
 
     # fill NaT (not a time) datetimes
     fill_nats(period_diffs, perioddata)
