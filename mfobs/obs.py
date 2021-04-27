@@ -410,8 +410,13 @@ def get_temporal_differences(base_data, perioddata,
     #period_diffs['obsnme'] = obsnme
     if 'obgnme' not in period_diffs.columns:
         period_diffs['obgnme'] = obstype
-    period_diffs['obgnme'] = [f'{g}_tdiff' for g in period_diffs['obgnme']]
-    period_diffs['type'] = f'temporal {obstype} difference'
+    
+    if get_displacements:
+        period_diffs['type'] = f'{obstype} displacement'
+        period_diffs['obgnme'] = [f'{g}_disp' for g in period_diffs['obgnme']]
+    else:
+        period_diffs['type'] = f'temporal {obstype} difference'
+        period_diffs['obgnme'] = [f'{g}_tdiff' for g in period_diffs['obgnme']]
 
     # drop some columns that aren't really valid; if they exist
     period_diffs.drop(['n'], axis=1, inplace=True, errors='ignore')
