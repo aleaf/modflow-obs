@@ -197,7 +197,10 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input,
     assert results.obsnme.str.islower().all()
     suffixes = np.ravel([obsnme.split('_')[1].split('d') for obsnme in results.obsnme])
     assert 'ss' not in suffixes
-    assert results.obgnme.unique().tolist() == ['head_tdiff']
+    expected_obgnme = 'head_tdiff'
+    if get_displacements:
+        expected_obgnme = 'head_disp'
+    assert results.obgnme.unique().tolist() == [expected_obgnme]
     
     # check displacement obs
     if get_displacements:
