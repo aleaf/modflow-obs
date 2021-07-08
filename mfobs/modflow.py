@@ -13,6 +13,14 @@ from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import write_insfile
 
 
+itmuni_text = {0: "undefined",
+               1: "seconds",
+               2: "minutes",
+               3: "hours",
+               4: "days",
+               5: "years"
+                 }
+
 def get_gwf_obs_input(gwf_obs_input_file):
     """Read the first BEGIN continuous  FILEOUT block of an input
     file to the MODFLOW-6 GWF observation utility.
@@ -592,56 +600,124 @@ def read_mf6_block(filename, blockname):
     return data
 
 
-def get_perioddata(tdis_file, sto_file=None):
+def get_perioddata(tdis_file, sto_file=None, start_datetime=None, 
+                   end_datetime=None, model_time_units=None):
     """Make the perioddata table required by other modflow-obs
     functions from a MODFLOW-6 Temporal Discretization (TDIS) file.
 
     Parameters
     ----------
-    tdis_file : str
-        TDIS Package file
+    tdis_file : str or pathlike
+        MODFLOW 6 TDIS, or MODFLOW-2005 style DIS Package file.
+        Model version is determined from the extension 
+        ('.tdis' for MODFLOW 6; '.dis' for MODFLOW-2005)
+    sto_file : str or pathlike
+        MODFLOW 6 STO Package file
+    start_datetime : str or pandas Timestamp    
+        Start date for model, if start date isn't specified in TDIS package file.
+        Required for MODFLOW-2005 style models.
+    end_datetime : str or pandas Timestamp (optional)
+        End date of model, only required for GSFLOW models, where time-step specification 
+        is handled internally. end_datetime should be specified as midnight following
+        the last full day simulated by the model. For example, if the model runs through
+        12/31/2019, end_datetime should be specified as 01/01/2020.
+    model_time_units : str (optional)
+        Time unit of model, in text understandable by pandas (e.g. "days").
+        Specification of time units will override what is read 
+        from the TDIS or DIS package file.
         
     Returns
     -------
     perioddata : DataFrame
     """
-    options = read_mf6_block(tdis_file, 'options')
-    perioddata = read_mf6_block(tdis_file, 'perioddata')
-    steady_period_blocks = None
-    if sto_file is not None:
-        steady_period_blocks = read_mf6_block(sto_file, 'period')
+    tdis_file = str(tdis_file)
+    mf6 = True
+    if tdis_file.endswith('.tdis'):
+        options = read_mf6_block(tdis_file, 'options')
+        perioddata = read_mf6_block(tdis_file, 'perioddata')
+        steady_period_blocks = None
+        if sto_file is not None:
+            steady_period_blocks = read_mf6_block(sto_file, 'period')
     
-    start_datetime = options['start_date_time']
-    if len(start_datetime) > 0:
-        start_datetime = pd.to_datetime(start_datetime[0])
-    else:
-        msg = (f'No start_date_time in {tdis_file};' 
-                'start_date_time is needed to construct perioddata.')
-        raise ValueError(msg)
-    time_units = options['time_units']
-    if len(time_units) > 0:
-        time_units = time_units[0]
-    else:
-        msg = (f'No time_units in {tdis_file};' 
-                'time_units is needed to construct perioddata.')
-        raise ValueError(msg)
-    perlen = []
-    nstp = []
-    tsmult = []
-    for row in perioddata['perioddata']:
-        if row.strip().startswith('#'):
-            continue
-        rperlen, rnstp, rtsmult = row.split('#')[0].split()
-        perlen.append(float(rperlen))
-        nstp.append(int(rnstp))
-        tsmult.append(float(rtsmult))
+        if start_datetime is None:
+            start_datetime = options['start_date_time']
+            if len(start_datetime) > 0:
+                start_datetime = pd.Timestamp(start_datetime[0])
+            else:
+                msg = (f'No start_date_time in {tdis_file};' 
+                        'start_date_time is needed to construct perioddata.')
+                raise ValueError(msg)
+        else:
+            start_datetime = pd.Timestamp(start_datetime)
         
-    if steady_period_blocks is not None:
-        steady = [True if 'steady' in steady_period_blocks[i+1][0] 
-                  else False for i in range(len(perlen))]
+        if model_time_units is None:
+            time_units = options['time_units']
+            if len(time_units) > 0:
+                time_units = time_units[0]
+            else:
+                msg = (f'No model_time_units specified, and no time_units in {tdis_file};' 
+                        'time units are needed to construct perioddata.')
+                raise ValueError(msg)
+        else:
+            time_units = model_time_units
+            
+        perlen = []
+        nstp = []
+        tsmult = []
+        for row in perioddata['perioddata']:
+            if row.strip().startswith('#'):
+                continue
+            rperlen, rnstp, rtsmult = row.split('#')[0].split()
+            perlen.append(float(rperlen))
+            nstp.append(int(rnstp))
+            tsmult.append(float(rtsmult))
+            
+        if steady_period_blocks is not None:
+            steady = [True if 'steady' in steady_period_blocks[i+1][0] 
+                    else False for i in range(len(perlen))]
+        else:
+            steady = True
     else:
-        steady = True
-        
+        mf6 = False
+        if start_datetime is None:
+            raise ValueError('start_datetimem required for MODFLOW-2005 style models')
+        else:
+            start_datetime = pd.Timestamp(start_datetime)
+        with open(tdis_file) as src:
+            for line in src:
+                if line.strip().startswith('#'):
+                    continue
+                else:
+                    dataset_1 = line.strip().split()
+                    if model_time_units is None:
+                        itmuni = int(dataset_1[4])
+                        time_units = itmuni_text[itmuni]
+                    else:
+                        time_units = model_time_units
+                    if model_time_units is None and itmuni == 0:
+                        msg = (f'No model_time_units specified, and no time_units in {tdis_file};' 
+                            'time units are needed to construct perioddata.')
+                        raise ValueError(msg)
+                break
+            perlen = []
+            nstp = []
+            tsmult = []
+            steady = []
+            for line in src:
+                line = line.lower()
+                if 'ss' in line or 'tr' in line:
+                    if 'constant' not in line and 'open/close' not in line:
+                        per_len, per_nstp, per_tsmult, sstr = line.strip().split()
+                        perlen.append(float(per_len))
+                        nstp.append(float(per_nstp))
+                        tsmult.append(float(per_tsmult))
+                        if sstr == 'ss':
+                            steady.append(True)
+                        elif sstr == 'tr':
+                            steady.append(False)
+                        else:
+                            raise ValueError(f'Invalid input for DIS package dataset 7, Ss/tr:\n{line}')
+
     perlen = np.array(perlen)
     actual_period_length = perlen.copy()
     if not np.isscalar(steady) and steady[0]:
@@ -651,6 +727,15 @@ def get_perioddata(tdis_file, sto_file=None):
     mf_time = np.cumsum(perlen)
     start_elapsed_times = [0] + elapsed_time[:-1]
     start_datetimes = start_datetime + pd.to_timedelta(start_elapsed_times, unit=time_units)
+    
+    # determine perlen and number of steps for a GSFLOW model with specified end date
+    # (model is assumed to have time units of days
+    # and daily timesteps)
+    if not mf6 and end_datetime is not None:
+        end_datetime = pd.Timestamp(end_datetime)
+        perlen[-1] = (end_datetime - start_datetimes[-1]).days
+        nstp[-1] = perlen[-1]
+
     end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
     
     perioddata = pd.DataFrame({'start_datetime': start_datetimes.strftime('%Y-%m-%d'),
@@ -658,7 +743,7 @@ def get_perioddata(tdis_file, sto_file=None):
                                'time': mf_time,
                                'per': np.arange(len(perlen)),
                                'perlen': perlen,
-                               'nstp': nstp,
+                               'nstp': np.array(nstp, dtype=int),
                                'tsmult': tsmult,
                                'steady': steady
                                })
