@@ -1,10 +1,15 @@
 """Tests for the modflow module.
 """
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from affine import Affine
 import pytest
-from mfobs.modflow import get_ij, get_perioddata
+from mfobs.modflow import (
+    get_ij, 
+    get_perioddata, 
+    read_mf_gage_package_output_files
+)
 
 
 def test_get_ij():
@@ -35,8 +40,8 @@ def test_get_ij():
     
 
 @pytest.mark.parametrize('tdis_file,sto_file,start_date,end_date,time_units,expected_time_units',
-                         (('badriver/br_trans.dis', None, '2000-01-01', None, None, 'days'),
-                          ('badriver/br_trans.dis', None, '2000-01-01', '2020-01-01', 'days', 'days'),
+                         (('mf2005/br_trans.dis', None, '2000-01-01', None, None, 'days'),
+                          ('mf2005/br_trans.dis', None, '2000-01-01', '2020-01-01', 'days', 'days'),
                           ('shellmound/mfsim.tdis', 'shellmound/shellmound.sto', '2000-01-01', None, None, 'days'),
                           ('shellmound/mfsim.tdis', 'shellmound/shellmound.sto', None, None, None, 'days'),
                          ))    
@@ -62,3 +67,37 @@ def test_get_perioddata(tdis_file, sto_file, start_date, end_date,
              pd.Timestamp(results['start_datetime'].values[-1])).days
     assert ndays == results['perlen'].values[-1] - 1
     
+    
+@pytest.mark.parametrize('fileinput,variable,expected_varname,expected_values', 
+                         (('mf2005/badger_mill_ck.ggo', None, None, None),
+                          ('mf2005/badger_mill_ck.ggo', 'Hyd.Grad.', 'hydgrad', None),
+                          ('mf2005/P32S.ggo', 'gw-head', 'gw-head', [919.12427, 916.03711]),
+                          (['mf2005/badger_mill_ck.ggo', 'mf2005/badger_mill_ck2.ggo'], 'Flow', 'flow', \
+                           [[101740.06, 137382.61], [142659.840, 978764.000]])))
+def test_read_mf_gage_package_output_files(fileinput, variable, expected_varname, expected_values, test_data_path):
+    
+    if isinstance(fileinput, str):
+        fileinput = test_data_path / fileinput
+    else:
+        fileinput = [test_data_path / f for f in fileinput]
+        # test str as well as pathlike
+        fileinput[0] = str(fileinput[0])
+    results = read_mf_gage_package_output_files(fileinput, variable)
+    assert results.index.name == 'time'
+    if expected_varname is None:
+        assert np.all(results.columns == 
+                      ['time', 'stage', 'flow', 'depth', 'width', 'midpt-flow', 
+                       'precip', 'et', 'sfr-runoff', 'uzf-runoff', 
+                       'conductance', 'headdiff', 'hydgrad'])
+    else:
+        if isinstance(fileinput, str) or isinstance(fileinput, Path):
+            fileinput = [fileinput]
+        for i, col in enumerate(results.columns):
+            obsprefix = col.split('-')[0]
+            variable = col.split(f'{obsprefix}-')[1]
+            assert Path(fileinput[i]).stem.lower().replace('-', '').replace('_', '') == obsprefix
+            assert variable == expected_varname
+    assert not results.isna().any().any()
+    if expected_values is not None:
+        assert np.all(results.iloc[0] == expected_values[0])
+        assert np.all(results.iloc[-1] == expected_values[-1])
