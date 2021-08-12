@@ -1,6 +1,7 @@
 """
 Miscellaneous utilities
 """
+import numpy as np
 import pandas as pd
 
 
@@ -49,8 +50,11 @@ def set_period_start_end_dates(perioddata):
     -----
     Assumes time units of days.
     """
-    perioddata.sort_values(by='per', inplace=True)
+    if perioddata.index.name == 'time':
+        perioddata.sort_index(inplace=True)
+    else:
+        perioddata.sort_values(by='time', inplace=True)
     start_datetimes = pd.to_datetime(perioddata.start_datetime.values)
-    perlen = perioddata['perlen'].values
+    perlen = np.array(perioddata['time'].tolist()[:1] + perioddata['time'].diff().tolist()[1:])
     new_end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
     perioddata['end_datetime'] = new_end_datetimes.strftime('%Y-%m-%d')

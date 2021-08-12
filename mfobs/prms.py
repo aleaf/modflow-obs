@@ -27,7 +27,7 @@ def read_statvar_file(statvar_file):
         for i in range(n_sites):
             variable, segment = next(iter(src)).strip().split()
             segment = int(segment)
-            site_names.append(f"{variable}-{segment}")
+            site_names.append(f"{segment}-{variable}")
         parse = lambda x: dt.datetime.strptime(x, '%Y %m %d %H %M %S')
         df = pd.read_csv(src, header=None,
                   delim_whitespace=True, 
@@ -39,7 +39,7 @@ def read_statvar_file(statvar_file):
     
 def get_prms_statvar_obs(perioddata,
                          statvar_file,
-                         variable_name='obsval',
+                         statvar_sitenames=None,
                          obsnme_date_suffix=True,
                          obsnme_suffix_format='%Y%m%d',
                          abs=False):
@@ -61,9 +61,9 @@ def get_prms_statvar_obs(perioddata,
         and 'end_datetime' (end date for the stress period).
     model_output_file : str
         Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).
-    variable_name : str, optional
-        Column with simulated output will be named "sim_<variable_name",
-        by default 'head'
+    statvar_sitenames : dict
+        Dictionary of the site names (values) associated with each HRU or stream segment 
+        (keys) referenced in the statvar file.
     obsnme_date_suffix : bool
         If true, give observations a date-based suffix. Otherwise, assign a 
         elapsed time-based suffix. In either case, the format of the suffix
@@ -86,10 +86,11 @@ def get_prms_statvar_obs(perioddata,
 
         =================== =============================================================
         per                 zero-based model stress period
+        site_no             unique identifier for each site
+        variable            PRMS variable name
         obsprefix           prefix of observation name (site identifier)
-        sim_<variable_name> column with simulated values
+        sim_value           simulated values
         datetime            pandas datetimes, based on stress period start date
-        layer               zero-based model layer
         obsnme              observation name based on format of <obsprefix>_'%Y%m'
 
         =================== =============================================================
@@ -136,9 +137,21 @@ def get_prms_statvar_obs(perioddata,
     # reshape the model output from (nper rows, nsites columns) to nper x nsites rows
     periods = dict(zip(model_output.index, model_output['per']))
     times = dict(zip(model_output.index, model_output['time']))
+    simval_col = 'sim_obsval'
     stacked = model_output.drop(['time', 'per'], axis=1).stack(level=0).reset_index()
-    simval_col = 'sim_{}'.format(variable_name)
     stacked.columns = ['datetime', 'obsprefix', simval_col]
+    stacked['variable'] = [s.split('-')[1] for s in stacked['obsprefix']]
+    if statvar_sitenames is None:
+        statvar_sitenames = {}
+
+    hrus = [int(s.split('-')[0]) for s in stacked['obsprefix']]
+    sitenames = [statvar_sitenames.get(hru, hru) for hru in hrus]
+    sitenames = [s.lower() if isinstance(s, str) else s for s in sitenames]
+    stacked['site_no'] = sitenames
+    variables = [s.split('-')[1] for s in stacked['obsprefix']]
+    stacked['variable'] = variables
+    stacked['obsprefix'] = [f"{sitename}-{variable}".lower() 
+                        for sitename, variable in zip(sitenames, variables)]
     stacked['per'] = [periods[ts] for ts in stacked['datetime']]
     stacked['time'] = [times[ts] for ts in stacked['datetime']]
 
@@ -170,6 +183,6 @@ def get_prms_statvar_obs(perioddata,
     stacked.index = stacked['obsnme']
     sort_cols = [c for c in ['obsprefix', 'per', 'layer'] if c in stacked.columns]
     stacked.sort_values(by=sort_cols, inplace=True)
-    results = stacked[['datetime', 'obsprefix', 'obsnme',
-                        'sim_obsval', 'per', 'time']].copy()
+    results = stacked[['datetime', 'site_no', 'variable', 'obsprefix', 'obsnme',
+                        'sim_obsval']].copy()
     return results
