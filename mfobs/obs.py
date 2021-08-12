@@ -325,6 +325,13 @@ def get_base_obs(perioddata,
         observed_simulated_combined.append(observed_in_period_rs)
 
     # Combined DataFrame of observed heads and simulated equivalents
+    if len(observed_simulated_combined) == 0:
+        msg = ("No overlap between model results "
+               f"({results['datetime'].min():%Y-%m-%d} to {results['datetime'].max():%Y-%m-%d})"
+               " and observed values "
+               f"({observed['datetime'].min():%Y-%m-%d} to {observed['datetime'].max():%Y-%m-%d})!"
+               )
+        raise ValueError(msg)
     obsdata = pd.concat(observed_simulated_combined)
 
     # raise an error if there are duplicates- reindexing below will fail if this is the case
