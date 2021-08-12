@@ -13,6 +13,7 @@ except:
     flopy = False
 from mfobs.utils import set_period_start_end_dates
 from mfobs.fileio import write_insfile, read_csv
+from mfobs.utils import set_period_start_end_dates
 
 
 itmuni_text = {0: "undefined",
