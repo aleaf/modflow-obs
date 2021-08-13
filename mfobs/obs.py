@@ -128,8 +128,21 @@ def get_base_obs(perioddata,
 
     Returns
     -------
-    [type]
-        [description]
+    base_obs : DataFrame
+        Table of base observations with the following columns:
+        
+        =================== =============================================================
+        datetime            pandas datetimes, based on stress period start date
+        per                 MODFLOW stress period
+        site_no             unique site identifier
+        obsprefix           prefix of observation name
+        obsnme              observation name based on format of <obsprefix>_<suffix>
+        obsval              observed values
+        sim_obsval          simulated equivalents to observed values
+        obgnme              observation group name
+
+        =================== =============================================================
+        
     """
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
@@ -139,9 +152,10 @@ def get_base_obs(perioddata,
     if outfile is not None:
         outpath = Path(outfile).parent
 
+    #obs_values_column = 'obsval'
     sim_values_column = 'sim_obsval'
     if variable_name is None:
-        obs_values_column = 'obs_value'
+        obs_values_column = 'obsval'  #'obs_value'
         #sim_values_column = 'sim_value'
     else:
         obs_values_column = 'obs_' + variable_name  # output column with observed values
@@ -159,7 +173,7 @@ def get_base_obs(perioddata,
     results = model_output.copy()
 
     # rename columns to their defaults
-    renames = {#observed_values_site_id_col: 'obsprefix',
+    renames = {observed_values_site_id_col: 'site_no',
                observed_values_datetime_col: 'datetime',
                observed_values_group_column: 'obgnme',
                observed_values_unc_column: 'uncertainty'
@@ -175,9 +189,9 @@ def get_base_obs(perioddata,
     if 'obsprefix' not in observed.columns:
         if variable_name is not None:
             observed['obsprefix'] = [f"{sn}-{variable_name}" 
-                                     for sn in observed[observed_values_site_id_col]]
+                                     for sn in observed['site_no']]
         else:
-            observed['obsprefix'] = observed[observed_values_site_id_col]
+            observed['obsprefix'] = observed['site_no']
 
     # read in the observed values metadata
     if observed_values_metadata_file is not None:
@@ -218,6 +232,10 @@ def get_base_obs(perioddata,
                                                               index=False)
     results = results.loc[~results.obsprefix.isin(no_info_sites)].copy()
     observed = observed.loc[~observed.obsprefix.isin(no_info_sites)].copy()
+    if len(results) == 0:
+        raise ValueError("No matches between observation prefixes in the model results"
+                         "and observed values! Check that the obsprefixes in the "
+                         "observed_values_file match those in the model_output DataFrame.")
 
     # for each model stress period or timestep, get the simulated values
     # and the observed equivalents
@@ -259,43 +277,22 @@ def get_base_obs(perioddata,
         # it is explicitly labeled as such and given a representative date range
         elif r['steady']:
             continue
-        observed_in_period_rs = aggregrate_to_period(observed, start, end, 
-                                                  aggregrate_observed_values_method='mean',
-                                                  obsnme_suffix=suffix)
+        observed_in_period_rs = aggregrate_to_period(
+            observed, start, end, 
+            aggregrate_observed_values_method=aggregrate_observed_values_method,
+            obsnme_suffix=suffix)
         if observed_in_period_rs is None:
             if per_column == 'per':
                 warnings.warn(('Stress period {}: No observations between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
-        
-        #observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
-        #if (len(observed_in_period) == 0) and (per_column == 'per'):
-        #    warnings.warn(('Stress period {}: No observations between start and '
-        #                   'end dates of {} and {}!'.format(r['per'], start, end)))
-        #    continue
-        #observed_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
-        #if 'n' not in observed_in_period.columns:
-        #    observed_in_period['n'] = 1
-        #by_site = observed_in_period.groupby('obsprefix')
-        #observed_in_period_rs = getattr(by_site, aggregrate_observed_values_method)()
-        #observed_in_period_rs['n'] = by_site.n.sum()
-        #observed_in_period_rs['datetime'] = pd.Timestamp(end)
-        #observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
-
-        #missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)
-        #for col in missing_cols:
-        #    observed_in_period_rs[col] = by_site[col].first().values
-        #observed_in_period_rs = observed_in_period_rs[observed_in_period.columns]
-        #obsnames = ['{}_{}'.format(prefix.lower(), suffix)
-        #            for prefix in observed_in_period_rs.obsprefix]
-        #observed_in_period_rs['obsnme'] = obsnames
-        #observed_in_period_rs.index = observed_in_period_rs['obsnme']
 
         # get the simulated equivalents
         # first populate obsnmes
-        sim_in_period_rs = aggregrate_to_period(results, start, end, 
-                                                aggregrate_observed_values_method='mean',
-                                                obsnme_suffix=suffix)
+        sim_in_period_rs = aggregrate_to_period(
+            results, start, end, 
+            aggregrate_observed_values_method=aggregrate_observed_values_method,
+            obsnme_suffix=suffix)
 
         any_simulated_obs = sim_in_period_rs.obsnme.isin(observed_in_period_rs.obsnme).any()
         
@@ -303,17 +300,7 @@ def get_base_obs(perioddata,
             warnings.warn(('Stress period {}: No simulated values between start and '
                             'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
-        #sim_values = []
-        #for obsnme, layer in zip(observed_in_period_rs.obsnme, observed_in_period_rs.layer):
-        #    obsnme_results = data.loc[obsnme]
-        #    # if a DataFrame (with simulated values for multiple layers) is returned
-        #    if len(obsnme_results.shape) == 2:
-        #        layer = obsnme_results.iloc[np.argmin(obsnme_results.layer - layer)]['layer']
-        #        sim_value = obsnme_results.iloc[layer][sim_values_column]
-        #    # Series (row) in results DataFrame with single simulated value
-        #    else:
-        #        sim_value = obsnme_results[sim_values_column]
-        #    sim_values.append(sim_value)
+
         observed_in_period_rs[sim_values_column] = sim_in_period_rs.reindex(observed_in_period_rs.index)[sim_values_column]
 
         # add stress period and observed values
@@ -357,26 +344,26 @@ def get_base_obs(perioddata,
         obsdata['obgnme'] = variable_name
 
     # reorder the columns
-    columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
+    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
                'uncertainty', 'obsval', 'obgnme']
     columns = [c for c in columns if c in obsdata.columns]
-    obsdata = obsdata[columns].copy()
+    base_obs = obsdata[columns].copy()
     if 'layer' in columns:
-        obsdata['layer'] = obsdata['layer'].astype(int)
+        base_obs['layer'] = base_obs['layer'].astype(int)
 
     # fill NaT (not a time) datetimes
-    fill_nats(obsdata, perioddata)
+    fill_nats(base_obs, perioddata)
 
-    obsdata.sort_values(by=['obsprefix', 'per'], inplace=True)
+    base_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
-        obsdata.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {len(obsdata):,} observations to {outfile}')
+        base_obs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {len(base_obs):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:
-            write_insfile(obsdata, str(outfile) + '.ins', obsnme_column='obsnme',
+            write_insfile(base_obs, str(outfile) + '.ins', obsnme_column='obsnme',
                           simulated_obsval_column=sim_values_column, index=False)
-    return obsdata
+    return base_obs
 
 
 def aggregrate_to_period(data, start, end, obsnme_suffix,
@@ -409,7 +396,7 @@ def get_spatial_differences(base_data, perioddata,
                             difference_sites,
                             obs_values_col='obs_head',
                             sim_values_col='sim_head',
-                            obstype='head',
+                            variable='head',
                             use_gradients=False,
                             sep='-d-',
                             write_ins=False, outfile=None):
@@ -421,7 +408,22 @@ def get_spatial_differences(base_data, perioddata,
     ----------
     base_data : DataFrame
         Table of preprocessed observations, such as that produced by
-        :func:`mfobs.obs.get_obs`
+        :func:`mfobs.obs.get_base_obs`. Must have the following columns:
+        
+        =================== =============================================================
+        datetime            pandas datetimes, based on stress period start date
+        per                 MODFLOW stress period
+        site_no             unique site identifier
+        obsprefix\ :sup:`1` prefix of observation name
+        obsnme              observation name based on format of <obsprefix>_<suffix>
+        obsval              observed values
+        sim_obsval          simulated equivalents to observed values
+        obgnme              observation group name
+
+        =================== =============================================================
+        
+        1) where obsprefix is assumed to be formatted as <site_no>-<variable> or simply <site_no>
+        
     perioddata : DataFrame
         DataFrame with start/end dates for stress periods. Must have columns
         'time' (modflow time, in days), 'start_datetime' (start date for the stress period)
@@ -438,13 +440,13 @@ def get_spatial_differences(base_data, perioddata,
         Column in ``base_data`` with observed values
     sim_values_col : str
         Column in `base_data`` with simulated equivalent values
-    obstype : str  {'head', 'flux', or other}
+    variable : str  {'head', 'flux', or other}
         Type of observation being processed. Simulated and observed values
-        columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
+        columns are named in the format 'sim_<variable>' and 'obs_<variable>',
         respectively. If there is no 'obgnme' column in ``base_data``,
-        ``obstype`` is also used as a default base group name. Finally,
+        ``variable`` is also used as a default base group name. Finally,
         a 'type' column is included in the output with the label
-        'vertical <obstype> gradient' or '<obstype> difference', depending on whether
+        'vertical <variable> gradient' or '<variable> difference', depending on whether
         ``use_gradients=True``.
     use_gradients : bool
         If True, compute vertical hydraulic gradients and use those for the
@@ -499,7 +501,7 @@ def get_spatial_differences(base_data, perioddata,
         Notes:
 
         * * denotes optional columns that may not be present.
-        * Columns relating to well open interval are only created if ``obstype='head'``
+        * Columns relating to well open interval are only created if ``variable='head'``
           and ``base_data`` has 'screen_top' and 'screen_botm' columns.
         * Negative difference or gradient values indicate a gradient towards the key site.
 
@@ -511,68 +513,96 @@ def get_spatial_differences(base_data, perioddata,
     set_period_start_end_dates(perioddata)
     perioddata.index = perioddata.per
 
+    # rename the observed and sim. eq. values columns
+    renames = {obs_values_col: f'obs_{variable}',
+               sim_values_col: f'sim_{variable}',
+               }
+    base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+                   inplace=True, errors='ignore')
+    base_data.rename(columns=renames, inplace=True)
+    obs_values_col = f'obs_{variable}'
+    sim_values_col = f'sim_{variable}'
+    
+    # get a list of unique variables
+    variables = {s.split('-')[1] if len(s.split('-')) > 1 else '' 
+                 for s in base_data['obsprefix']}
+    
     # get subset of base_data sites to compare to each key site in difference_sites
-    base_data_sites = set(base_data.obsprefix)
+    base_data_obsprefixes = set(base_data['obsprefix'])
     groups = base_data.groupby('obsprefix')
     spatial_differences = []
-    for key_site_no, patterns in difference_sites.items():
+    
+    for variable in variables:
+        for key_obsprefix, patterns in difference_sites.items():
+            
+            if len(variable) > 0:
+                key_obsprefix = f"{key_obsprefix.split('-')[0]}-{variable}"
+                
+            if key_obsprefix not in base_data_obsprefixes:
+                print((f'warning: observation prefix {key_obsprefix} not in base_data. '
+                    'Skipping spatial differencing.'))
+                continue
+            
+            compare = []
+            if isinstance(patterns, str):
+                patterns = [patterns]
+            # matching obsprefixes must have the pattern and the variable
+            # if obsprefixes are simply formatted as site numbers
+            # (no variables)
+            # then the only variable will be an empty string,
+            # which will match any string
+            for pattern in patterns:
+                matches = [True if pattern in obsprefix and variable in obsprefix 
+                           else False for obsprefix in base_data.obsprefix]
+                compare.append(matches)
+            compare = np.any(compare, axis=0)
+            prefixes = set(base_data.loc[compare, 'obsprefix'])
+
+            # for each site in the subset, compare the values to the keys site
+            # index by stress period
+            key_values = groups.get_group(key_obsprefix).copy()
+            key_values.index = key_values.per
+
+            for obsprefix, site_observations in groups:
+                if obsprefix in prefixes:
+                    site_obs = site_observations.copy()
+                    site_obs.rename(columns={obs_values_col: f"{obs_values_col}2",  # 'obs_head2',
+                                            sim_values_col: f"{sim_values_col}2",  # 'sim_head2',
+                                            'obsnme': 'obsnme2',
+                                            'screen_top': 'screen_top2',
+                                            'screen_botm': 'screen_botm2',
+                                            'layer': 'layer2'
+                                            }, inplace=True)
+                    site_obs.index = site_obs.per
+                    site_obs['obsnme1'] = key_values['obsnme']
+                    site_obs[f"{obs_values_col}1"] = key_values[obs_values_col]
+                    site_obs[f"{sim_values_col}1"] = key_values[sim_values_col]
+                    if 'screen_top' in key_values.columns:
+                        site_obs['screen_top1'] = key_values['screen_top']
+                    if 'screen_botm' in key_values.columns:
+                        site_obs['screen_botm1'] = key_values['screen_botm']
+                    if 'layer2' in site_obs.columns:
+                        site_obs['layer1'] = key_values['layer']
+                    # negative values indicate gradient towards key site
+                    # (key site head < values site head)
+                    site_obs['obs_diff'] = site_obs[f"{obs_values_col}1"] - site_obs[f"{obs_values_col}2"]
+                    site_obs['sim_diff'] = site_obs[f"{sim_values_col}1"] - site_obs[f"{sim_values_col}2"]
+
+                    # get a screen midpoint and add gradient
+                    screen_midpoint1 = None
+                    if {'screen_top1', 'screen_botm1'}.intersection(site_obs.columns):
+                        screen_midpoint1 = site_obs[['screen_top1', 'screen_botm1']].mean(axis=1)
+                    if {'screen_top2', 'screen_botm2'}.intersection(site_obs.columns):
+                        screen_midpoint2 = site_obs[['screen_top2', 'screen_botm2']].mean(axis=1)
+                        if screen_midpoint1 is not None:
+                            site_obs['dz'] = (screen_midpoint1 - screen_midpoint2)
+                            site_obs['obs_grad'] = site_obs['obs_diff'] / site_obs['dz']
+                            site_obs['sim_grad'] = site_obs['sim_diff'] / site_obs['dz']
+                    spatial_differences.append(site_obs)
+    if len(spatial_differences) == 0:
+        raise ValueError('No spatial difference site/variable pairs found! '
+                         'Check that the key sites and their compare patterns exist in the base_data.')
         
-        if key_site_no not in base_data_sites:
-            print((f'warning: site {key_site_no} not in base_data. '
-                   'Skipping spatial differencing.'))
-            continue
-        
-        compare = []
-        if isinstance(patterns, str):
-            patterns = [patterns]
-        for pattern in patterns:
-            matches = [True if pattern in site_name else False
-                       for site_name in base_data.obsprefix]
-            compare.append(matches)
-        compare = np.any(compare, axis=0)
-        sites = set(base_data.loc[compare, 'obsprefix'])
-
-        # for each site in the subset, compare the values to the keys site
-        # index by stress period
-        key_values = groups.get_group(key_site_no).copy()
-        key_values.index = key_values.per
-
-        for obsprefix, site_observations in groups:
-            if obsprefix in sites:
-                site_obs = site_observations.copy()
-                site_obs.rename(columns={obs_values_col: f"{obs_values_col}2",  # 'obs_head2',
-                                         sim_values_col: f"{sim_values_col}2",  # 'sim_head2',
-                                         'obsnme': 'obsnme2',
-                                         'screen_top': 'screen_top2',
-                                         'screen_botm': 'screen_botm2',
-                                         'layer': 'layer2'
-                                         }, inplace=True)
-                site_obs.index = site_obs.per
-                site_obs['obsnme1'] = key_values['obsnme']
-                site_obs[f"{obs_values_col}1"] = key_values[obs_values_col]
-                site_obs[f"{sim_values_col}1"] = key_values[sim_values_col]
-                if 'screen_top' in key_values.columns:
-                    site_obs['screen_top1'] = key_values['screen_top']
-                if 'screen_botm' in key_values.columns:
-                    site_obs['screen_botm1'] = key_values['screen_botm']
-                if 'layer2' in site_obs.columns:
-                    site_obs['layer1'] = key_values['layer']
-                # negative values indicate gradient towards key site
-                # (key site head < values site head)
-                site_obs['obs_diff'] = site_obs[f"{obs_values_col}1"] - site_obs[f"{obs_values_col}2"]
-                site_obs['sim_diff'] = site_obs[f"{sim_values_col}1"] - site_obs[f"{sim_values_col}2"]
-
-                # get a screen midpoint and add gradient
-                screen_midpoint1 = None
-                if {'screen_top1', 'screen_botm1'}.intersection(site_obs.columns):
-                    screen_midpoint1 = site_obs[['screen_top1', 'screen_botm1']].mean(axis=1)
-                if {'screen_top2', 'screen_botm2'}.intersection(site_obs.columns):
-                    screen_midpoint2 = site_obs[['screen_top2', 'screen_botm2']].mean(axis=1)
-                    if screen_midpoint1 is not None:
-                        site_obs['dz'] = (screen_midpoint1 - screen_midpoint2)
-                        site_obs['obs_grad'] = site_obs['obs_diff'] / site_obs['dz']
-                        site_obs['sim_grad'] = site_obs['sim_diff'] / site_obs['dz']
-                spatial_differences.append(site_obs)
     spatial_differences = pd.concat(spatial_differences)
     spatial_differences.dropna(subset=['obs_diff', 'sim_diff'], axis=0, inplace=True)
 
@@ -592,7 +622,7 @@ def get_spatial_differences(base_data, perioddata,
     spatial_differences['obsnme'] = obsnme
     spatial_differences['obsprefix'] = obsprefix
     if 'obgnme' not in spatial_differences.columns:
-        spatial_differences['obgnme'] = obstype
+        spatial_differences['obgnme'] = variable
     spatial_differences['obgnme'] = ['{}_sdiff'.format(g)
                                          for g in spatial_differences['obgnme']]
 
@@ -609,13 +639,13 @@ def get_spatial_differences(base_data, perioddata,
     if use_gradients:
         spatial_differences['obsval'] = spatial_differences['obs_grad']
         spatial_differences['sim_obsval'] = spatial_differences['sim_grad']
-        obstype = f'{obstype} gradients'
+        variable = f'{variable} gradients'
     else:
         spatial_differences['obsval'] = spatial_differences['obs_diff']
         spatial_differences['sim_obsval'] = spatial_differences['sim_diff']
-        obstype = f'spatial {obstype} difference'
+        variable = f'spatial {variable} difference'
     spatial_differences.dropna(axis=0, subset=['obsval'], inplace=True)
-    spatial_differences['type'] = obstype
+    spatial_differences['type'] = variable
 
     # uncertainty column is from base_data;
     # assume that spatial head differences have double the uncertainty
@@ -644,7 +674,7 @@ def get_spatial_differences(base_data, perioddata,
 def get_temporal_differences(base_data, perioddata,
                              obs_values_col='obs_head',
                              sim_values_col='sim_head',
-                             obstype='head',
+                             variable='head',
                              get_displacements=False,
                              displacement_from=None,
                              obsnme_date_suffix=True,
@@ -670,11 +700,11 @@ def get_temporal_differences(base_data, perioddata,
         Column in ``base_data`` with observed values
     sim_values_col : str
         Column in `base_data`` with simulated equivalent values
-    obstype : str  {'head', 'flux', or other}
+    variable : str  {'head', 'flux', or other}
         Type of observation being processed. Simulated and observed values
-        columns are named in the format 'sim_<obstype>' and 'obs_<obstype>',
+        columns are named in the format 'sim_<variable>' and 'obs_<variable>',
         respectively. If there is no 'obgnme' column in ``base_data``,
-        ``obstype`` is also used as a default base group name.
+        ``variable`` is also used as a default base group name.
     get_displacements : bool
         If True, compute the displacement of each observation from 
         a datum (specified by ``displacement_from``). If False, difference
@@ -726,6 +756,16 @@ def get_temporal_differences(base_data, perioddata,
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
                         function_name='get_head_obs', obsdata=base_data)
+    
+    # rename the observed and sim. eq. values columns
+    renames = {obs_values_col: f'obs_{variable}',
+               sim_values_col: f'sim_{variable}',
+               }
+    base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+                   inplace=True, errors='ignore')
+    base_data.rename(columns=renames, inplace=True)
+    obs_values_col = f'obs_{variable}'
+    sim_values_col = f'sim_{variable}'
     
     # only compute differences on transient obs
     if isinstance(exclude_suffix, str):
@@ -837,13 +877,13 @@ def get_temporal_differences(base_data, perioddata,
     #    obsnme.append('{}d{}'.format(r.obsnme, obsname2_suffix))
     #period_diffs['obsnme'] = obsnme
     if 'obgnme' not in period_diffs.columns:
-        period_diffs['obgnme'] = obstype
+        period_diffs['obgnme'] = variable
     
     if get_displacements:
-        period_diffs['type'] = f'{obstype} displacement'
+        period_diffs['type'] = f'{variable} displacement'
         period_diffs['obgnme'] = [f'{g}_disp' for g in period_diffs['obgnme']]
     else:
-        period_diffs['type'] = f'temporal {obstype} difference'
+        period_diffs['type'] = f'temporal {variable} difference'
         period_diffs['obgnme'] = [f'{g}_tdiff' for g in period_diffs['obgnme']]
 
     # drop some columns that aren't really valid; if they exist
@@ -851,7 +891,7 @@ def get_temporal_differences(base_data, perioddata,
 
     # clean up columns
     cols = ['datetime', 'per', 'obsprefix', 'obsnme',
-            f'obs_{obstype}', f'sim_{obstype}', 'screen_top', 'screen_botm', 'layer',
+            f'obs_{variable}', f'sim_{variable}', 'screen_top', 'screen_botm', 'layer',
             'obsval', 'sim_obsval', 'obgnme', 'type']
     cols = [c for c in cols if c in period_diffs.columns]
     period_diffs = period_diffs[cols]
