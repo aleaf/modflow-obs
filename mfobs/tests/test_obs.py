@@ -8,7 +8,14 @@ from mfobs.modflow import (
     get_mf6_single_variable_obs, 
     get_mf_gage_package_obs)
 from mfobs.prms import get_prms_statvar_obs
-from mfobs.obs import get_base_obs, get_temporal_differences, get_spatial_differences
+from mfobs.obs import (get_base_obs, 
+                       get_temporal_differences, 
+                       get_spatial_differences,
+                       get_annual_means,
+                       get_monthly_means,
+                       get_mean_monthly,
+                       get_log10_observations
+)
 
 
 @pytest.fixture
@@ -279,3 +286,81 @@ def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_differen
     assert not results.obsval.isna().any()
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
+    
+    
+def test_get_annual_means(flux_obs):
+    
+    results = get_annual_means(flux_obs)
+    
+    # check the actual values
+    grouped = flux_obs.groupby(flux_obs.datetime.dt.year).mean()
+    expected = grouped[['obsval', 'sim_obsval']]
+    assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
+    
+    assert np.all(results.columns ==
+                ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
+                 'sim_obsval', 'obsval', 'obgnme']
+                )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
+    j=2
+    
+    
+def test_mean_monthly(flux_obs):
+    results = get_mean_monthly(flux_obs)
+    
+    # check the actual values
+    grouped = flux_obs.groupby([flux_obs.datetime.dt.month]).mean()
+    expected = grouped[['obsval', 'sim_obsval']]
+    assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
+    
+    assert np.all(results.columns ==
+                ['datetime', 'month', 'site_no', 'obsprefix', 'obsnme', 
+                 'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
+                )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
+
+
+def test_get_monthly_means(flux_obs):
+    results = get_monthly_means(flux_obs)
+    
+    # check the actual values
+    grouped = flux_obs.groupby([flux_obs.datetime.dt.year,
+                                flux_obs.datetime.dt.month]).mean()
+    expected = grouped[['obsval', 'sim_obsval']]
+    assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
+    
+    assert np.all(results.columns ==
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
+                 'sim_obsval', 'obsval', 'obgnme']
+                )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
+
+def test_log_obs(flux_obs):
+    results = get_log10_observations(flux_obs, fill_zeros_with=0)
+    
+    # check the actual values
+    expected = np.log10(flux_obs[['obsval', 'sim_obsval']])
+    expected.loc[flux_obs['obsval'] == 0, 'obsval'] = 0
+    expected.loc[flux_obs['sim_obsval'] == 0, 'sim_obsval'] = 0
+    assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
+    
+    assert np.all(results.columns ==
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
+                 'sim_obsval', 'obsval', 'obgnme']
+                )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
+
+def test_baseflow_obs():
+    pass
