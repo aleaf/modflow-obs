@@ -137,10 +137,7 @@ def get_layer(column_name):
 def get_mf6_single_variable_obs(perioddata,
                                 model_output_file,
                                 gwf_obs_input_file=None,
-                                variable_name='values',
-                                obsnme_date_suffix=True,
-                                obsnme_suffix_format='%Y%m',
-                                label_period_as_steady_state=None,
+                                variable=None,
                                 abs=True):
     """Read raw MODFLOW-6 observation output from csv table with
     times along the row axis and observations along the column axis. Reshape
@@ -169,28 +166,18 @@ def get_mf6_single_variable_obs(perioddata,
         Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).
     gwf_obs_input_file : str
         Input file to MODFLOW-6 observation utility (contains layer information).
-    variable_name : str, optional
-        Column with simulated output will be named "sim_<variable_name",
-        by default 'head'
-    obsnme_date_suffix : bool
-        If true, give observations a date-based suffix. Otherwise, assign a 
-        stress period-based suffix. In either case, the format of the suffix
-        is controlled by obsnme_suffix_format.
-        by default True
-    obsnme_suffix_format : str, optional
-        Format for suffix of obsnmes. Observation names are created following the format of
-        <obsprefix>_<date or stress period suffix>. By default, ``'%Y%m'``,
-        which would yield ``'202001'`` for a Jan, 2020 observation 
-        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
-        should be a decimal format in the "new-style" string format
-        (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
-    label_period_as_steady_state : int, optional
-        Zero-based model stress period where observations will be
-        assigned the suffix 'ss' instead of a date suffix.
-        By default, None, in which case all model output is assigned
-        a date suffix based on the start date of the stress period.
+    variable : str
+        Variable name for observations. If supplied, observation prefixes will
+        be named following the format <site number>-<variable>. 
+        If observations are already set up in MODFLOW
+        with the format <site number>-<variable>, then this is not needed.
+        By default, None, in which case observation prefixes are the same 
+        as the site numbers.
     abs : bool, optional
-        Option to convert simulated values to absolute values
+        Option to convert simulated values to absolute values. For example,
+        downstream-flow observations, which by convention are reported as 
+        negative by MODFLOW 6, but will be compared to positive observed values.
+        By default, True.
 
     Returns
     -------
@@ -198,44 +185,27 @@ def get_mf6_single_variable_obs(perioddata,
         DataFrame with one head observation per row, with the following columns:
 
         =================== =============================================================
-        per                 zero-based model stress period
-        obsprefix           prefix of observation name (site identifier)
-        sim_<variable_name> column with simulated values
         datetime            pandas datetimes, based on stress period start date
-        layer               zero-based model layer
-        obsnme              observation name based on format of <obsprefix>_'%Y%m'
-
+        site_no             unique identifier for each site
+        variable            MODFLOW variable name for observed value
+        obsprefix           prefix of observation name (site identifier)
+        sim_obsval          simulated values
+        time                modflow simulation time, in days
+        per                 modflow stress period\ :sup:`1`
         =================== =============================================================
-
-        Example observation names:
-
-        site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)
         
-        site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)
-
-        a steady-state stress period specified with label_period_as_steady_state 
-        is given the suffix of 'ss'
-        e.g. site1000_ss
+        1) Stress period information is needed to differentiate between 
+           steady-state and transient observations that may have the same timestamp.
 
 
     """
-    # validation checks
-    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_mf6_single_variable_obs')
-    
     # read in/set up the perioddata table
     if not isinstance(perioddata, pd.DataFrame):
         perioddata = pd.read_csv(perioddata)
     else:
         perioddata = perioddata.copy()        
     set_period_start_end_dates(perioddata)
-    perioddata.index = perioddata.per
-    if perioddata.index.name == 'per':
-        perioddata = perioddata.sort_index()
-    else:
-        perioddata = perioddata.sort_values(by='per')
-    if 'perlen' not in perioddata.columns:
-        perioddata['perlen'] = perioddata['time'].diff().fillna(0).tolist()
+    perioddata.index = perioddata['time']
         
     print('reading model output from {}...'.format(model_output_file))
     model_output = read_csv(model_output_file, dtype='float64')
@@ -256,12 +226,17 @@ def get_mf6_single_variable_obs(perioddata,
     model_output.dropna(subset=['per'], axis=0, inplace=True)
     model_output['per'] = model_output['per'].astype(int)
     assert np.allclose(model_output.time.values, model_output.perioddata_time.values)
-    model_output.index = model_output['per']
+    #model_output.index = model_output['per']
 
     # reshape the model output from (nper rows, nsites columns) to nper x nsites rows
+    periods = dict(zip(perioddata['time'], perioddata['per']))
     stacked = model_output.drop(['time', 'perioddata_time', 'per'], axis=1).stack(level=0).reset_index()
-    simval_col = 'sim_{}'.format(variable_name)
-    stacked.columns = ['per', 'obsprefix', simval_col]
+    simval_col = 'sim_obsval'
+    stacked.columns = ['time', 'obsprefix', simval_col]
+    stacked['site_no'] = [s.split('-')[0].split('.')[0] 
+                          for s in stacked.obsprefix]
+    stacked['variable'] = [s[1] if len(s) > 1 else variable for s in stacked.obsprefix.str.split('-')]
+    stacked['per'] = [periods[time] for time in stacked['time']]
 
     # optionally convert simulated values to absolute values
     if abs:
@@ -292,19 +267,19 @@ def get_mf6_single_variable_obs(perioddata,
     stacked['obsprefix'] = [prefix.split('.')[0] for prefix in stacked.obsprefix]
 
     # assign obsnames using the prefixes (location identifiers) and month
-    obsnames = []
-    for prefix, per, dt in zip(stacked.obsprefix, stacked.per, stacked.datetime):
-        if per == label_period_as_steady_state:
-            name = f"{prefix}_ss"
-        elif obsnme_date_suffix and not pd.isnull(dt):
-            name = f"{prefix}_{dt.strftime(obsnme_suffix_format)}"
-        elif not obsnme_date_suffix:
-            suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
-            name = f"{prefix}_{suffix}"
-        else:
-            name = prefix
-        obsnames.append(name)
-    stacked['obsnme'] = obsnames
+    #obsnames = []
+    #for prefix, per, dt in zip(stacked.obsprefix, stacked.per, stacked.datetime):
+    #    if per == label_period_as_steady_state:
+    #        name = f"{prefix}_ss"
+    #    elif obsnme_date_suffix and not pd.isnull(dt):
+    #        name = f"{prefix}_{dt.strftime(obsnme_suffix_format)}"
+    #    elif not obsnme_date_suffix:
+    #        suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
+    #        name = f"{prefix}_{suffix}"
+    #    else:
+    #        name = prefix
+    #    obsnames.append(name)
+    #stacked['obsnme'] = obsnames
 
     # drop any duplicate observations, keeping those from transient periods
     # (for example, an initial steady-state period that isn't being used for observations
@@ -312,41 +287,45 @@ def get_mf6_single_variable_obs(perioddata,
     # first make temp obsnames that include layer
     # steady state periods that are being used for observations (label_period_as_steady_state=True)
     # won't be dropped because their obs will have an "ss" suffix instead of a date suffix
-    if gwf_obs_input_file is not None:
-        unique_obsnames = ['{}_{}'.format(name, layer)
-                           for name, layer in zip(stacked.obsnme, stacked.layer)]
-    else:
-        unique_obsnames = stacked.obsnme.to_list()
-    stacked['unique_obsnames'] = unique_obsnames
-    are_duplicates = stacked['unique_obsnames'].duplicated(keep=False)
-    #are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values
-    if any(are_duplicates):
-        #duplicated_obsnames = set(stacked.loc[are_duplicates.values, 'obsnme'])
-        steady_obs = stacked.per.isin(perioddata.loc[perioddata.steady, 'per'].values)
-        drop = are_duplicates & steady_obs
-        stacked = stacked.loc[~drop]
-        #unique_obsnames = np.array(unique_obsnames)[~drop]
-        #assert not any(pd.Series(unique_obsnames).duplicated())
-    if stacked['unique_obsnames'].duplicated().any():
-        duplicates = stacked.loc[stacked['unique_obsnames']. \
-            duplicated(keep=False)].sort_values(by='unique_obsnames')
-        msg = ("mfobs.modflow.get_mf6_single_variable_obs:"
-               "Duplicate observation names.\n\nIf obsnme_date_suffix=True, "
-               "you may need a more specific obsnme_suffix_format, e.g. '%Y%m%d\n\n"
-               "Or, if the head observation input to MODFLOW is set up with an observation in each layer,\n"
-               "supply a gwf_obs_input_file so that unique observations can identified in each layer.\n\n"
-               "There could also be a mismatch between the time discretization of the model results (e.g. perlen)\n"
-               "and the start and end dates in the stress period data table (perioddata).\n"
-               "In the latter case, you may need to re-run the model "
-               f"and possibly the model setup.\n\nDuplicated obs:{duplicates}"
-               ""
-               )
-        raise ValueError(msg)
-
-    stacked.index = stacked['obsnme']
-    sort_cols = [c for c in ['obsprefix', 'per', 'layer'] if c in stacked.columns]
+    #if gwf_obs_input_file is not None:
+    #    unique_obsnames = ['{}_{}'.format(name, layer)
+    #                       for name, layer in zip(stacked.obsnme, stacked.layer)]
+    #else:
+    #    unique_obsnames = stacked.obsnme.to_list()
+    #stacked['unique_obsnames'] = unique_obsnames
+    #are_duplicates = stacked['unique_obsnames'].duplicated(keep=False)
+    ##are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values
+    #if any(are_duplicates):
+    #    #duplicated_obsnames = set(stacked.loc[are_duplicates.values, 'obsnme'])
+    #    steady_obs = stacked.per.isin(perioddata.loc[perioddata.steady, 'per'].values)
+    #    drop = are_duplicates & steady_obs
+    #    stacked = stacked.loc[~drop]
+    #    #unique_obsnames = np.array(unique_obsnames)[~drop]
+    #    #assert not any(pd.Series(unique_obsnames).duplicated())
+    #if stacked['unique_obsnames'].duplicated().any():
+    #    duplicates = stacked.loc[stacked['unique_obsnames']. \
+    #        duplicated(keep=False)].sort_values(by='unique_obsnames')
+    #    msg = ("mfobs.modflow.get_mf6_single_variable_obs:"
+    #           "Duplicate observation names.\n\nIf obsnme_date_suffix=True, "
+    #           "you may need a more specific obsnme_suffix_format, e.g. '%Y%m%d\n\n"
+    #           "Or, if the head observation input to MODFLOW is set up with an observation in each layer,\n"
+    #           "supply a gwf_obs_input_file so that unique observations can identified in each layer.\n\n"
+    #           "There could also be a mismatch between the time discretization of the model results (e.g. perlen)\n"
+    #           "and the start and end dates in the stress period data table (perioddata).\n"
+    #           "In the latter case, you may need to re-run the model "
+    #           f"and possibly the model setup.\n\nDuplicated obs:{duplicates}"
+    #           ""
+    #           )
+    #    raise ValueError(msg)
+#
+    #stacked.index = stacked['obsnme']
+    stacked.reset_index(drop=True, inplace=True)
+    sort_cols = [c for c in ['obsprefix', 'datetime'] if c in stacked.columns]
     stacked.sort_values(by=sort_cols, inplace=True)
-    results = stacked
+    stacked['obsprefix'] = [f"{sn}-{var}" if var is not None else str(sn) 
+                            for sn, var in zip(stacked['site_no'], stacked['variable'])]
+    results = stacked[['datetime', 'site_no', 'variable', 'obsprefix',
+                      simval_col, 'time', 'per']]
     return results
 
 
@@ -464,6 +443,7 @@ def get_mf_gage_package_obs(perioddata,
 
 
     """
+    # read in/set up the perioddata table
     if not isinstance(perioddata, pd.DataFrame):
         perioddata = pd.read_csv(perioddata)
     else:
@@ -471,12 +451,6 @@ def get_mf_gage_package_obs(perioddata,
     set_period_start_end_dates(perioddata)
     perioddata.index = perioddata['time']
     
-    #if perioddata.index.name == 'per':
-    #    perioddata = perioddata.sort_index()
-    #else:
-    #    perioddata = perioddata.sort_values(by='per')
-    #if 'perlen' not in perioddata.columns:
-    #    perioddata['perlen'] = perioddata['time'].diff().fillna(0).tolist()
     if isinstance(gage_package_output_files, str) or isinstance(gage_package_output_files, Path):
         gage_package_output_files = [gage_package_output_files]
     if isinstance(variable, str):

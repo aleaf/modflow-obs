@@ -1,3 +1,5 @@
+from datetime import datetime
+from pathlib import Path
 import numpy as np
 import pandas as pd
 import pytest
@@ -6,7 +8,7 @@ from mfobs.modflow import (
     get_mf6_single_variable_obs, 
     get_mf_gage_package_obs)
 from mfobs.prms import get_prms_statvar_obs
-from mfobs.obs import get_base_obs
+from mfobs.obs import get_base_obs, get_temporal_differences, get_spatial_differences
 
 
 @pytest.fixture
@@ -23,14 +25,11 @@ def flux_obs_input(shellmound_data_path):
 # TODO: refactor existing SW obs tests to work with get_base_obs
 @pytest.fixture
 def flux_obs(flux_obs_input):
-    # TODO: refactor get_mf6_single_variable_obs to not require perioddata or obsnme input
-    sfr_results = get_mf6_single_variable_obs(perioddata, model_output_file=flux_obs_input.model_output_file,
-                                          variable_name=variable_name,
-                                          obsnme_date_suffix=obsnme_date_suffix,
-                                          obsnme_suffix_format=obsnme_suffix_format,
-                                          label_period_as_steady_state=label_period_as_steady_state)
+    sfr_results = get_mf6_single_variable_obs(flux_obs_input.perioddata, 
+                                              model_output_file=flux_obs_input.model_output_file,
+                                              variable='flux'
+                                              )
 
-    
     results = get_base_obs(flux_obs_input.perioddata,
                            sfr_results,
                            observed_values_file=flux_obs_input.observed_values_file,
@@ -38,6 +37,9 @@ def flux_obs(flux_obs_input):
                            observed_values_obsval_col='obsval',
                            observed_values_group_column='category',
                            variable_name='flux',
+                           obsnme_date_suffix=True,
+                           obsnme_suffix_format='%Y%m',
+                           label_period_as_steady_state=0,
                            outfile=None,
                            write_ins=False)
     return results
@@ -45,8 +47,13 @@ def flux_obs(flux_obs_input):
 
 @pytest.fixture
 def flux_obs_per_based_suffixes(flux_obs_input):
+    sfr_results = get_mf6_single_variable_obs(flux_obs_input.perioddata, 
+                                              model_output_file=flux_obs_input.model_output_file,
+                                              variable='flux'
+                                              )
+    
     results = get_base_obs(flux_obs_input.perioddata,
-                           model_output_file=flux_obs_input.model_output_file,
+                           sfr_results,
                            observed_values_file=flux_obs_input.observed_values_file,
                            observed_values_site_id_col='site_no',
                            observed_values_obsval_col='obsval',
@@ -137,12 +144,12 @@ def test_get_base_obs_statvar(prms_statvar_obs, test_data_path):
                            outfile=None,
                            write_ins=False)
 
-@pytest.mark.skip("still working on refactoring flux obs tests to get_base_obs")
+
 def test_get_flux_obs(flux_obs):
 
     results = flux_obs
-    expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
-                        'obs_flux', 'sim_flux', 'obsval', 'obgnme']
+    expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
+                        'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
     assert np.all(results.columns == expected_columns)
     assert len(set(results.obsnme)) == len(results)
     assert not results.obs_flux.isna().any()
@@ -152,12 +159,11 @@ def test_get_flux_obs(flux_obs):
     assert np.all(results.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)
 
 
-@pytest.mark.skip("still working on refactoring flux obs tests to get_base_obs")
 def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
 
     results = flux_obs_per_based_suffixes
-    expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
-                        'obs_flux', 'sim_flux', 'obsval', 'obgnme']
+    expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
+                        'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
     assert np.all(results.columns == expected_columns)
     assert len(set(results.obsnme)) == len(results)
     assert not results.obs_flux.isna().any()
@@ -173,7 +179,6 @@ def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
     assert np.array_equal(parsed_periods, results.loc[is_trans, 'per'].values)
     
 
-@pytest.mark.skip("still working on refactoring flux obs tests to get_base_obs")
 @pytest.mark.parametrize(('write_ins,obsnme_date_suffix,'
                           'obsnme_suffix_format'), 
                          ((True, False, '03d'),
@@ -181,24 +186,29 @@ def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
                           ))
 def test_get_temporal_flux_differences(flux_obs_input, write_ins, 
                                        obsnme_date_suffix, obsnme_suffix_format):
-    flux_obs = get_flux_obs(flux_obs_input.perioddata,
-                        model_output_file=flux_obs_input.model_output_file,
-                        observed_values_file=flux_obs_input.observed_values_file,
-                        observed_values_site_id_col='site_no',
-                        observed_values_obsval_col='obsval',
-                        observed_values_group_column='category',
-                        obsnme_date_suffix=obsnme_date_suffix,
-                        obsnme_suffix_format=obsnme_suffix_format,
-                        variable_name='flux',
-                        outfile=None,
-                        write_ins=False)
+    sfr_results = get_mf6_single_variable_obs(flux_obs_input.perioddata, 
+                                              model_output_file=flux_obs_input.model_output_file,
+                                              variable='flux'
+                                              )
+    flux_obs = get_base_obs(flux_obs_input.perioddata,
+                            sfr_results,
+                            observed_values_file=flux_obs_input.observed_values_file,
+                            observed_values_site_id_col='site_no',
+                            observed_values_obsval_col='obsval',
+                            observed_values_group_column='category',
+                            variable_name='flux',
+                            obsnme_date_suffix=obsnme_date_suffix,
+                            obsnme_suffix_format=obsnme_suffix_format,
+                            label_period_as_steady_state=0,
+                            outfile=None,
+                            write_ins=write_ins)
     results = get_temporal_differences(flux_obs,
                                        flux_obs_input.perioddata,
-                                       obs_values_col='obs_flux',
-                                       sim_values_col='sim_flux',
+                                       obs_values_col='obsval',
+                                       sim_values_col='sim_obsval',
                                        obsnme_date_suffix=obsnme_date_suffix,
                                        obsnme_suffix_format=obsnme_suffix_format,
-                                       obstype='flux',
+                                       variable='flux',
                                        write_ins=write_ins,
                                        outfile=flux_obs_input.tflux_diff_obs_outfile)
     assert flux_obs_input.tflux_diff_obs_outfile.exists()
@@ -234,19 +244,18 @@ def test_get_temporal_flux_differences(flux_obs_input, write_ins,
             per2 = int(suffix1)
     
     
-@pytest.mark.skip("still working on refactoring flux obs tests to get_base_obs")
-@pytest.mark.parametrize('flux_difference_sites, write_ins',
+@pytest.mark.parametrize('flux_difference_sites, write_ins, variable',
                          (({'07288280':  # sunflower r. at merigold
                            '07288500'   # sunflower r. at sunflower
-                             }, True),
-                          ({'07288500': '07288280' }, False)))
-def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_difference_sites, write_ins):
+                             }, True, 'flux'),
+                          ({'07288500': '07288280' }, False, 'stage')))
+def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_difference_sites, variable, write_ins):
 
     results = get_spatial_differences(flux_obs, flux_obs_input.perioddata,
                                       flux_difference_sites,
-                                      obs_values_col='obs_flux',
-                                      sim_values_col='sim_flux',
-                                      obstype='flux',
+                                      obs_values_col='obsval',
+                                      sim_values_col='sim_obsval',
+                                      variable=variable,
                                       use_gradients=False,
                                       write_ins=write_ins,
                                       outfile=flux_obs_input.sflux_diff_obs_outfile)
@@ -261,8 +270,8 @@ def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_differen
 
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix',
-                   'obsnme1', 'obs_flux1', 'sim_flux1',
-                   'obsnme2', 'obs_flux2', 'sim_flux2',
+                   'obsnme1', f'obs_{variable}1', f'sim_{variable}1',
+                   'obsnme2', f'obs_{variable}2', f'sim_{variable}2',
                    'obs_diff', 'sim_diff', 'obgnme', 'obsnme',
                    'obsval', 'sim_obsval', 'type']
                   )

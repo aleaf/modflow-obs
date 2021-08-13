@@ -150,7 +150,8 @@ def test_get_mf_gage_package_obs(test_data_path):
     assert np.all(gage_results['per'].values == [0] + [1] * (len(gage_results)-1))
 
 
-def test_get_mf6_single_variable_obs(test_data_path):
+@pytest.mark.parametrize('variable', ('head', None))
+def test_get_mf6_single_variable_obs(test_data_path, variable):
     tdis_file = test_data_path / 'shellmound/mfsim.tdis'
     sto_file = test_data_path / 'shellmound/shellmound.sto'
     model_output_file = test_data_path / 'shellmound/shellmound.head.obs'
@@ -158,13 +159,13 @@ def test_get_mf6_single_variable_obs(test_data_path):
 
     perioddata = get_perioddata(tdis_file, sto_file, #start_datetime=start_date, end_datetime=end_date, 
                                 model_time_units='days')
-    assert False, "Need to refactor so that all times are returned with sp, timestep, and modflow time info. Need to do this for other reader utilities as well."
     results = get_mf6_single_variable_obs(perioddata,
                                           model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
-                                          variable_name='values',
-                                          obsnme_date_suffix=True,
-                                          obsnme_suffix_format='%Y%m',
-                                          label_period_as_steady_state=None,
+                                          variable=variable,
                                           abs=True)
-    j=2
+    # obsprefixes should include variable if one is specified
+    if variable is not None:
+        assert results.obsprefix.values[0].split('-')[1] == variable
+    else:
+        assert len(results.obsprefix.values[0].split('-')) == 1
