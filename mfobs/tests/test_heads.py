@@ -94,12 +94,12 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     assert not Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat').unlink()  # delete it
     expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
-                        'obs_head', 'sim_head', 'n', 'screen_top', 'screen_botm', 'layer',
-                        'obsval', 'obgnme'
+                        'obsval', 'sim_obsval', 'n', 'screen_top', 'screen_botm', 'layer',
+                        'obgnme'
                         ]
     assert np.all(head_obs.columns == expected_columns)
     assert len(set(head_obs.obsnme)) == len(head_obs)
-    assert not head_obs.obs_head.isna().any()
+    assert not head_obs['obsval'].isna().any()
     assert not head_obs.obsnme.str.isupper().any()
 
     # check sorting
@@ -170,9 +170,9 @@ def test_get_temporal_head_difference_obs(head_obs, head_obs_input,
                                           displacement_from):
     results = get_temporal_differences(head_obs,
                                        head_obs_input.perioddata,
-                                       obs_values_col='obs_head',
-                                       sim_values_col='sim_head',
-                                       obstype='head',
+                                       obs_values_col='obsval',
+                                       sim_values_col='sim_obsval',
+                                       variable='head',
                                        get_displacements=get_displacements,
                                        displacement_from=displacement_from,
                                        write_ins=write_ins,
@@ -228,9 +228,9 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
                              }
     results = get_spatial_differences(head_obs, head_obs_input.perioddata,
                                       head_difference_sites,
-                                      obs_values_col='obs_head',
-                                      sim_values_col='sim_head',
-                                      obstype='head',
+                                      obs_values_col='obsval',
+                                      sim_values_col='sim_obsval',
+                                      variable='head',
                                       use_gradients=False,
                                       write_ins=write_ins,
                                       outfile=head_obs_input.shead_diff_obs_outfile)

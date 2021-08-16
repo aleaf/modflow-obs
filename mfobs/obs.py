@@ -339,13 +339,15 @@ def get_base_obs(perioddata,
     obsdata.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
     # add standard obsval and obgmne columns
-    obsdata['obsval'] = obsdata[obs_values_column]
+    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
+               'uncertainty', 'obgnme']
+    if obs_values_column != 'obsval':
+        obsdata['obsval'] = obsdata[obs_values_column]
+        columns.insert(-1, 'obsval')
     if 'obgnme' not in obsdata.columns:
         obsdata['obgnme'] = variable_name
 
     # reorder the columns
-    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
-               'uncertainty', 'obsval', 'obgnme']
     columns = [c for c in columns if c in obsdata.columns]
     base_obs = obsdata[columns].copy()
     if 'layer' in columns:
@@ -753,19 +755,33 @@ def get_temporal_differences(base_data, perioddata,
     Differences are computed by subtracting the previous time from the current,
     so a positive value indicates an increase.
     """
+    base_data = base_data.copy()
+    
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
                         function_name='get_head_obs', obsdata=base_data)
+    if base_data.columns.duplicated().any():
+        raise ValueError('Duplicate column names in base_data:\n'
+                         f'{base_data.columns[base_data.columns.duplicated(keep=False)]}')
     
     # rename the observed and sim. eq. values columns
-    renames = {obs_values_col: f'obs_{variable}',
-               sim_values_col: f'sim_{variable}',
-               }
-    base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+    if variable is not None:
+        renames = {obs_values_col: f'obs_{variable}',
+                sim_values_col: f'sim_{variable}',
+                }
+        obs_values_col = f'obs_{variable}'
+        sim_values_col = f'sim_{variable}'
+    else:
+        renames = {obs_values_col: 'base_obsval',  # f'obs_{variable}',
+                sim_values_col: 'base_sim_obsval',  # f'sim_{variable}',
+                }
+        obs_values_col = f'base_obsval'
+        sim_values_col = f'base_sim_obsval'
+    base_data.drop([f'obs_{variable}', f'sim_{variable}', 
+                    'base_obsval', 'bas_sim_obsval'], axis=1, 
                    inplace=True, errors='ignore')
     base_data.rename(columns=renames, inplace=True)
-    obs_values_col = f'obs_{variable}'
-    sim_values_col = f'sim_{variable}'
+
     
     # only compute differences on transient obs
     if isinstance(exclude_suffix, str):
@@ -873,7 +889,7 @@ def get_temporal_differences(base_data, perioddata,
             f'obs_{variable}', f'sim_{variable}', 'screen_top', 'screen_botm', 'layer',
             'obsval', 'sim_obsval', 'obgnme', 'type']
     cols = [c for c in cols if c in period_diffs.columns]
-    period_diffs = period_diffs[cols]
+    period_diffs = period_diffs[cols].copy()
 
     # drop observations with no difference (first observations at each site)
     period_diffs.dropna(axis=0, subset=['obsval', 'sim_obsval'], inplace=True)
@@ -882,7 +898,7 @@ def get_temporal_differences(base_data, perioddata,
     if exclude_obs is not None:
         exclude_obs = set(exclude_obs)
         print(f"dropping {len(exclude_obs)} observations specified with exclude_obs")
-        period_diffs = period_diffs.loc[~period_diffs['obsnme'].isin(exclude_obs)]
+        period_diffs = period_diffs.loc[~period_diffs['obsnme'].isin(exclude_obs)].copy()
 
     # fill NaT (not a time) datetimes
     fill_nats(period_diffs, perioddata)

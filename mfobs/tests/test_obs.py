@@ -187,15 +187,16 @@ def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
     
 
 @pytest.mark.parametrize(('write_ins,obsnme_date_suffix,'
-                          'obsnme_suffix_format'), 
-                         ((True, False, '03d'),
-                          (False, True, '%Y%m%d'),
+                          'obsnme_suffix_format, variable_name'), 
+                         ((True, False, '03d', None),
+                          (False, True, '%Y%m%d', 'flux'),
                           ))
 def test_get_temporal_flux_differences(flux_obs_input, write_ins, 
-                                       obsnme_date_suffix, obsnme_suffix_format):
+                                       obsnme_date_suffix, obsnme_suffix_format, 
+                                       variable_name):
     sfr_results = get_mf6_single_variable_obs(flux_obs_input.perioddata, 
                                               model_output_file=flux_obs_input.model_output_file,
-                                              variable='flux'
+                                              variable=variable_name
                                               )
     flux_obs = get_base_obs(flux_obs_input.perioddata,
                             sfr_results,
@@ -203,7 +204,7 @@ def test_get_temporal_flux_differences(flux_obs_input, write_ins,
                             observed_values_site_id_col='site_no',
                             observed_values_obsval_col='obsval',
                             observed_values_group_column='category',
-                            variable_name='flux',
+                            variable_name=variable_name,
                             obsnme_date_suffix=obsnme_date_suffix,
                             obsnme_suffix_format=obsnme_suffix_format,
                             label_period_as_steady_state=0,

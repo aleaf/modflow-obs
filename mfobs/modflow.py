@@ -325,8 +325,9 @@ def get_mf6_single_variable_obs(perioddata,
     stacked.sort_values(by=sort_cols, inplace=True)
     stacked['obsprefix'] = [f"{sn}-{var}" if var is not None else str(sn) 
                             for sn, var in zip(stacked['site_no'], stacked['variable'])]
-    results = stacked[['datetime', 'site_no', 'variable', 'obsprefix',
-                      simval_col, 'time', 'per']]
+    cols = ['datetime', 'site_no', 'variable', 'obsprefix',
+            simval_col, 'layer', 'time', 'per']
+    results = stacked[[c for c in cols if c in stacked.columns]]
     return results
 
 
