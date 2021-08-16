@@ -25,7 +25,7 @@ def test_get_prms_statvar_obs(test_data_path, statvar_sitenames,
 )
     assert np.all(results.columns ==
                   ['datetime', 'site_no', 'variable', 'obsprefix', 'obsnme',
-                   'sim_obsval', 'per', 'time']
+                   'sim_obsval']
                   )
     assert results.loc[expected_obsnme, 'sim_obsval'] == expected_value
     assert results.loc[expected_obsnme, 'site_no'] == expected_site_no

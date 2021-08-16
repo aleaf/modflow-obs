@@ -260,18 +260,19 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     if outfile is not None:
         outpath = Path(outfile).parent
 
-    obs_values_column = 'obs_' + variable_name  # output column with observed values
-    sim_values_column = 'sim_' + variable_name  # output column with simulated equivalents to observed values
+    obs_values_column = 'obsval'  # + variable_name  # output column with observed values
+    sim_values_column = 'sim_obsval' # + variable_name  # output column with simulated equivalents to observed values
 
     perioddata = perioddata.copy()
     set_period_start_end_dates(perioddata)
     perioddata.index = perioddata.per
     results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
-                                          variable_name=variable_name,
-                                          obsnme_date_suffix=obsnme_date_suffix,
-                                          obsnme_suffix_format=obsnme_suffix_format,
-                                          label_period_as_steady_state=label_period_as_steady_state)
+                                          #variable_name=variable_name,
+                                          #obsnme_date_suffix=obsnme_date_suffix,
+                                          #obsnme_suffix_format=obsnme_suffix_format,
+                                          #label_period_as_steady_state=label_period_as_steady_state
+                                          )
 
     # rename columns to their defaults
     renames = {observed_values_site_id_col: 'obsprefix',
@@ -376,6 +377,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 start = steady_state_period_start
             if steady_state_period_end is not None:
                 end = steady_state_period_end
+                
+        # kludge to assign obsnmes to model results
+        # until head obs handling gets refactored into obs.get_base_obs
+        data['obsnme'] = ['{}_{}'.format(prefix.lower(), suffix)
+                          for prefix in data.obsprefix]
+        data.index = data['obsnme']
+        
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
         if len(observed_in_period) == 0:
             warnings.warn(('Stress period {}: No observations between start and '
@@ -399,11 +407,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         observed_in_period_rs['obsnme'] = obsnames
         observed_in_period_rs.index = observed_in_period_rs['obsnme']
 
-        # get head values based on T-weighted average of open interval
+        # get simulated head values based on T-weighted average of open interval
         if observed_values_layer_col is None:
             # get a n layers x n sites array of simulated head observations
             data = data.reset_index(drop=True)
-            heads_2d = data.pivot(columns='layer', values='sim_head', index='obsnme').T.values
+            heads_2d = data.pivot(columns='layer', values='sim_obsval', index='obsnme').T.values
             obsnme = data.pivot(columns='layer', values='obsnme', index='obsnme').index.tolist()
 
             # x, y, screen_top and screen_botm have one value for each site
@@ -454,6 +462,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             sim_values = []
             for obsnme, layer in zip(observed_in_period_rs.obsnme, observed_in_period_rs.layer):
                 obsnme_results = data.loc[obsnme]
+                
                 # if a DataFrame (with simulated values for multiple layers) is returned
                 if len(obsnme_results.shape) == 2:
                     layer = obsnme_results.iloc[np.argmin(obsnme_results.layer - layer)]['layer']
@@ -490,13 +499,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     head_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
     # add standard obsval and obgmne columns
-    head_obs['obsval'] = head_obs[obs_values_column]
+    #head_obs['obsval'] = head_obs[obs_values_column]
     if 'obgnme' not in head_obs.columns:
         head_obs['obgnme'] = variable_name
 
     # reorder the columns
     columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
-               'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 'obsval', 'obgnme']
+               'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 'obgnme']
     columns = [c for c in columns if c in head_obs.columns]
     head_obs = head_obs[columns].copy()
     if 'layer' in columns:

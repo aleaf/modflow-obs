@@ -98,8 +98,6 @@ def test_add_timesteps_to_perioddata():
                           ('mf2005/badger_mill_ck.ggo', 'Hyd.Grad.', 'hydgrad', None),
                           ('mf2005/P32S.ggo', 'gw-head', 'gw-head', [919.12427, 916.03711]),
                           (['mf2005/badger_mill_ck.ggo', 'mf2005/badger_mill_ck2.ggo'], 'Flow', 'flow', \
-                           [[101740.06, 137382.61], [142659.840, 978764.000]]),
-                          (['mf2005/badger_mill_ck.ggo', 'mf2005/badger_mill_ck2.ggo'], None, None, \
                            [[101740.06, 137382.61], [142659.840, 978764.000]])
                           )
                          )
@@ -164,6 +162,10 @@ def test_get_mf6_single_variable_obs(test_data_path, variable):
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           variable=variable,
                                           abs=True)
+    assert np.all(results.columns ==
+                ['datetime', 'site_no', 'variable', 'obsprefix',
+                'sim_obsval', 'layer', 'time', 'per']
+                )
     # obsprefixes should include variable if one is specified
     if variable is not None:
         assert results.obsprefix.values[0].split('-')[1] == variable
