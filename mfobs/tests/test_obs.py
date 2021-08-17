@@ -14,7 +14,8 @@ from mfobs.obs import (get_base_obs,
                        get_annual_means,
                        get_monthly_means,
                        get_mean_monthly,
-                       get_log10_observations
+                       get_log10_observations,
+                       get_baseflow_observations
 )
 
 
@@ -91,39 +92,12 @@ def prms_statvar_obs(test_data_path):
 
 @pytest.fixture
 def gage_package_obs(test_data_path):
-    gage_file = test_data_path / 'mf2005/badger_mill_ck2.ggo'
+    gage_file = test_data_path / 'mf2005/04027500.ggo'
     perioddata = get_perioddata(test_data_path / 'mf2005/br_trans.dis', start_datetime='2000-01-01',
                                 end_datetime='2001-02-01', include_timesteps=True)
     gage_results = get_mf_gage_package_obs(perioddata, gage_file, variable='flow',
                                            abs=True)
     return gage_results, perioddata
-
-
-@pytest.mark.skip("need an observed values file")
-def test_get_base_obs_gage(gage_package_obs, test_data_path):
-    
-    gage_results, perioddata = gage_package_obs
-    observed_values_file = test_data_path / 'prms/daily_snowdepth.csv'
-    observed_values_metadata = test_data_path / 'prms/snowpack_locations.csv'
-    
-    results = get_base_obs(perioddata,
-                           gage_results,
-                           observed_values_file=observed_values_file,
-                           #observed_values_metadata_file=observed_values_metadata,
-                           variable_name='pk_depth',
-                           observed_values_site_id_col='STATION',
-                           observed_values_datetime_col='DATE',
-                           obsnme_date_suffix=True,
-                           obsnme_suffix_format='%Y%m%d',
-                           observed_values_obsval_col='SNWD',
-                           observed_values_group_column='obgnme',
-                           observed_values_unc_column='uncertainty',
-                           aggregrate_observed_values_method='mean',
-                           drop_groups=None,
-                           label_period_as_steady_state=None, steady_state_period_start=None,
-                           steady_state_period_end=None,
-                           outfile=None,
-                           write_ins=False)
     
     
 def test_get_base_obs_statvar(prms_statvar_obs, test_data_path):
@@ -363,5 +337,39 @@ def test_log_obs(flux_obs):
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
 
-def test_baseflow_obs():
-    pass
+
+def test_get_baseflow_observations(gage_package_obs, test_data_path):
+    """Test getting base obs from the gage package, and then baseflow 
+    derivative obs."""
+    
+    gage_results, perioddata = gage_package_obs
+    observed_values_file = test_data_path / 'mf2005/04027500.csv'
+    
+    base_obs = get_base_obs(perioddata,
+                           gage_results,
+                           observed_values_file=observed_values_file,
+                           #observed_values_metadata_file=observed_values_metadata,
+                           variable_name='flow',
+                           observed_values_site_id_col='site_no',
+                           observed_values_datetime_col='datetime',
+                           obsnme_date_suffix=True,
+                           obsnme_suffix_format='%Y%m%d',
+                           observed_values_obsval_col='q_cfd',
+                           #observed_values_group_column='obgnme',
+                           #observed_values_unc_column='uncertainty',
+                           #aggregrate_observed_values_method='mean',
+                           #drop_groups=None,
+                           #label_period_as_steady_state=0, steady_state_period_start=None,
+                           #steady_state_period_end=None,
+                           outfile=None,
+                           write_ins=False)
+    results = get_baseflow_observations(base_obs)
+    
+    assert np.all(results.columns ==
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flow',
+                 'sim_obsval', 'obsval', 'obgnme']
+                )
+    assert len(set(results.obsnme)) == len(results)
+    assert not results.obsval.isna().any()
+    assert not results.sim_obsval.isna().any()
+    assert results.obsnme.str.islower().all()
