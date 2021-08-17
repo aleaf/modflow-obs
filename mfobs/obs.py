@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import write_insfile
+from mfobs.sep import ih_method
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
 
@@ -293,11 +294,17 @@ def get_base_obs(perioddata,
             results, start, end, 
             aggregrate_observed_values_method=aggregrate_observed_values_method,
             obsnme_suffix=suffix)
-
+        
+        if sim_in_period_rs is None:
+            if per_column == 'per':
+                warnings.warn(('Stress period {}: No simulated equivalents between start and '
+                                'end dates of {} and {}!'.format(r['per'], start, end)))
+            continue
+        
         any_simulated_obs = sim_in_period_rs.obsnme.isin(observed_in_period_rs.obsnme).any()
         
         if not any_simulated_obs and (per_column == 'per'):
-            warnings.warn(('Stress period {}: No simulated values between start and '
+            warnings.warn(('Stress period {}: No observation/simulated equivalent pairs for start and '
                             'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
 
@@ -1084,8 +1091,7 @@ def get_monthly_means(base_data,
         which now contain the aggregated values):
         
         =================== =============================================================
-        datetime            year of annual mean, as datetime
-        year                year of annual mean, as integer
+        datetime            aggregated dates as datetime objects
         site_no             unique site identifier
         obsprefix\ :sup:`1` prefix of observation name
         obsnme              observation name based on format of <obsprefix>_<suffix>\ :sup:`2`
@@ -1197,8 +1203,8 @@ def get_mean_monthly(base_data,
         which now contain the aggregated values):
         
         =================== =============================================================
-        datetime            year of annual mean, as datetime
-        year                year of annual mean, as integer
+        datetime            datetimes that represent the mean of the period averaged
+        month               month of monthly average values
         site_no             unique site identifier
         obsprefix\ :sup:`1` prefix of observation name
         obsnme              observation name based on format of <obsprefix>_<suffix>\ :sup:`2`
@@ -1312,8 +1318,7 @@ def get_log10_observations(base_data,
         which now contain the aggregated values):
         
         =================== =============================================================
-        datetime            year of annual mean, as datetime
-        year                year of annual mean, as integer
+        datetime            observation dates as datetimes
         site_no             unique site identifier
         obsprefix\ :sup:`1` prefix of observation name
         obsnme              observation name based on format of <obsprefix>_<suffix>\ :sup:`2`
@@ -1364,3 +1369,119 @@ def get_log10_observations(base_data,
                           index=False)
     return log_base_data
     
+
+def get_baseflow_observations(base_data, 
+                              obsnme_suffix_format='%Y%m%d-bf',
+                              exclude_suffix='ss',
+                              obgnme_suffix='bf',
+                              outfile=None,
+                              write_ins=False, **kwargs):
+    """Create observations of base flow using the 
+    BFI/Institute of Hydrology hydrograph separation method (:func:`mfobs.sep.ih_method`).
+    
+    
+    Parameters
+    ----------
+    base_data : DataFrame
+        Table of preprocessed observations, such as that produced by
+        :func:`mfobs.obs.get_base_obs`. Must have the following columns,
+        in addition to columns of floating point data to aggregate 
+        (which can have any name):
+        
+        =================== =============================================================
+        datetime            pandas datetimes, based on stress period end date
+        site_no             unique site identifier
+        obsprefix\ :sup:`1` prefix of observation name
+        obsnme              observation name based on format of <obsprefix>_<suffix>\ :sup:`2`
+        obgnme              observation group name
+
+        =================== =============================================================
+        
+        1) where obsprefix is assumed to be formatted as <site_no>-<variable> or simply <site_no>
+        2) Assumed to be formatted <obsprefix>_<`obsnme_suffix_format`>
+        
+    obsnme_suffix_format : str, optional
+        Format for suffix of obsnmes.
+        By default ''%Y%m%d-log' (e.g. 20010101-log for Jan 1, 2001)
+    exclude_suffix : str or list-like
+        Option to exclude observations from differencing by suffix;
+        e.g. 'ss' to include steady-state observations.
+        By default, 'ss'
+    obgnme_suffix : str
+        Create new observation group names by appending this suffix to existing
+        obgnmes, for example <existing obgnme>_<obgnme_suffix>
+        by default, 'annual-mean'
+    outfile : str, optional
+        CSV file to write output to.
+        By default, None (no output written)
+    write_ins : bool, optional
+        Option to write instruction file, by default False
+    **kwargs : key-word arguments to :func:`mfobs.sep.ih_method`
+
+    Returns
+    -------
+    bf_base_data : DataFrame
+        With the following columns (in addition to the data columns in `base_data`, 
+        which now contain the aggregated values):
+        
+        =================== =============================================================
+        datetime            observation dates as datetimes
+        site_no             unique site identifier
+        obsprefix\ :sup:`1` prefix of observation name
+        obsnme              observation name based on format of <obsprefix>_<suffix>\ :sup:`2`
+        obgnme              observation group name\ :sup:`3`
+
+        =================== =============================================================
+        
+        1) With format <site_no>-<variable> or simply <site_no> 
+        2) With suffix formatted with `obsnme_suffix_format`
+        3) With format of <original obgnme>_<obgnme_suffix>
+            e.g. heads_annual-mean
+        
+        
+    Notes
+    -----
+    """
+    base_data['datetime'] = pd.to_datetime(base_data['datetime'])
+    
+    # only compute statistics on transient obs
+    if isinstance(exclude_suffix, str):
+        exclude_suffix = [exclude_suffix]
+    suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
+    keep = ~np.in1d(suffix, exclude_suffix)
+    base_data = base_data.loc[keep].copy()
+    
+    bf_base_data = base_data.copy()
+    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    bf_base_data.index = pd.to_datetime(bf_base_data['datetime'])
+    
+    dfs = []
+    site_groups = bf_base_data.groupby('obsprefix')
+    for obsprefix, group in site_groups:
+        for c in data_cols:            
+            results = ih_method(group[c], **kwargs)
+            group[c] = results['QB']
+        dfs.append(group)
+    bf_base_data = pd.concat(dfs)
+
+    # drop nan values
+    bf_base_data.dropna(subset=['obsval', 'sim_obsval'], axis=0, inplace=True)
+
+    bf_base_data['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}".lower() 
+                            for prefix, dt in zip(bf_base_data['obsprefix'], 
+                                                  bf_base_data['datetime'])]
+    bf_base_data['obgnme'] = [f"{prefix}_{obgnme_suffix}" 
+                            for prefix in bf_base_data['obgnme']]
+    cols = ['datetime', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme']
+    bf_base_data = bf_base_data[cols]
+    
+    if outfile is not None:
+        bf_base_data.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {len(bf_base_data):,} observations to {outfile}')
+
+        # write the instruction file
+        if write_ins:
+            write_insfile(bf_base_data, str(outfile) + '.ins',
+                          obsnme_column='obsnme', simulated_obsval_column='sim_obsval',
+                          index=False)
+    return bf_base_data
