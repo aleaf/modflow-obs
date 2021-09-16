@@ -241,7 +241,9 @@ def get_base_obs(perioddata,
     # for each model stress period or timestep, get the simulated values
     # and the observed equivalents
     observed.index = pd.to_datetime(observed.datetime)
+    observed.sort_index(inplace=True)
     results.index = pd.to_datetime(results.datetime)
+    results.sort_index(inplace=True)
     
     # integer column for stress period- or timestep-based obsnme suffixes
     # timestep-based observations
@@ -378,7 +380,9 @@ def get_base_obs(perioddata,
 def aggregrate_to_period(data, start, end, obsnme_suffix,
                          aggregrate_observed_values_method='mean',
                          ):
-    data_in_period = data.sort_index().loc[start:end].reset_index(drop=True)
+
+    data_in_period = data.loc[start:end].reset_index(drop=True)
+        
     if (len(data_in_period) == 0):
         return
     data_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
@@ -1017,12 +1021,12 @@ def get_annual_means(base_data,
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
-    grouped = base_data.groupby(base_data['datetime'].dt.year)
+    grouped = base_data.groupby([base_data['site_no'], base_data['datetime'].dt.year])
     aggregated = grouped.first()
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
-    aggregated.index.name = 'year'
+    aggregated.index.set_names(['site_no', 'year'], inplace=True)
     aggregated.reset_index(inplace=True)
         
     aggregated['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}" 
@@ -1130,13 +1134,15 @@ def get_monthly_means(base_data,
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
-    grouped = base_data.groupby([base_data['datetime'].dt.year, 
+    grouped = base_data.groupby([base_data['site_no'],
+                                 base_data['datetime'].dt.year, 
                                  base_data['datetime'].dt.month])
     aggregated = grouped.first()
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
-    aggregated.reset_index(drop=True, inplace=True)
+    aggregated.index.set_names(['site_no', 'year', 'month'], inplace=True)
+    aggregated.reset_index(inplace=True)
         
     aggregated['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}" 
                             for prefix, dt in zip(aggregated['obsprefix'], 
@@ -1243,12 +1249,13 @@ def get_mean_monthly(base_data,
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
-    grouped = base_data.groupby([base_data['datetime'].dt.month])
+    grouped = base_data.groupby([base_data['site_no'],
+                                 base_data['datetime'].dt.month])
     aggregated = grouped.first()
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
-    aggregated.index.name = 'month'
+    aggregated.index.set_names(['site_no', 'month'], inplace=True)
     aggregated.reset_index(inplace=True)
     aggregated['month'] = [f"{dt:%B}" for dt in aggregated['datetime']]
         
@@ -1468,9 +1475,12 @@ def get_baseflow_observations(base_data,
     dfs = []
     site_groups = bf_base_data.groupby('obsprefix')
     for obsprefix, group in site_groups:
-        for c in data_cols:            
-            results = ih_method(group[c], **kwargs)
-            group[c] = results['QB']
+        for c in data_cols:
+            # series must be at least 2x the BFI block length (default=5)
+            block_length = kwargs.get('block_length', 5)
+            if len(group[c]) >= (block_length * 2):            
+                results = ih_method(group[c], **kwargs)
+                group[c] = results['QB']
         dfs.append(group)
     bf_base_data = pd.concat(dfs)
 

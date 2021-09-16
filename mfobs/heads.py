@@ -8,6 +8,7 @@ import pandas as pd
 from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import load_array, write_insfile
 from mfobs.modflow import get_mf6_single_variable_obs, get_transmissivities
+from mfobs.obs import aggregrate_to_period
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
 
@@ -187,15 +188,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         object. By default, 'mean'
     drop_groups : sequence, optional
         Observation groups to exclude from output, by default None
-    hk_arrays : list-like, optional
+    hk_arrays : list-like of pathlikes or ndarray, optional
         File paths to text arrays with hydraulic conductivity values
         (ordered by model layer). Used in the transmissivity-weighted averaging.
         by default None
-    top_array : str, optional
+    top_array : str, pathlike or ndarray, optional
         File paths to text array with model top elevations.
         Used in the transmissivity-weighted averaging.
         by default None
-    botm_arrays : str, optional
+    botm_arrays : str, pathlike or ndarray, optional
         File paths to text arrays with model cell bottom elevations.
         (ordered by model layer). Used in the transmissivity-weighted averaging.
         by default None
@@ -301,7 +302,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                                           )
 
     # rename columns to their defaults
-    renames = {observed_values_site_id_col: 'obsprefix',
+    renames = {#observed_values_site_id_col: 'obsprefix',
                observed_values_datetime_col: 'datetime',
                observed_values_x_col: 'x',
                observed_values_y_col: 'y',
@@ -318,6 +319,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     else:
         observed = observed_values_file
     observed.rename(columns=renames, inplace=True)
+    observed['obsprefix'] = observed[observed_values_site_id_col]
 
     # read in the observed values metadata
     if observed_values_metadata_file is not None:
@@ -327,6 +329,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         else:
             metadata = observed_values_metadata_file
         metadata.rename(columns=renames, inplace=True)
+        metadata['obsprefix'] = metadata[observed_values_site_id_col]
 
         # join the metadata to the observed data
         metadata.index = metadata['obsprefix'].values
@@ -334,6 +337,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         join_cols = [c for c in ['screen_top', 'screen_botm', 'x', 'y', 'layer']
                      if c in metadata.columns]
         observed = observed.join(metadata[join_cols])
+        assert not observed[['x', 'y']].isna().any().any()
 
     # convert obs names and prefixes to lower case
     observed['obsprefix'] = observed['obsprefix'].str.lower()
@@ -381,9 +385,18 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # collapse these into one value for each location, time
     # by taking the transmissivity-weighted average
     if observed_values_layer_col is None:
-        hk = load_array(hk_arrays)
-        top = load_array(top_array)
-        botm = load_array(botm_arrays)
+        if isinstance(hk_arrays, str) or isinstance(hk_arrays, Path):
+            hk = load_array(hk_arrays)
+        else:
+            hk = hk_arrays
+        if isinstance(top_array, str) or isinstance(top_array, Path):
+            top = load_array(top_array)
+        else:
+            top = top_array
+        if isinstance(botm_arrays, str) or isinstance(botm_arrays, Path):
+            botm = load_array(botm_arrays)
+        else:
+            botm = botm_arrays
 
     # get the x and y location and open interval corresponding to each head observation
     x = dict(zip(observed['obsprefix'], observed['x']))
@@ -401,32 +414,63 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # for each model stress period, get the simulated values
     # and the observed equivalents
     observed.index = pd.to_datetime(observed.datetime)
-    periods = results.groupby('per')
+    results.index = pd.to_datetime(results.datetime)
+    
+    # integer column for stress period- or timestep-based obsnme suffixes
+    # timestep-based observations
+    if 'timestep' in perioddata.columns:
+        perioddata['unique_timestep'] = list(range(len(perioddata)))
+        per_column = 'unique_timestep'
+    # stress period-based observations
+    else:
+        per_column = 'per'
+        
     observed_simulated_combined = []
-    for per, data in periods:
+    for i, r in perioddata.iterrows():
 
         # get the equivalent observed values
-        start, end = perioddata.loc[per, ['start_datetime', 'end_datetime']]
+        start, end = str(r['start_datetime']), str(r['end_datetime'])
+        
         # date-based suffix
         if obsnme_date_suffix:  
             suffix = pd.Timestamp(end).strftime(obsnme_suffix_format)
-        # stress period-based suffix
+        # stress or timestep-based period-based suffix
         else:  
-            suffix = f"{per:{obsnme_suffix_format.strip('{:}')}}"
+            suffix = f"{r[per_column]:{obsnme_suffix_format.strip('{:}')}}"
 
         # steady-state observations can represent a period
         # other than the "modflow time" in the perioddata table
-        if per == label_period_as_steady_state:
+        if r['per'] == label_period_as_steady_state:
             suffix = 'ss'
             if steady_state_period_start is not None:
-                start = steady_state_period_start
+                start = str(steady_state_period_start)
             if steady_state_period_end is not None:
-                end = steady_state_period_end
-                
+                end = str(steady_state_period_end)
+        # don't process observations for a steady-state period unless 
+        # it is explicitly labeled as such and given a representative date range
+        elif r['steady']:
+            continue
+        
+        aggregrate_observed_values_method = 'mean'
+        
+        observed_in_period_rs = aggregrate_to_period(
+            observed, start, end, 
+            aggregrate_observed_values_method=aggregrate_observed_values_method,
+            obsnme_suffix=suffix)
+        if observed_in_period_rs is None:
+            if per_column == 'per':
+                warnings.warn(('Stress period {}: No observations between start and '
+                                'end dates of {} and {}!'.format(r['per'], start, end)))
+            continue
+
+        data = results.loc[start:end].copy()
+        if len(data) == 0:
+            continue
         # kludge to assign obsnmes to model results
         # until head obs handling gets refactored into obs.get_base_obs
         data['obsnme'] = ['{}_{}'.format(prefix.lower(), suffix)
                           for prefix in data.obsprefix]
+        
         data.index = data['obsnme']
         
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
@@ -545,7 +589,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             observed_in_period_rs[sim_values_column] = sim_values
 
         # add stress period and observed values
-        observed_in_period_rs['per'] = per
+        observed_in_period_rs['per'] = r['per']
         observed_in_period_rs[obs_values_column] = observed_in_period_rs[observed_values_obsval_col]
         observed_simulated_combined.append(observed_in_period_rs)
 
@@ -609,7 +653,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         head_obs = head_obs.loc[keep].copy()
 
     # reorder the columns
-    columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
+    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
+               obs_values_column, sim_values_column,
                'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 'obgnme']
     columns = [c for c in columns if c in head_obs.columns]
     head_obs = head_obs[columns].copy()

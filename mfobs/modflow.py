@@ -239,16 +239,21 @@ def get_mf6_single_variable_obs(perioddata,
                           for s in stacked.obsprefix]
     stacked['variable'] = [s[1] if len(s) > 1 else variable for s in stacked.obsprefix.str.split('-')]
     stacked['per'] = [periods[time] for time in stacked['time']]
+    stacked.index = stacked['time']
 
     # optionally convert simulated values to absolute values
     if abs:
         stacked[simval_col] = stacked[simval_col].abs()
-
+    
+    # add dates
+    stacked['datetime'] = perioddata['end_datetime']
+    assert not stacked.drop('variable', axis=1).isna().any().any()
+    
     # add dates
     #perlen = dict(zip(perioddata.per, perioddata.perlen))
     #period_start_dates = dict(zip(perioddata.per, perioddata.start_datetime))
-    period_end_dates = dict(zip(perioddata.per, perioddata.end_datetime))
-    stacked['datetime'] = pd.to_datetime([period_end_dates.get(per) for per in stacked.per])
+    #period_end_dates = dict(zip(perioddata.per, perioddata.end_datetime))
+    #stacked['datetime'] = pd.to_datetime([period_end_dates.get(per) for per in stacked.per])
     # get the start date of the next period
     # so that suffix for an observation would be consistent with the start date of the next obs
     #next_period_start = [period_start_dates.get(per) for per in stacked.per][1:]
@@ -262,8 +267,8 @@ def get_mf6_single_variable_obs(perioddata,
         gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)
         # Assign layer to each observation,
         # assuming that numbering in gwf_obs_input is repeated nper times
-        nper = len(stacked.per.unique())
-        stacked['layer'] = gwf_obs_input['k'].tolist() * nper
+        ntimes = len(stacked['time'].unique())
+        stacked['layer'] = gwf_obs_input['k'].tolist() * ntimes
 
     # reset the obsprefixes to be the same for different layers at a location
     stacked['obsprefix'] = [prefix.split('.')[0] for prefix in stacked.obsprefix]

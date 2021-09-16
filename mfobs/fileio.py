@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-def load_array(files):
+def load_array(files, shape=None):
     """Create a 3D numpy array from a list
     of ascii files containing 2D arrays.
 
@@ -23,9 +23,24 @@ def load_array(files):
     """
     if isinstance(files, str) or isinstance(files, Path):
         return np.loadtxt(files)
+    if shape is not None:
+        if len(files) != shape[0]:
+            raise ValueError(
+                'Number of files should match the first element in shape!')
     arrays = []
     for f in files:
-        arrays.append(np.loadtxt(f))
+        try:
+            arr = np.loadtxt(f)
+        except:
+            if shape is not None:
+                with open(f) as src:
+                    arr = src.read().replace('\n', ' ')
+                    arr = np.fromstring(arr, sep=' ')
+                arr = np.reshape(arr, shape[-2:])
+            else:
+                raise ValueError('Text array file {} not readable by np.loadtxt; may be wrapped. '
+                                 'Please supply output shape of array.')
+        arrays.append(arr)
     array3d = np.stack(arrays)
     return array3d
 
