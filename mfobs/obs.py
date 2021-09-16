@@ -912,10 +912,9 @@ def get_temporal_differences(base_data, perioddata,
 
 
 def get_annual_means(base_data, 
-                     obsnme_date_suffix=True,
                      obsnme_suffix_format='%Y',
                      exclude_suffix='ss',
-                     obgnme_suffix='monthly-mean',
+                     obgnme_suffix='annual-mean',
                      outfile=None,
                      write_ins=False):
     """Create observations of annual mean values for a set of 
@@ -984,9 +983,10 @@ def get_annual_means(base_data,
     Notes
     -----
     """
-        # validation checks
-    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_head_obs', obsdata=base_data)
+    # validation checks
+    #obsnme_date_suffix=True
+    #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+    #                    function_name='get_head_obs', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs
@@ -1025,7 +1025,6 @@ def get_annual_means(base_data,
     
     
 def get_monthly_means(base_data, 
-                      obsnme_date_suffix=True,
                       obsnme_suffix_format='%Y%m',
                       exclude_suffix='ss',
                       obgnme_suffix='monthly-mean',
@@ -1097,9 +1096,10 @@ def get_monthly_means(base_data,
     Notes
     -----
     """
-        # validation checks
-    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_head_obs', obsdata=base_data)
+    # validation checks
+    #obsnme_date_suffix=True
+    #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+    #                    function_name='get_head_obs', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs
@@ -1140,7 +1140,6 @@ def get_monthly_means(base_data,
 
 
 def get_mean_monthly(base_data, 
-                     obsnme_date_suffix=True,
                      obsnme_suffix_format='%b',
                      exclude_suffix='ss',
                      obgnme_suffix='mean-monthly',
@@ -1212,9 +1211,10 @@ def get_mean_monthly(base_data,
     Notes
     -----
     """
-        # validation checks
-    check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_head_obs', obsdata=base_data)
+    # validation checks
+    #obsnme_date_suffix=True,
+    #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
+    #                    function_name='get_head_obs', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs
