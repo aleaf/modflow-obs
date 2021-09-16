@@ -8,11 +8,11 @@ from mfobs.prms import read_statvar_file, get_prms_statvar_obs
 def test_read_statvar(test_data_path):
     statvar_file = test_data_path / 'prms/brsql500.statvar'
     df = read_statvar_file(statvar_file)
-    assert df.loc['2000-01-01', '1527-seg_outflow'] == 6.321514
+    assert df.loc['2000-01-01', '1527-segoutflow'] == 6.321514
     
 @pytest.mark.parametrize('statvar_sitenames,expected_obsnme,expected_site_no,expected_value', (
-     (None, '1527-seg_outflow_20000101', 1527, 6.321514),
-     ({1527: 'SITE1'}, 'site1-seg_outflow_20000101', 'site1', 6.321514)
+     (None, '1527-segoutflow_20000101', 1527, 6.321514),
+     ({1527: 'SITE1'}, 'site1-segoutflow_20000101', 'site1', 6.321514)
 ))
 def test_get_prms_statvar_obs(test_data_path, statvar_sitenames, 
                               expected_obsnme, expected_site_no, expected_value):

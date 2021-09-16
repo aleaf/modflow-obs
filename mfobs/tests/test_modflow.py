@@ -171,3 +171,19 @@ def test_get_mf6_single_variable_obs(test_data_path, variable):
         assert results.obsprefix.values[0].split('-')[1] == variable
     else:
         assert len(results.obsprefix.values[0].split('-')) == 1
+
+@pytest.mark.parametrize('gwf_obs_input_file', (None, 'mf6/br_mf6.obs'))
+def test_get_mf6_single_variable_obs_daily(test_data_path, gwf_obs_input_file):
+    model_output_file = test_data_path / 'mf6/head.obs'
+    if gwf_obs_input_file is not None:
+        gwf_obs_input_file = test_data_path / 'mf6/br_mf6.obs'
+
+    perioddata = get_perioddata(test_data_path / 'mf2005/br_trans.dis', start_datetime='2000-01-01',
+                            end_datetime='2001-02-01', include_timesteps=True)
+    results = get_mf6_single_variable_obs(perioddata,
+                                          model_output_file,
+                                          gwf_obs_input_file=gwf_obs_input_file,
+                                          variable='head',
+                                          abs=True)
+    # 1 steady-state period; 39 timesteps in transient period
+    assert len(results.datetime.unique()) == 39

@@ -57,4 +57,5 @@ def set_period_start_end_dates(perioddata):
     start_datetimes = pd.to_datetime(perioddata.start_datetime.values)
     perlen = np.array(perioddata['time'].tolist()[:1] + perioddata['time'].diff().tolist()[1:])
     new_end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
+    perioddata['start_datetime'] = start_datetimes.strftime('%Y-%m-%d')
     perioddata['end_datetime'] = new_end_datetimes.strftime('%Y-%m-%d')

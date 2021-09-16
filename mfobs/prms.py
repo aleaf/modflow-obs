@@ -26,6 +26,9 @@ def read_statvar_file(statvar_file):
         site_names = []
         for i in range(n_sites):
             variable, segment = next(iter(src)).strip().split()
+            # remove underscores,
+            # which are used as delimiter in observation names
+            variable = variable.replace('_', '')
             segment = int(segment)
             site_names.append(f"{segment}-{variable}")
         parse = lambda x: dt.datetime.strptime(x, '%Y %m %d %H %M %S')
