@@ -11,7 +11,7 @@ try:
 except:
     flopy = False
 from mfobs.checks import check_obsnme_suffix
-from mfobs.fileio import write_insfile
+from mfobs.fileio import write_insfile, read_csv
 
 
 itmuni_text = {0: "undefined",
@@ -222,7 +222,7 @@ def get_mf6_single_variable_obs(perioddata,
     if 'perlen' not in perioddata.columns:
         perioddata['perlen'] = perioddata['time'].diff().fillna(0).tolist()
     print('reading model output from {}...'.format(model_output_file))
-    model_output = pd.read_csv(model_output_file)
+    model_output = read_csv(model_output_file, dtype='float64')
 
     # convert all observation names to lower case
     model_output.columns = model_output.columns.str.lower()

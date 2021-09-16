@@ -2,7 +2,9 @@
 Functions for reading and writing files
 """
 from pathlib import Path
+import time
 import numpy as np
+import pandas as pd
 
 
 def load_array(files):
@@ -28,6 +30,55 @@ def load_array(files):
     return array3d
 
 
+def read_csv(csvfile, col_limit=1e4, **kwargs):
+    """Read tabular data with pandas.read_csv,
+    unless the data are super wide (col_limit or greater columns),
+    in which case read the data using pure python. The pure
+    python approach below is apparently much faster than
+    pandas.read_csv for very wide files.
+
+    Parameters
+    ----------
+    csvfile : str or pathlike
+    col_limit : int
+        Column threshold at which to use pure python 
+        instead of pandas.read_csv, by default 10e4
+    **kwargs : keyword arguments to pandas.read_csv or 
+        pandas.DataFrame (in the case of a wide file)
+    """
+    t0 = time.time()
+    # get the header length
+    delim = kwargs.get('delimiter', ',')
+    if kwargs.get('delim_whitespace', False):
+        delim = ' '
+    with open(csvfile) as src:
+        header = next(iter(src)).split(delim)
+    if len(header) > col_limit:
+        lines = []
+        with open(csvfile) as src:
+            header = next(iter(src)).strip().split(',')
+            for line in src:
+                lines.append(line.strip().split(','))
+                
+        # handle duplicate columns in the same way that pandas does
+        col_counts = {}
+        new_header = []
+        for col in header:
+            if col not in col_counts:
+                col_counts[col] = 1
+                append_column_name = col
+            else:
+                append_column_name = f"{col}.{col_counts[col]}"
+                col_counts[col] += 1
+            new_header.append(append_column_name)
+            
+        df = pd.DataFrame(lines, columns=new_header, **kwargs)
+    else:
+        df = pd.read_csv(csvfile, **kwargs)
+    print("took {:.2f}s\n".format(time.time() - t0))
+    return df
+    
+    
 def write_insfile(results_dataframe, outfile, obsnme_column='obsnme',
                   simulated_obsval_column='modelled', index=True):
     """Write instruction file for PEST. Assumes that
