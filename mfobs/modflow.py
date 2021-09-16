@@ -11,7 +11,7 @@ try:
     import flopy
 except:
     flopy = False
-from mfobs.checks import check_obsnme_suffix
+from mfobs.utils import set_period_start_end_dates
 from mfobs.fileio import write_insfile, read_csv
 
 
