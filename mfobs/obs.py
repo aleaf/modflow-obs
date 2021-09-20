@@ -1001,15 +1001,17 @@ def get_annual_means(base_data,
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
+    aggregated['n'] = grouped.count().iloc[:, 0]
     aggregated.index.set_names(['site_no', 'year'], inplace=True)
     aggregated.reset_index(inplace=True)
+    aggregated.sort_values(by=['site_no', 'year'], inplace=True)
         
     aggregated['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}" 
                             for prefix, dt in zip(aggregated['obsprefix'], 
                                                   aggregated['datetime'])]
     aggregated['obgnme'] = [f"{prefix}_{obgnme_suffix}" 
                             for prefix in aggregated['obgnme']]
-    cols = ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme']
+    cols = ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme', 'n']
     aggregated = aggregated[cols]
     
     if outfile is not None:
@@ -1116,15 +1118,17 @@ def get_monthly_means(base_data,
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
+    aggregated['n'] = grouped.count().iloc[:, 0]
     aggregated.index.set_names(['site_no', 'year', 'month'], inplace=True)
     aggregated.reset_index(inplace=True)
+    aggregated.sort_values(by=['site_no', 'year', 'month'], inplace=True)
         
     aggregated['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}" 
                             for prefix, dt in zip(aggregated['obsprefix'], 
                                                   aggregated['datetime'])]
     aggregated['obgnme'] = [f"{prefix}_{obgnme_suffix}" 
                             for prefix in aggregated['obgnme']]
-    cols = ['datetime', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme']
+    cols = ['datetime', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme', 'n']
     aggregated = aggregated[cols]
     
     if outfile is not None:
@@ -1230,8 +1234,11 @@ def get_mean_monthly(base_data,
     data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
+    aggregated['n'] = grouped.count().iloc[:, 0]
     aggregated.index.set_names(['site_no', 'month'], inplace=True)
     aggregated.reset_index(inplace=True)
+    aggregated.sort_values(by=['site_no', 'month'], inplace=True)
+    # change month column to be name instead of number
     aggregated['month'] = [f"{dt:%B}" for dt in aggregated['datetime']]
         
     aggregated['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}".lower() 
@@ -1239,7 +1246,7 @@ def get_mean_monthly(base_data,
                                                   aggregated['datetime'])]
     aggregated['obgnme'] = [f"{prefix}_{obgnme_suffix}" 
                             for prefix in aggregated['obgnme']]
-    cols = ['datetime', 'month', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme']
+    cols = ['datetime', 'month', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme', 'n']
     aggregated = aggregated[cols]
     
     if outfile is not None:
