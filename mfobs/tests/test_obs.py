@@ -268,13 +268,14 @@ def test_get_annual_means(flux_obs):
     results = get_annual_means(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby(flux_obs.datetime.dt.year).mean()
-    expected = grouped[['obsval', 'sim_obsval']]
+    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.year]).mean()
+    grouped.index.set_names(['site_no', 'year'], inplace=True)
+    expected = grouped.sort_values(by=['site_no', 'year'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
                 ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
-                 'sim_obsval', 'obsval', 'obgnme']
+                 'sim_obsval', 'obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -287,13 +288,14 @@ def test_mean_monthly(flux_obs):
     results = get_mean_monthly(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby([flux_obs.datetime.dt.month]).mean()
-    expected = grouped[['obsval', 'sim_obsval']]
+    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.month]).mean()
+    grouped.index.set_names(['site_no', 'month'], inplace=True)
+    expected = grouped.sort_values(by=['site_no', 'month'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
                 ['datetime', 'month', 'site_no', 'obsprefix', 'obsnme', 
-                 'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
+                 'obs_flux', 'sim_obsval', 'obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -305,14 +307,15 @@ def test_get_monthly_means(flux_obs):
     results = get_monthly_means(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby([flux_obs.datetime.dt.year,
+    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.year,
                                 flux_obs.datetime.dt.month]).mean()
-    expected = grouped[['obsval', 'sim_obsval']]
+    grouped.index.set_names(['site_no', 'year', 'month'], inplace=True)
+    expected = grouped.sort_values(by=['site_no', 'year', 'month'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
                 ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
-                 'sim_obsval', 'obsval', 'obgnme']
+                 'sim_obsval', 'obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
