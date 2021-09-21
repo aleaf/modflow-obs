@@ -795,14 +795,14 @@ def get_temporal_differences(base_data, perioddata,
 
     
     # rename the observed and sim. eq. values columns
-    renames = {obs_values_col: f'obs_{variable}',
-               sim_values_col: f'sim_{variable}',
-               }
-    base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
-                   inplace=True, errors='ignore')
-    base_data.rename(columns=renames, inplace=True)
-    obs_values_col = f'obs_{variable}'
-    sim_values_col = f'sim_{variable}'
+    #renames = {obs_values_col: f'obs_{variable}',
+    #           sim_values_col: f'sim_{variable}',
+    #           }
+    #base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+    #               inplace=True, errors='ignore')
+    #base_data.rename(columns=renames, inplace=True)
+    #obs_values_col = f'obs_{variable}'
+    #sim_values_col = f'sim_{variable}'
     
     # only compute differences on transient obs
     if isinstance(exclude_suffix, str):

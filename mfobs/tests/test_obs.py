@@ -110,7 +110,7 @@ def test_get_base_obs_statvar(prms_statvar_obs, test_data_path):
                            statvar_results,
                            observed_values_file=observed_values_file,
                            #observed_values_metadata_file=observed_values_metadata,
-                           variable_name='pk_depth',
+                           variable_name='pkdepth',
                            observed_values_site_id_col='STATION',
                            observed_values_datetime_col='DATE',
                            obsnme_date_suffix=True,

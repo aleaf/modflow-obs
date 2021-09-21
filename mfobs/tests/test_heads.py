@@ -93,7 +93,7 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     assert Path(shellmound_output_path, 'processed_head_obs.dat').exists()
     assert not Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat').unlink()  # delete it
-    expected_columns = ['datetime', 'per', 'obsprefix', 'obsnme',
+    expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
                         'obsval', 'sim_obsval', 'n', 'screen_top', 'screen_botm', 'layer',
                         'obgnme'
                         ]
