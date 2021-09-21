@@ -340,7 +340,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # collapse these into one value for each location, time
     # by taking the transmissivity-weighted average
     if observed_values_layer_col is None:
-        if isinstance(hk_arrays, str) or isinstance(hk_arrays, Path):
+        if isinstance(hk_arrays[0], str) or isinstance(hk_arrays[0], Path):
             hk = load_array(hk_arrays)
         else:
             hk = hk_arrays
@@ -348,7 +348,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             top = load_array(top_array)
         else:
             top = top_array
-        if isinstance(botm_arrays, str) or isinstance(botm_arrays, Path):
+        if isinstance(botm_arrays[0], str) or isinstance(botm_arrays[0], Path):
             botm = load_array(botm_arrays)
         else:
             botm = botm_arrays
@@ -376,6 +376,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     if 'timestep' in perioddata.columns:
         perioddata['unique_timestep'] = list(range(len(perioddata)))
         per_column = 'unique_timestep'
+        times = dict(zip(perioddata['time'], perioddata['unique_timestep']))
+        results[per_column] = [times[t] for t in results['time']]
     # stress period-based observations
     else:
         per_column = 'per'
@@ -418,7 +420,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
 
-        data = results.loc[start:end].copy()
+        # for now, require results to have period or unique timestep column
+        # otherwise, if slicing by datetimes, can run into problem of
+        # for example, initial steady-state periods being included 
+        # with first transient period
+        # leading to a duplicate index error when trying to pivot below
+        #data = results.loc[start:end].copy()
+        data = results.loc[results[per_column] == r[per_column]].copy()
         if len(data) == 0:
             continue
         # kludge to assign obsnmes to model results
