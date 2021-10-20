@@ -120,18 +120,33 @@ def ih_method(Qseries, block_length=5, tp=0.9, interp_semilog=True, freq='D', li
     # expand Q dataframe back out to include row for each day
     Q = Q.dropna(subset=['datetime'], axis=0).resample(freq).mean()
 
+    # reassign the original flow values back to Q
+    Q['Q'] = df.Q.loc[Q.index]
+    Q.loc[Q['Q'] == 0, 'ordinate'] = 0
+    
     # interpolate between baseflow ordinates
     if interp_semilog:
         iszero = Q.ordinate.values == 0
         logQ = np.log10(Q.ordinate)
-        logQ[iszero] = -2
+        # fill zero values for the purpose of semi-log interpolation
+        # (all baseflow values coinciding with 
+        #  total flow values of zero will be reset to zero)
+        # use the 1% quantile for filling
+        # otherwise semi-log interpolation might be unreasonable (too rapid)
+        # for larger units like cubic feet per day
+        fill_value = np.log10(df.Q.loc[df.Q > 0].quantile(0.01))
+        logQ[iszero] = fill_value
         QB = np.power(10.0, logQ.interpolate(limit=limit).values)
     else:
         QB = Q.ordinate.interpolate(limit=limit).values
     Q['QB'] = QB
 
-    # reassign the original flow values back to Q
-    Q['Q'] = df.Q.loc[Q.index]
+    # in places where 'Q' is zero, set 'QB' to zero as well
+    # (for example, zero-flow values past the interpolation limit)
+    # otherwise, an inconsistent number of flow values can be returned for a site, 
+    # depending on how many zero values are simulated,
+    # which for example would cause PEST to crash during parameter estimation
+    Q.loc[Q['Q'] == 0, 'QB'] = 0
 
     # ensure that no baseflow values are > Q measured
     QBgreaterthanQ = Q.QB.values > Q.Q.values

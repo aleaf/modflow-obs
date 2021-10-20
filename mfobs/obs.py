@@ -7,7 +7,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from mfobs.checks import check_obsnme_suffix
-from mfobs.fileio import write_insfile
+from mfobs.fileio import write_insfile, get_insfile_observations
 from mfobs.sep import ih_method
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
@@ -1373,6 +1373,7 @@ def get_baseflow_observations(base_data,
                               obsnme_suffix_format='%Y%m%d-bf',
                               exclude_suffix='ss',
                               obgnme_suffix='bf',
+                              missing_obs_fill_value=0.,
                               outfile=None,
                               write_ins=False, **kwargs):
     """Create observations of base flow using the 
@@ -1410,6 +1411,16 @@ def get_baseflow_observations(base_data,
         Create new observation group names by appending this suffix to existing
         obgnmes, for example <existing obgnme>_<obgnme_suffix>
         by default, 'annual-mean'
+    missing_obs_fill_value : float
+        Baseflow observations are different from most other observation types in that
+        they are produced by hydrograph separation, which can lead to different numbers
+        of observations with changing conditions. For example, a given parameter set
+        may produce a total flow hydrograph with a different number of ordinates (turning points),
+        which in turn can change the interpolation of baseflow values between ordinates, potentially
+        producing either 'extra' observations (not in the instruction file) or missing observations.
+        Missing observations will be filled with `missing_obs_value`, so that PEST doesn't crash. A
+        value of 0. is recommended, as missing observations are often associated with low or no-flow
+        periods, especially near the start or end of a timeseries.
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -1478,12 +1489,43 @@ def get_baseflow_observations(base_data,
     bf_base_data = bf_base_data[cols]
     
     if outfile is not None:
-        bf_base_data.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {len(bf_base_data):,} observations to {outfile}')
-
         # write the instruction file
         if write_ins:
             write_insfile(bf_base_data, str(outfile) + '.ins',
                           obsnme_column='obsnme', simulated_obsval_column='sim_obsval',
                           index=False)
+        # otherwise, normalize observations to the instruction file
+        else:
+            insfile_obs = get_insfile_observations(str(outfile) + '.ins')
+            
+            missing_in_output = set(insfile_obs).difference(bf_base_data['obsnme'])
+            extra_in_output = set(bf_base_data['obsnme']).difference(insfile_obs)
+            
+            # fill missing observations
+            if any(missing_in_output):
+                bf_base_data.index = bf_base_data['obsnme']
+                
+                # re-index the observation data to add rows for the missing obs
+                reindexed = bf_base_data.reindex(insfile_obs)
+                # identify rows containing missing obs
+                filled = reindexed['sim_obsval'].isna()
+                # refill columns for the missing obs
+                reindexed['obsnme'] = reindexed.index
+                reindexed.loc[filled, 'datetime'] = [pd.Timestamp(s.split('_')[1].split('-')[0])
+                                                     for s in reindexed.loc[filled, 'obsnme']]
+                reindexed.loc[filled, 'site_no'] = [s.split('_')[0].split('-')[0]
+                                        for s in reindexed.loc[filled, 'obsnme']]
+                reindexed.loc[filled, 'obsprefix'] = [s.split('_')[0]
+                        for s in reindexed.loc[filled, 'obsnme']]
+                reindexed.loc[filled, 'obgnme'] = 'filled-bf'
+                reindexed.loc[filled, data_cols] = missing_obs_fill_value
+                assert not reindexed.isna().any().any()
+                bf_base_data = reindexed
+            # drop any extra observations
+            if any(extra_in_output):
+                bf_base_data = bf_base_data.loc[~bf_base_data.index.isin(extra_in_output)]
+            
+        bf_base_data.to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {len(bf_base_data):,} observations to {outfile}')
+            
     return bf_base_data
