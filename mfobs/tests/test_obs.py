@@ -1,8 +1,10 @@
 from datetime import datetime
 from pathlib import Path
+import shutil
 import numpy as np
 import pandas as pd
 import pytest
+from mfobs.fileio import get_insfile_observations
 from mfobs.modflow import (
     get_perioddata, 
     get_mf6_single_variable_obs, 
@@ -366,6 +368,7 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
                            #steady_state_period_end=None,
                            outfile=None,
                            write_ins=False)
+    
     results = get_baseflow_observations(base_obs)
     
     assert np.all(results.columns ==
@@ -376,3 +379,88 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
     assert not results.obsval.isna().any()
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
+
+    base_obs_sim_0 = base_obs.copy()
+    base_obs_sim_0['sim_obsval'] = 0
+    next_date = base_obs_sim_0['datetime'][-1] + pd.Timedelta(1, unit='d')
+    base_obs_sim_0['datetime'] = pd.date_range(next_date, next_date + pd.Timedelta(len(base_obs_sim_0), unit='d'))[:len(base_obs_sim_0)]
+#
+    # Check handling of zero flow periods
+    # and interpolation down to zero
+    base_obs_w_zeros = pd.read_csv('mfobs/tests/data/bf_with_zeros.csv')
+    base_obs_w_zeros['obsval'] = 10.
+    base_obs_w_zeros['site_no'] = 'site1'
+    base_obs_w_zeros['obsprefix'] = 'site1-flow'
+    base_obs_w_zeros['obsnme'] = [f'{obsprefix}_{i}:03d' for i, obsprefix in enumerate(base_obs_w_zeros['obsprefix'])]
+    base_obs_w_zeros['obgnme'] = 'flux'
+    results2 = get_baseflow_observations(base_obs_w_zeros)
+    # notes:
+    # gap between 10/7 and 10/24 reflects actual gap in measurements
+    # with the 5 day default block length, 
+    # there will be 5 less baseflow obs at the start 
+    # and at least 5 less at the end of the time series
+    # the base flow obs at 10/24 represents 
+    # the last complete 5-day block (10/23 through 10/27)
+    # 10/24 is not an ordinate (turning point), but it gets
+    # filled because there is a measured value of 0 on that date
+    # so to summarize, results 2 should be 
+    # 5 (at start) and 7 (at end) days shorter than base_obs_w_zeros, 
+    # which runs through 10/31
+    assert len(base_obs_w_zeros) - len(results2) == 12
+    # kind of cheesy and specific, but verify that
+    # last non-zero flow value for this dataset is > 1,000 cfd
+    # with previous (absolute instead of quantile-based)
+    # fill value for semi-log interp, was very small (< 1 cfd);
+    # indicative of too rapid semi-log recession with 
+    # units that are typically large, such as cubic feet per day
+    results2.loc['2015-04-28', 'sim_obsval'] > 1e3
+    
+    # test for missing obs
+    df = pd.read_csv('mfobs/tests/data/br_missing_test_data.csv')
+    results3 = get_baseflow_observations(df)
+    
+    
+def test_fill_missing_obs(gage_package_obs, test_data_path, 
+                          test_output_folder):
+    """Test getting base obs from the gage package, and then baseflow 
+    derivative obs."""
+    
+    gage_results, perioddata = gage_package_obs
+    observed_values_file = test_data_path / 'mf2005/04027500.csv'
+    
+    base_obs = get_base_obs(perioddata,
+                           gage_results,
+                           observed_values_file=observed_values_file,
+                           #observed_values_metadata_file=observed_values_metadata,
+                           variable_name='flow',
+                           observed_values_site_id_col='site_no',
+                           observed_values_datetime_col='datetime',
+                           obsnme_date_suffix=True,
+                           obsnme_suffix_format='%Y%m%d',
+                           observed_values_obsval_col='q_cfd',
+                           #observed_values_group_column='obgnme',
+                           #observed_values_unc_column='uncertainty',
+                           #aggregrate_observed_values_method='mean',
+                           #drop_groups=None,
+                           #label_period_as_steady_state=0, steady_state_period_start=None,
+                           #steady_state_period_end=None,
+                           outfile=None,
+                           write_ins=False)
+    # test for missing obs
+    shutil.copy('mfobs/tests/data/br_missing_test_data2.dat.ins', test_output_folder)
+    df = pd.read_csv('mfobs/tests/data/br_missing_test_data2.dat', 
+                     delim_whitespace=True)
+    outfile = test_data_path / 'br_missing_test_data2.dat'
+    results3 = get_baseflow_observations(df, write_ins=False, 
+                                         outfile=outfile)
+    insfile_obs = get_insfile_observations(str(outfile) + '.ins')
+    # baseflow observations returned should be the same as those in the insfile
+    # (with br_missing_test_data2.dat, this won't happen 
+    #  unless the missing obs are filled after hydrograph sep.)
+    assert not any(set(results3['obsnme']).symmetric_difference(insfile_obs))
+    # filled obs should be identified by filled-bf group
+    # and be filled with zeros
+    data_cols = [c for c, dtype in results3.dtypes.iteritems() 
+                 if 'float' in dtype.name]
+    filled = results3['obgnme'] == 'filled-bf'
+    assert np.all(results3.loc[filled, data_cols] == 0)

@@ -2,6 +2,7 @@
 Functions for reading and writing files
 """
 from pathlib import Path
+import re
 import time
 import numpy as np
 import pandas as pd
@@ -137,3 +138,11 @@ def write_insfile(results_dataframe, outfile, obsnme_column='obsnme',
         dest.write('pif @\n@{}@\n'.format(obsnme_column))
         ins.to_csv(dest, sep=' ', index=True, header=False)
         print(f'wrote {len(ins):,} observation instructions to {outfile}')
+        
+def get_insfile_observations(insfile):
+    """Return observation names listed in a PEST 
+    instruction file (in order)."""
+    with open(insfile) as src:
+        text = src.read()
+        results = re.findall("(?<=\!).+?(?=\!)",text)
+    return results
