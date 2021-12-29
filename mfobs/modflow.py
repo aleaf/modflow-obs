@@ -659,8 +659,8 @@ def get_modelgrid_transform(grid_json_file, shift_to_cell_centers=False):
         yul -= 0.5 * cfg['delc']
 
     transform = Affine(cfg['delr'], 0., xul,
-                       0., -cfg['delr'], yul) * \
-                Affine.rotation(cfg['angrot'])
+                       0., -cfg['delc'], yul) * \
+                Affine.rotation(-cfg['angrot'])
     return transform
 
 
