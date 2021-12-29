@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRMS-related functions &mdash; modflow-obs 0.post30.dev0+gb8e875c documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="The general observation processing module" href="mfobs.obs.html" />
+    <link rel="prev" title="MODFLOW-related functions" href="mfobs.modflow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> modflow-obs
+          </a>
+              <div class="version">
+                0.post30.dev0+gb8e875c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html"> Demo of Modflow-obs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">PRMS-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.obs.html">General observation processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release history</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-history.html"> Release History</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to modflow-obs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">modflow-obs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Modules</a> &raquo;</li>
+      <li>PRMS-related functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/mfobs.prms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-mfobs.prms">
+<span id="prms-related-functions"></span><h1>PRMS-related functions<a class="headerlink" href="#module-mfobs.prms" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.prms.get_prms_statvar_obs">
+<span class="sig-prename descclassname"><span class="pre">mfobs.prms.</span></span><span class="sig-name descname"><span class="pre">get_prms_statvar_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statvar_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/prms.html#get_prms_statvar_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.prms.get_prms_statvar_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read raw PRMS statvar observation output from text file table with
+times along the row axis and observation sites along the column axis. Reshape
+(stack) results to be n times x n sites rows, with a single observation value
+in each row.</p>
+<p>If there is more than one time in a stress period, retain only
+the last time (so that there is one observation per stress period for each site.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>perioddata</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with start/end dates for stress periods. Must have columns
+‘per’ (stress period number), ‘time’ (modflow time, in days), 
+‘start_datetime’ (start date for the stress period)
+and ‘end_datetime’ (end date for the stress period).</p>
+</dd>
+<dt><strong>model_output_file</strong><span class="classifier">str</span></dt><dd><p>Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).</p>
+</dd>
+<dt><strong>variable_name</strong><span class="classifier">str, optional</span></dt><dd><p>Column with simulated output will be named “sim_&lt;variable_name”,
+by default ‘head’</p>
+</dd>
+<dt><strong>obsnme_date_suffix</strong><span class="classifier">bool</span></dt><dd><p>If true, give observations a date-based suffix. Otherwise, assign a 
+elapsed time-based suffix. In either case, the format of the suffix
+is controlled by obsnme_suffix_format.
+by default True</p>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes. Observation names are created following the format of
+&lt;obsprefix&gt;_&lt;date or elapsed time suffix&gt;. By default, <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>,
+which would yield <code class="docutils literal notranslate"><span class="pre">'202001'</span></code> for a Jan, 2020 observation 
+(obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+should be a decimal format in the “new-style” string format
+(e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for an elapsed time of 1 day.)</p>
+</dd>
+<dt><strong>abs</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to convert simulated values to absolute values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>results</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with one head observation per row, with the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>per</p></td>
+<td><p>zero-based model stress period</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix</p></td>
+<td><p>prefix of observation name (site identifier)</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_&lt;variable_name&gt;</p></td>
+<td><p>column with simulated values</p></td>
+</tr>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period start date</p></td>
+</tr>
+<tr class="row-odd"><td><p>layer</p></td>
+<td><p>zero-based model layer</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_’%Y%m’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example observation names:</p>
+<p>site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)</p>
+<p>site1000_00001, for a day 1 observation at site1000 (obsnme_date_suffix=False)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.prms.read_statvar_file">
+<span class="sig-prename descclassname"><span class="pre">mfobs.prms.</span></span><span class="sig-name descname"><span class="pre">read_statvar_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">statvar_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/prms.html#read_statvar_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.prms.read_statvar_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a PRMS statvar file into a pandas dataframe.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>statvar_file</strong><span class="classifier">str or pathlike</span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>df</strong><span class="classifier">pandas DataFrame (n days x n sites)</span></dt><dd><p>With a datetime index (one row per day)
+and columns: <em>site1, site2, …</em></p>
+<p>Column names are formulated as variable-segment, for example,
+<em>seg_outflow-1527</em> for stream segment outflow at segment 1527.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mfobs.modflow.html" class="btn btn-neutral float-left" title="MODFLOW-related functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mfobs.obs.html" class="btn btn-neutral float-right" title="The general observation processing module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on Dec 29, 2021.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

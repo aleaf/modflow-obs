@@ -1,0 +1,2719 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post30.dev0+gb8e875c documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Modules" href="../api/index.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="../examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> modflow-obs
+          </a>
+              <div class="version">
+                0.post30.dev0+gb8e875c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Inputs">Inputs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-grid-definition">model grid definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-time-discretization">model time discretization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files">alternatively, get the stress period information from the TDIS and STO files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#model-property-information-for-T-weighted-averaging">model property information for T-weighted averaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#head-observation-data">head observation data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#streamflow-observations">streamflow observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-input">MODFLOW-6 observation input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-output">MODFLOW-6 observation output</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-head-observations">Create a base set of head observations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#PEST-instruction-files">PEST instruction files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-base-data-for-a-site">plot base data for a site</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-head-through-time">Changes in head through time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Displacement-in-head-through-time">Displacement in head through time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Plot-the-displacement-observations">Plot the displacement observations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Head-differences-between-sites">Head differences between sites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-flux-observations">Create a base set of flux observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-streamflow-through-time">Changes in streamflow through time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Change-in-streamflow-between-two-sites">Change in streamflow between two sites</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Demo of Modflow-obs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Inputs">Inputs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#model-grid-definition">model grid definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-time-discretization">model time discretization</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files">alternatively, get the stress period information from the TDIS and STO files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#model-property-information-for-T-weighted-averaging">model property information for T-weighted averaging</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#head-observation-data">head observation data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#streamflow-observations">streamflow observations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-input">MODFLOW-6 observation input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-output">MODFLOW-6 observation output</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-head-observations">Create a base set of head observations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#PEST-instruction-files">PEST instruction files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#plot-base-data-for-a-site">plot base data for a site</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-head-through-time">Changes in head through time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Displacement-in-head-through-time">Displacement in head through time</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Plot-the-displacement-observations">Plot the displacement observations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#Head-differences-between-sites">Head differences between sites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-flux-observations">Create a base set of flux observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Changes-in-streamflow-through-time">Changes in streamflow through time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Change-in-streamflow-between-two-sites">Change in streamflow between two sites</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html"> Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release history</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-history.html"> Release History</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to modflow-obs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">modflow-obs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../examples.html">&lt;no title&gt;</a> &raquo;</li>
+      <li>Demo of modflow-obs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/notebooks/Example.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Demo-of-modflow-obs">
+<h1>Demo of modflow-obs<a class="headerlink" href="#Demo-of-modflow-obs" title="Permalink to this headline">¶</a></h1>
+<p>This page demonstrates some of the core features of modflow-obs. Specifically:</p>
+<ul class="simple">
+<li><p>creation of ‘base’ head and stream flow observations from time series, including</p>
+<ul>
+<li><p>in-tandem processing of observation data and MODFLOW output</p></li>
+<li><p>creation of instruction files</p></li>
+</ul>
+</li>
+<li><p>creating of derivative observations from the base observations, including</p>
+<ul>
+<li><p>sequential temporal changes in observation values at a site</p></li>
+<li><p>time series of displacement from a reference observation at a site</p></li>
+<li><p>time series of differences between observed values at two sites</p></li>
+</ul>
+</li>
+</ul>
+<div class="line-block">
+<div class="line">References:</div>
+<div class="line"><a class="reference external" href="https://github.com/aleaf/modflow-setup">Modflow-setup package</a></div>
+<div class="line"><a class="reference external" href="https://github.com/sgillies/affine">Affine package</a></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
+
+</pre></div>
+</div>
+</div>
+<section id="Inputs">
+<h2>Inputs<a class="headerlink" href="#Inputs" title="Permalink to this headline">¶</a></h2>
+<p>Input and output paths</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../mfobs/tests/data/shellmound/&#39;</span><span class="p">)</span>
+
+<span class="n">output_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">)</span>
+<span class="n">output_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># make the output folder if it doesn&#39;t exist</span>
+</pre></div>
+</div>
+</div>
+<section id="model-grid-definition">
+<h3>model grid definition<a class="headerlink" href="#model-grid-definition" title="Permalink to this headline">¶</a></h3>
+<p>read the model grid json file created by <code class="docutils literal notranslate"><span class="pre">modflow-setup</span></code> and create an <code class="docutils literal notranslate"><span class="pre">affine.Affine</span></code> instance describing the grid orientation</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_modelgrid_transform</span>
+
+<span class="n">modelgrid_transform</span> <span class="o">=</span> <span class="n">get_modelgrid_transform</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound_grid.json&#39;</span><span class="p">)</span>
+<span class="n">modelgrid_transform</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Affine(1000.0, 0.0, 500955.0,
+       0.0, -1000.0, 1205285.0)
+</pre></div></div>
+</div>
+</section>
+<section id="model-time-discretization">
+<h3>model time discretization<a class="headerlink" href="#model-time-discretization" title="Permalink to this headline">¶</a></h3>
+<p>read table of stress period information created by <code class="docutils literal notranslate"><span class="pre">modflow-setup</span></code></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/stress_period_data.csv&#39;</span><span class="p">)</span>
+<span class="n">perioddata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start_datetime</th>
+      <th>end_datetime</th>
+      <th>time</th>
+      <th>per</th>
+      <th>perlen</th>
+      <th>nstp</th>
+      <th>tsmult</th>
+      <th>steady</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1998-04-01</td>
+      <td>1998-04-01</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1998-04-01</td>
+      <td>2007-03-31</td>
+      <td>3288.0</td>
+      <td>1</td>
+      <td>3287.0</td>
+      <td>10</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2007-04-01</td>
+      <td>2007-09-30</td>
+      <td>3471.0</td>
+      <td>2</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2007-10-01</td>
+      <td>2008-03-31</td>
+      <td>3654.0</td>
+      <td>3</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008-04-01</td>
+      <td>2008-09-30</td>
+      <td>3837.0</td>
+      <td>4</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<section id="alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files">
+<h4>alternatively, get the stress period information from the TDIS and STO files<a class="headerlink" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files" title="Permalink to this headline">¶</a></h4>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_perioddata</span>
+
+<span class="n">perioddata</span> <span class="o">=</span> <span class="n">get_perioddata</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;mfsim.tdis&#39;</span><span class="p">,</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sto&#39;</span><span class="p">)</span>
+<span class="n">perioddata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>start_datetime</th>
+      <th>end_datetime</th>
+      <th>time</th>
+      <th>per</th>
+      <th>perlen</th>
+      <th>nstp</th>
+      <th>tsmult</th>
+      <th>steady</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1998-04-01</td>
+      <td>1998-04-01</td>
+      <td>1.0</td>
+      <td>0</td>
+      <td>1.0</td>
+      <td>1</td>
+      <td>1.0</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1998-04-01</td>
+      <td>2007-03-31</td>
+      <td>3288.0</td>
+      <td>1</td>
+      <td>3287.0</td>
+      <td>10</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2007-04-01</td>
+      <td>2007-09-30</td>
+      <td>3471.0</td>
+      <td>2</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2007-10-01</td>
+      <td>2008-03-31</td>
+      <td>3654.0</td>
+      <td>3</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008-04-01</td>
+      <td>2008-09-30</td>
+      <td>3837.0</td>
+      <td>4</td>
+      <td>183.0</td>
+      <td>5</td>
+      <td>1.5</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>The above “period_data” table has start/end datetimes in MODFLOW time, but often we want a steady-state period to effectively represent a different time period. Define start and end dates that bracket the time period represented by steady-state period 0:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">steady_state_period_start</span> <span class="o">=</span> <span class="s1">&#39;2008-04-01&#39;</span>
+<span class="n">steady_state_period_end</span> <span class="o">=</span> <span class="s1">&#39;2008-9-30&#39;</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="model-property-information-for-T-weighted-averaging">
+<h3>model property information for T-weighted averaging<a class="headerlink" href="#model-property-information-for-T-weighted-averaging" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">top_array</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/top.dat&#39;</span>
+<span class="n">botm_arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/botm</span><span class="si">{}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">)]</span>
+<span class="n">hk_arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/k</span><span class="si">{}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">)]</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="head-observation-data">
+<h3>head observation data<a class="headerlink" href="#head-observation-data" title="Permalink to this headline">¶</a></h3>
+<p>We start with some head observation data that already has</p>
+<ul class="simple">
+<li><p>been culled to model area, reprojected to model CRS, converted to model units, etc.</p></li>
+<li><p>open interval information</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">obsnme</span></code> (in the PEST parlance) prefixes identifying the sites</p></li>
+<li><p>prelimary groupings based on location (optional)</p></li>
+</ul>
+<p>The observation data may or may not be broken into a data table with time series, and a metadata table with site information.</p>
+<p>The <a class="reference external" href="https://github.com/aleaf/usgs-map-gwmodels">USGS-MAP-gwmodels package</a> is one way to create such input data from sources including the USGS National Water Information System (NWIS).</p>
+<p>The metadata (site info):</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">head_obs_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs_info.csv&#39;</span><span class="p">)</span>
+<span class="n">head_obs_info</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>head</th>
+      <th>head_std</th>
+      <th>last_head</th>
+      <th>n</th>
+      <th>aqfr_cd</th>
+      <th>nat_aqfr_cd</th>
+      <th>screen_botm</th>
+      <th>screen_top</th>
+      <th>well_depth</th>
+      <th>well_el</th>
+      <th>...</th>
+      <th>end_dt</th>
+      <th>site_no</th>
+      <th>x</th>
+      <th>y</th>
+      <th>well_botm</th>
+      <th>category</th>
+      <th>orig_scbot</th>
+      <th>orig_sctop</th>
+      <th>obsprefix</th>
+      <th>group</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>32.00</td>
+      <td>NaN</td>
+      <td>32.00</td>
+      <td>1.0</td>
+      <td>112MRVA</td>
+      <td>N100MSRVVL</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>39.05</td>
+      <td>...</td>
+      <td>2018-10-01</td>
+      <td>USGS:333034090150501</td>
+      <td>530104.14</td>
+      <td>1176208.54</td>
+      <td>NaN</td>
+      <td>4</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>USGS:333034090150501</td>
+      <td>heads</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>26.21</td>
+      <td>NaN</td>
+      <td>26.21</td>
+      <td>1.0</td>
+      <td>112MRVA</td>
+      <td>N100MSRVVL</td>
+      <td>-3.35</td>
+      <td>14.94</td>
+      <td>136.0</td>
+      <td>38.10</td>
+      <td>...</td>
+      <td>2006-09-01</td>
+      <td>USGS:333040090200601</td>
+      <td>522383.51</td>
+      <td>1175944.23</td>
+      <td>-97.90</td>
+      <td>3</td>
+      <td>-3.35</td>
+      <td>14.94</td>
+      <td>USGS:333040090200601</td>
+      <td>heads</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>33.15</td>
+      <td>0.0</td>
+      <td>33.15</td>
+      <td>1.6</td>
+      <td>112MRVA</td>
+      <td>N100MSRVVL</td>
+      <td>-69.38</td>
+      <td>-57.18</td>
+      <td>109.0</td>
+      <td>39.62</td>
+      <td>...</td>
+      <td>2002-04-01</td>
+      <td>USGS:333050090153001</td>
+      <td>529954.56</td>
+      <td>1176430.50</td>
+      <td>-69.38</td>
+      <td>2</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>USGS:333050090153001</td>
+      <td>heads</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>20.73</td>
+      <td>NaN</td>
+      <td>20.73</td>
+      <td>1.0</td>
+      <td>112MRVA</td>
+      <td>N100MSRVVL</td>
+      <td>-1.52</td>
+      <td>10.67</td>
+      <td>125.0</td>
+      <td>36.58</td>
+      <td>...</td>
+      <td>2002-06-01</td>
+      <td>USGS:333113090232001</td>
+      <td>517359.53</td>
+      <td>1176671.36</td>
+      <td>-88.42</td>
+      <td>3</td>
+      <td>-1.52</td>
+      <td>10.67</td>
+      <td>USGS:333113090232001</td>
+      <td>heads</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>22.83</td>
+      <td>NaN</td>
+      <td>22.83</td>
+      <td>1.0</td>
+      <td>112MRVA</td>
+      <td>N100MSRVVL</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>37.19</td>
+      <td>...</td>
+      <td>2000-10-01</td>
+      <td>USGS:333113090244701</td>
+      <td>515142.49</td>
+      <td>1176527.26</td>
+      <td>NaN</td>
+      <td>4</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>USGS:333113090244701</td>
+      <td>heads</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 23 columns</p>
+</div></div>
+</div>
+<p>Time series of head at the locations in the metadata:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">head_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs.csv&#39;</span><span class="p">)</span>
+<span class="n">head_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>site_no</th>
+      <th>datetime</th>
+      <th>head</th>
+      <th>last_head</th>
+      <th>head_std</th>
+      <th>n</th>
+      <th>obsprefix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>USGS:333034090150501</td>
+      <td>1999-04-01</td>
+      <td>32.37</td>
+      <td>32.37</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>USGS:333034090150501</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>USGS:333034090150501</td>
+      <td>2000-10-01</td>
+      <td>31.54</td>
+      <td>31.54</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>USGS:333034090150501</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>USGS:333034090150501</td>
+      <td>2001-04-01</td>
+      <td>32.60</td>
+      <td>32.60</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>USGS:333034090150501</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>USGS:333034090150501</td>
+      <td>2001-10-01</td>
+      <td>31.96</td>
+      <td>31.96</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>USGS:333034090150501</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>USGS:333034090150501</td>
+      <td>2002-04-01</td>
+      <td>33.35</td>
+      <td>33.35</td>
+      <td>NaN</td>
+      <td>1</td>
+      <td>USGS:333034090150501</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="streamflow-observations">
+<h3>streamflow observations<a class="headerlink" href="#streamflow-observations" title="Permalink to this headline">¶</a></h3>
+<p>Flux observation inputs are similar to heads, except the metadata aren’t needed</p>
+<ul class="simple">
+<li><p>only a site number, datetime, and values column are required</p></li>
+<li><p>Note: site numbers are handled as strings. Site numbers with leading zeros (such as those for many USGS gages) must be specified as strings when read by pandas, otherwise they will be cast to integers by default, and not match the MODFLOW observation names</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/processed_flow_obs.csv&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;site_no&#39;</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
+<span class="n">flux_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>site_no</th>
+      <th>datetime</th>
+      <th>category</th>
+      <th>est_qtotal_m3d</th>
+      <th>est_qbase_m3d</th>
+      <th>meas_qtotal_m3d</th>
+      <th>meas_qbase_m3d</th>
+      <th>obsval</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>07281600</td>
+      <td>2008-01-01</td>
+      <td>measured</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>10215000.0</td>
+      <td>6403120.0</td>
+      <td>6403120.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>07281600</td>
+      <td>2008-02-01</td>
+      <td>measured</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>15611700.0</td>
+      <td>5332650.0</td>
+      <td>5332650.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>07281600</td>
+      <td>2008-03-01</td>
+      <td>measured</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>20682200.0</td>
+      <td>15022400.0</td>
+      <td>15022400.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>07281600</td>
+      <td>2008-04-01</td>
+      <td>measured</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>24353200.0</td>
+      <td>12339100.0</td>
+      <td>12339100.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>07281600</td>
+      <td>2008-05-01</td>
+      <td>measured</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>22076000.0</td>
+      <td>13931500.0</td>
+      <td>13931500.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+<section id="MODFLOW-6-observation-input">
+<h3>MODFLOW-6 observation input<a class="headerlink" href="#MODFLOW-6-observation-input" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>the MODFLOW observation names (representing sites) must match those in the <code class="docutils literal notranslate"><span class="pre">obsprefix</span></code> column of the preprocessed head data above</p></li>
+<li><p>a key feature of <strong>Modflow-obs</strong> is computation of simulated heads from transmissivity-weighted averages of the head values simulated for the layers that intersect each well open interval. To take advantage of this feature, for each location (site), a MODFLOW observation must be entered for each layer.</p></li>
+<li><p><a class="reference external" href="https://github.com/aleaf/modflow-setup">Modflow-setup</a> can create MODFLOW-6 observation input (with an observation in each layer) automatically, using the locations and <code class="docutils literal notranslate"><span class="pre">obsprefixes</span></code> in the above metadata file</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">headobs_input_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.obs&#39;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">headobs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()[:</span><span class="mi">500</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+BEGIN options
+  DIGITS  10
+  PRINT_INPUT
+END options
+
+BEGIN continuous  FILEOUT  shellmound.head.obs
+  usgs:333145090261901  HEAD  1 28 12
+  usgs:333145090261901  HEAD  2 28 12
+  usgs:333145090261901  HEAD  3 28 12
+  usgs:333145090261901  HEAD  4 28 12
+  usgs:333145090261901  HEAD  5 28 12
+  usgs:333145090261901  HEAD  6 28 12
+  usgs:333145090261901  HEAD  7 28 12
+  usgs:333145090261901  HEAD  8 28 12
+  usgs:333145090261901  HEAD  9 28 12
+  usgs:333145090261901  HEAD  10 28 12
+  usgs:33314509026
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p><strong>flux observation in input</strong> to MODFLOW is not needed by modflow-obs because there aren’t layers to sort out, but like head observations, the site identifiers supplied to MODFLOW must match those in the observation data file above</p></li>
+</ul>
+</section>
+<section id="MODFLOW-6-observation-output">
+<h3>MODFLOW-6 observation output<a class="headerlink" href="#MODFLOW-6-observation-output" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>simulated values at observation locations are returned in a csv file with model timesteps along the row axis, and individual observation locations (1 per layer) along the column axis</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">headobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.head.obs&#39;</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">headobs_output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+time,USGS:333145090261901,USGS:333145090261901,USGS:333145090261901,USGS:333145090261901,USGS:333145
+1.000000000000,29.61748720,29.62154020,29.62504962,29.62677031,29.62761331,29.62882679,29.63409325,2
+</pre></div></div>
+</div>
+<ul class="simple">
+<li><p>SFR package observations are similar</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fluxobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sfr.obs.output.csv&#39;</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fluxobs_output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+time,07288280,07288580,07288500,07281600
+1,0,-1805.6,0,-8.203e+06
+30.0038,0,-901.46,0,-8.2845e+06
+73.5094,0,0,0,-8.2622e+06
+
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="Create-a-base-set-of-head-observations">
+<h2>Create a base set of head observations<a class="headerlink" href="#Create-a-base-set-of-head-observations" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>reads head observation data and model output and matches values</p>
+<ul>
+<li><p>by location using the <code class="docutils literal notranslate"><span class="pre">obsprefix</span></code> names</p></li>
+<li><p>in time by averaging observed values to the model stress period</p></li>
+<li><p>optionally, a model stress period can be labeled as steady-state (<code class="docutils literal notranslate"><span class="pre">label_period_as_steady_state</span></code>), representing average conditions over a time period bracked by a <code class="docutils literal notranslate"><span class="pre">steady_state_period_start</span></code> and <code class="docutils literal notranslate"><span class="pre">steady_state_period_end</span></code>. In this case, the simulated values for the labeled stress period are matched to average values for the steady-state time period.</p></li>
+</ul>
+</li>
+<li><p>the model output are assumed to include all layers at each observation location; observation names in the model output are assumed to correspond to <code class="docutils literal notranslate"><span class="pre">obsprefix</span></code>es in the head observation data</p></li>
+<li><p>observation layer can be specified explicitly via an <code class="docutils literal notranslate"><span class="pre">observed_values_layer_col</span></code> in the head observation data, or, the simulated values can be averaged vertically with transmissivity-based weighting (<code class="docutils literal notranslate"><span class="pre">observed_values_layer_col=None</span></code>). In the latter case, model property arrays (<code class="docutils literal notranslate"><span class="pre">hk_arrays</span></code>, <code class="docutils literal notranslate"><span class="pre">top_array</span></code>, <code class="docutils literal notranslate"><span class="pre">botm_arrays</span></code>) must be supplied. At observation sites without open interval information, all model layers are included in the transmissivity-weighted averaging.</p></li>
+<li><p>observation names to match observed values to their simulated equivalents are constructed in the format of <code class="docutils literal notranslate"><span class="pre">&lt;obsprefix&gt;_&lt;date</span> <span class="pre">suffix&gt;</span></code>, where obsprefix is a site identifier taken from the <code class="docutils literal notranslate"><span class="pre">observed_values_site_id_col</span></code> in <code class="docutils literal notranslate"><span class="pre">observed_values_file</span></code>, and the date suffix is controlled by the <code class="docutils literal notranslate"><span class="pre">obsnme_date_suffix_format</span></code> parameter (default of <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>). Steady-state observations are assigned a suffix of <code class="docutils literal notranslate"><span class="pre">'ss'</span></code>.</p></li>
+<li><p>simulated and observed values are written to columns formatted with <code class="docutils literal notranslate"><span class="pre">sim_</span></code> or <code class="docutils literal notranslate"><span class="pre">obs_&lt;variable_name&gt;</span></code></p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_head_obs</span>
+
+<span class="n">base_obs</span> <span class="o">=</span> <span class="n">get_head_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
+                        <span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">modelgrid_transform</span><span class="p">,</span>
+                        <span class="n">model_output_file</span><span class="o">=</span><span class="n">headobs_output_file</span><span class="p">,</span>
+                        <span class="n">observed_values_file</span><span class="o">=</span><span class="n">head_obs</span><span class="p">,</span>
+                        <span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="n">head_obs_info</span><span class="p">,</span>
+                        <span class="n">observed_values_obsval_col</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                        <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="n">headobs_input_file</span><span class="p">,</span>
+                        <span class="n">hk_arrays</span><span class="o">=</span><span class="n">hk_arrays</span><span class="p">,</span>
+                        <span class="n">top_array</span><span class="o">=</span><span class="n">top_array</span><span class="p">,</span>
+                        <span class="n">botm_arrays</span><span class="o">=</span><span class="n">botm_arrays</span><span class="p">,</span>
+                        <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">steady_state_period_start</span><span class="o">=</span><span class="n">steady_state_period_start</span><span class="p">,</span>
+                        <span class="n">steady_state_period_end</span><span class="o">=</span><span class="n">steady_state_period_end</span><span class="p">,</span>
+                        <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                        <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs.dat&#39;</span>
+                        <span class="p">)</span>
+<span class="n">base_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
+took 0.02s
+
+Dropping 191 sites with no information
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:267: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version.
+
+
+  gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:381: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
+  warnings.warn((&#39;Stress period {}: No observations between start and &#39;
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 581 observations to output/processed_head_obs.dat
+wrote 581 observation instructions to output/processed_head_obs.dat.ins
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obs_head</th>
+      <th>sim_head</th>
+      <th>n</th>
+      <th>screen_top</th>
+      <th>screen_botm</th>
+      <th>obsval</th>
+      <th>obgnme</th>
+    </tr>
+    <tr>
+      <th>obsnme</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>usgs:333145090261901_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201409</td>
+      <td>20.906667</td>
+      <td>28.948277</td>
+      <td>27</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>20.906667</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333145090261901_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201503</td>
+      <td>20.985000</td>
+      <td>29.139451</td>
+      <td>181</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>20.985000</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333145090261901_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201509</td>
+      <td>21.060000</td>
+      <td>29.057794</td>
+      <td>181</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>21.060000</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333218090271101_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>usgs:333218090271101</td>
+      <td>usgs:333218090271101_ss</td>
+      <td>19.320000</td>
+      <td>30.279858</td>
+      <td>2</td>
+      <td>-102.15</td>
+      <td>-114.34</td>
+      <td>19.320000</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333218090271101_200703</th>
+      <td>2007-03-31</td>
+      <td>1</td>
+      <td>usgs:333218090271101</td>
+      <td>usgs:333218090271101_200703</td>
+      <td>20.111250</td>
+      <td>28.161395</td>
+      <td>8</td>
+      <td>-102.15</td>
+      <td>-114.34</td>
+      <td>20.111250</td>
+      <td>head</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<section id="PEST-instruction-files">
+<h3>PEST instruction files<a class="headerlink" href="#PEST-instruction-files" title="Permalink to this headline">¶</a></h3>
+<p>Can be written in tandem with the processed observation output (<code class="docutils literal notranslate"><span class="pre">write_ins=True</span></code>). This way,</p>
+<ul class="simple">
+<li><p>observation processing functions like <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can be used initially to get an instruction file and a set of observed values for making a PEST control file</p></li>
+<li><p>and subsequently for processing model output during a PEST run, that can then be read by PEST via the instruciton file</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output/processed_head_obs.dat.ins&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pif @
+@obsnme@
+l1 w w w w w !usgs:333145090261901_201409! w w w w w
+l1 w w w w w !usgs:333145090261901_201503! w w w w w
+
+</pre></div></div>
+</div>
+</section>
+<section id="plot-base-data-for-a-site">
+<h3>plot base data for a site<a class="headerlink" href="#plot-base-data-for-a-site" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head, in meters above sea level&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_32_0.png" src="../_images/notebooks_Example_32_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="Changes-in-head-through-time">
+<h2>Changes in head through time<a class="headerlink" href="#Changes-in-head-through-time" title="Permalink to this headline">¶</a></h2>
+<p>The base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can be processed further into temporal head differences:</p>
+<ul class="simple">
+<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also write an instruction file in tandem</p></li>
+<li><p>by default, sequential differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
+<li><p>Sequential difference observations can help inform PEST about seasonal trends in the observation data.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_temporal_differences</span>
+
+<span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                       <span class="n">perioddata</span><span class="p">,</span>
+                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
+                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
+                                       <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_tdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 499 observations to output/processed_head_obs_tdiffs.dat
+wrote 499 observation instructions to output/processed_head_obs_tdiffs.dat.ins
+</pre></div></div>
+</div>
+<section id="plot-temporal-head-differences-for-a-site">
+<h3>plot temporal head differences for a site<a class="headerlink" href="#plot-temporal-head-differences-for-a-site" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">thead_diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">thead_diffs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head change, in meters&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_36_0.png" src="../_images/notebooks_Example_36_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="Displacement-in-head-through-time">
+<h2>Displacement in head through time<a class="headerlink" href="#Displacement-in-head-through-time" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also be used to compute displacement (total change) from a reference time, via the <code class="docutils literal notranslate"><span class="pre">get_displacement</span></code> flag. * Displacements are computed at sites with 2 or more observations. * The reference time is specified by the <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code> argument. * The first observation at each site that occurs on or after the reference time is then used as the datum in computing the displacements. * If no reference time is specified, the first observation is
+used as the datum for each site. * Displacement observations can help inform PEST about longer-term temporal trends in the observation data.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">thead_disp</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                       <span class="n">perioddata</span><span class="p">,</span>
+                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
+                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
+                                       <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                       <span class="n">get_displacements</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">displacement_from</span><span class="o">=</span><span class="s1">&#39;2010-01-01&#39;</span><span class="p">,</span>
+                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_disp.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 292 observations to output/processed_head_obs_disp.dat
+wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
+A value is trying to be set on a copy of a slice from a DataFrame
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  self._setitem_single_block(indexer, value, name)
+</pre></div></div>
+</div>
+<section id="Plot-the-displacement-observations">
+<h3>Plot the displacement observations<a class="headerlink" href="#Plot-the-displacement-observations" title="Permalink to this headline">¶</a></h3>
+<p>Note: the datum observation (where displacement is zero) is excluded.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">thead_disp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">thead_disp</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+<span class="c1"># for some reason, pd.DataFrame.plot() incorrectly shifts the xticks in this case</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">site_values</span><span class="o">.</span><span class="n">obsval</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">site_values</span><span class="o">.</span><span class="n">sim_obsval</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head change, in meters&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">autofmt_xdate</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_40_0.png" src="../_images/notebooks_Example_40_0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="Head-differences-between-sites">
+<h2>Head differences between sites<a class="headerlink" href="#Head-differences-between-sites" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, the base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can also be processed into spatial head differences. These may represent nested wells, well-lake differences or simply two nearby wells that represent an important head gradient.</p>
+<ul class="simple">
+<li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can also write an instruction file in tandem</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
+
+<span class="n">head_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;usgs:333904090123801&#39;</span><span class="p">:</span>  <span class="c1"># well in money, ms</span>
+                         <span class="s1">&#39;usgs:333145090261901&#39;</span>  <span class="c1"># well approx. 15 mi southwest in cone of depression</span>
+                             <span class="p">}</span>
+
+<span class="n">shead_diffs</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+                                      <span class="n">perioddata</span><span class="p">,</span>
+                                      <span class="n">difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
+                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_sdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 3 observations to output/processed_head_obs_sdiffs.dat
+wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme1</th>
+      <th>obs_head1</th>
+      <th>sim_head1</th>
+      <th>screen_top1</th>
+      <th>screen_botm1</th>
+      <th>obsnme2</th>
+      <th>obs_head2</th>
+      <th>...</th>
+      <th>obs_diff</th>
+      <th>sim_diff</th>
+      <th>dz</th>
+      <th>obs_grad</th>
+      <th>sim_grad</th>
+      <th>obgnme</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>type</th>
+    </tr>
+    <tr>
+      <th>per</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>16</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201409</td>
+      <td>35.163333</td>
+      <td>40.340913</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201409</td>
+      <td>20.906667</td>
+      <td>...</td>
+      <td>14.256667</td>
+      <td>11.392636</td>
+      <td>39.16</td>
+      <td>0.364062</td>
+      <td>0.290925</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.256667</td>
+      <td>11.392636</td>
+      <td>spatial head difference</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201503</td>
+      <td>35.258333</td>
+      <td>41.410755</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201503</td>
+      <td>20.985000</td>
+      <td>...</td>
+      <td>14.273333</td>
+      <td>12.271304</td>
+      <td>39.16</td>
+      <td>0.364488</td>
+      <td>0.313363</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.273333</td>
+      <td>12.271304</td>
+      <td>spatial head difference</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901</td>
+      <td>usgs:333904090123801_201509</td>
+      <td>35.358333</td>
+      <td>40.785719</td>
+      <td>23.15</td>
+      <td>10.96</td>
+      <td>usgs:333145090261901_201509</td>
+      <td>21.060000</td>
+      <td>...</td>
+      <td>14.298333</td>
+      <td>11.727924</td>
+      <td>39.16</td>
+      <td>0.365126</td>
+      <td>0.299487</td>
+      <td>head_sdiff</td>
+      <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
+      <td>14.298333</td>
+      <td>11.727924</td>
+      <td>spatial head difference</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 23 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head difference, in meters&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Head difference, in meters&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_44_1.png" src="../_images/notebooks_Example_44_1.png" />
+</div>
+</div>
+</section>
+<section id="Create-a-base-set-of-flux-observations">
+<h2>Create a base set of flux observations<a class="headerlink" href="#Create-a-base-set-of-flux-observations" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>similar to head observations, the first step in flux observation processing is to create a set of base observations</p></li>
+<li><p>observation data and model output are read and matched</p>
+<ul>
+<li><p>by location using the <code class="docutils literal notranslate"><span class="pre">obsprefix</span></code> names</p></li>
+<li><p>in time by averaging observed values to the model stress period</p></li>
+<li><p>optionally, a model stress period can be labeled as steady-state (<code class="docutils literal notranslate"><span class="pre">label_period_as_steady_state</span></code>), representing average conditions over a time period bracked by a <code class="docutils literal notranslate"><span class="pre">steady_state_period_start</span></code> and <code class="docutils literal notranslate"><span class="pre">steady_state_period_end</span></code>. In this case, the simulated values for the labeled stress period are matched to average values for the steady-state time period.</p></li>
+</ul>
+</li>
+<li><p>observation names to match observed values to their simulated equivalents are constructed in the format of <code class="docutils literal notranslate"><span class="pre">&lt;obsprefix&gt;_&lt;date</span> <span class="pre">suffix&gt;</span></code>, where obsprefix is a site identifier taken from the <code class="docutils literal notranslate"><span class="pre">observed_values_site_id_col</span></code> in <code class="docutils literal notranslate"><span class="pre">observed_values_file</span></code>, and the date suffix is controlled by the <code class="docutils literal notranslate"><span class="pre">obsnme_date_suffix_format</span></code> parameter (default of <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>). Steady-state observations are assigned a suffix of <code class="docutils literal notranslate"><span class="pre">'ss'</span></code>.</p></li>
+<li><p>simulated and observed values are written to columns formatted with <code class="docutils literal notranslate"><span class="pre">sim_</span></code> or <code class="docutils literal notranslate"><span class="pre">obs_&lt;variable_name&gt;</span></code></p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">mfobs.swflows</span> <span class="kn">import</span> <span class="n">get_flux_obs</span>
+
+<span class="n">base_flux_obs</span> <span class="o">=</span> <span class="n">get_flux_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
+                             <span class="n">model_output_file</span><span class="o">=</span><span class="n">fluxobs_output_file</span><span class="p">,</span>
+                             <span class="n">observed_values_file</span><span class="o">=</span><span class="n">flux_obs</span><span class="p">,</span>
+                             <span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="s1">&#39;site_no&#39;</span><span class="p">,</span>
+                             <span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
+                             <span class="n">observed_values_obsval_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                             <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                             <span class="n">steady_state_period_start</span><span class="o">=</span><span class="n">steady_state_period_start</span><span class="p">,</span>
+                             <span class="n">steady_state_period_end</span><span class="o">=</span><span class="n">steady_state_period_end</span><span class="p">,</span>
+                             <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs.dat&#39;</span>
+                             <span class="p">)</span>
+<span class="n">base_flux_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+reading model output from ../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv...
+took 0.00s
+
+Dropping 1 sites with no information
+wrote 53 observations to output/processed_flux_obs.dat
+wrote 53 observation instructions to output/processed_flux_obs.dat.ins
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obs_flux</th>
+      <th>sim_flux</th>
+      <th>obsval</th>
+      <th>obgnme</th>
+    </tr>
+    <tr>
+      <th>obsnme</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>07281600_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>07281600</td>
+      <td>07281600_ss</td>
+      <td>1.349688e+07</td>
+      <td>8203000.0</td>
+      <td>1.349688e+07</td>
+      <td>flux</td>
+    </tr>
+    <tr>
+      <th>07281600_200803</th>
+      <td>2008-03-31</td>
+      <td>3</td>
+      <td>07281600</td>
+      <td>07281600_200803</td>
+      <td>8.919390e+06</td>
+      <td>7155800.0</td>
+      <td>8.919390e+06</td>
+      <td>flux</td>
+    </tr>
+    <tr>
+      <th>07281600_200809</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07281600</td>
+      <td>07281600_200809</td>
+      <td>1.349688e+07</td>
+      <td>6290400.0</td>
+      <td>1.349688e+07</td>
+      <td>flux</td>
+    </tr>
+    <tr>
+      <th>07281600_200903</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07281600</td>
+      <td>07281600_200903</td>
+      <td>1.547445e+07</td>
+      <td>6740000.0</td>
+      <td>1.547445e+07</td>
+      <td>flux</td>
+    </tr>
+    <tr>
+      <th>07281600_200909</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07281600</td>
+      <td>07281600_200909</td>
+      <td>1.365627e+07</td>
+      <td>7182900.0</td>
+      <td>1.365627e+07</td>
+      <td>flux</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([&#39;07281600&#39;, &#39;07288280&#39;, &#39;07288500&#39;], dtype=object)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_flux_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Base flow, in $m^3/d$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_48_1.png" src="../_images/notebooks_Example_48_1.png" />
+</div>
+</div>
+</section>
+<section id="Changes-in-streamflow-through-time">
+<h2>Changes in streamflow through time<a class="headerlink" href="#Changes-in-streamflow-through-time" title="Permalink to this headline">¶</a></h2>
+<p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can be used to create observations of the changes in streamflow through time at each site.</p>
+<ul class="simple">
+<li><p>Differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span>
+                                      <span class="n">perioddata</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
+                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_tdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 47 observations to output/processed_flux_obs_tdiffs.dat
+wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obs_flux</th>
+      <th>sim_flux</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>obgnme</th>
+      <th>type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07281600</td>
+      <td>07281600_200809d200803</td>
+      <td>1.349688e+07</td>
+      <td>6290400.0</td>
+      <td>4.577493e+06</td>
+      <td>-865400.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07281600</td>
+      <td>07281600_200903d200809</td>
+      <td>1.547445e+07</td>
+      <td>6740000.0</td>
+      <td>1.977567e+06</td>
+      <td>449600.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07281600</td>
+      <td>07281600_200909d200903</td>
+      <td>1.365627e+07</td>
+      <td>7182900.0</td>
+      <td>-1.818178e+06</td>
+      <td>442900.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2010-03-31</td>
+      <td>7</td>
+      <td>07281600</td>
+      <td>07281600_201003d200909</td>
+      <td>3.217932e+07</td>
+      <td>7544900.0</td>
+      <td>1.852304e+07</td>
+      <td>362000.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2010-09-30</td>
+      <td>8</td>
+      <td>07281600</td>
+      <td>07281600_201009d201003</td>
+      <td>1.156270e+07</td>
+      <td>6223100.0</td>
+      <td>-2.061661e+07</td>
+      <td>-1321800.0</td>
+      <td>flux_tdiff</td>
+      <td>temporal flux difference</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
+<span class="n">site_data</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_data</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Change in streamflow, $m^3/d$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_52_1.png" src="../_images/notebooks_Example_52_1.png" />
+</div>
+</div>
+</section>
+<section id="Change-in-streamflow-between-two-sites">
+<h2>Change in streamflow between two sites<a class="headerlink" href="#Change-in-streamflow-between-two-sites" title="Permalink to this headline">¶</a></h2>
+<p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can be used to difference stream flows between sites to create observations of stream flow gain or loss.</p>
+<ul class="simple">
+<li><p>Differences are computed by subtracting the values site(s) from the key site, so for example, to represent a gain in streamflow as positive, the downstream site should be key site.</p></li>
+</ul>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;07288500&#39;</span><span class="p">:</span>   <span class="c1"># sunflower r. at sunflower</span>
+                         <span class="s1">&#39;07288280&#39;</span>  <span class="c1"># sunflower r. at merigold</span>
+                         <span class="p">}</span>
+
+<span class="n">flux_sdiff</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
+                                     <span class="n">flux_difference_sites</span><span class="p">,</span>
+                                     <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
+                                     <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
+                                     <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                     <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                     <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_sdiffs.dat&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+wrote 17 observations to output/processed_flux_obs_sdiffs.dat
+wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>obsprefix</th>
+      <th>obsnme1</th>
+      <th>obs_flux1</th>
+      <th>sim_flux1</th>
+      <th>obsnme2</th>
+      <th>obs_flux2</th>
+      <th>sim_flux2</th>
+      <th>obs_diff</th>
+      <th>sim_diff</th>
+      <th>obgnme</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>type</th>
+    </tr>
+    <tr>
+      <th>per</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_ss</td>
+      <td>816717.0</td>
+      <td>0.0</td>
+      <td>07288280_ss</td>
+      <td>274565.500000</td>
+      <td>0.0</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_ss</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2008-03-31</td>
+      <td>3</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200803</td>
+      <td>425160.0</td>
+      <td>0.0</td>
+      <td>07288280_200803</td>
+      <td>255581.650000</td>
+      <td>0.0</td>
+      <td>169578.350000</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200803</td>
+      <td>169578.350000</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200809</td>
+      <td>816717.0</td>
+      <td>0.0</td>
+      <td>07288280_200809</td>
+      <td>274565.500000</td>
+      <td>0.0</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200809</td>
+      <td>542151.500000</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200903</td>
+      <td>468096.5</td>
+      <td>0.0</td>
+      <td>07288280_200903</td>
+      <td>280535.333333</td>
+      <td>0.0</td>
+      <td>187561.166667</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200903</td>
+      <td>187561.166667</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07288500-d-07288280</td>
+      <td>07288500_200909</td>
+      <td>976710.5</td>
+      <td>0.0</td>
+      <td>07288280_200909</td>
+      <td>570437.333333</td>
+      <td>0.0</td>
+      <td>406273.166667</td>
+      <td>0.0</td>
+      <td>flux_sdiff</td>
+      <td>07288500-d-07288280_200909</td>
+      <td>406273.166667</td>
+      <td>0.0</td>
+      <td>spatial flux difference</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="o">.</span><span class="n">datetime</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="p">[[</span><span class="s1">&#39;obs_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_diff&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gain in streamflow, $m^3/d$&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_Example_56_1.png" src="../_images/notebooks_Example_56_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/index.html" class="btn btn-neutral float-right" title="Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on Dec 29, 2021.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

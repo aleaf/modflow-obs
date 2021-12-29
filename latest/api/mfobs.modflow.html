@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MODFLOW-related functions &mdash; modflow-obs 0.post30.dev0+gb8e875c documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PRMS-related functions" href="mfobs.prms.html" />
+    <link rel="prev" title="The head observations module" href="mfobs.heads.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> modflow-obs
+          </a>
+              <div class="version">
+                0.post30.dev0+gb8e875c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html"> Demo of Modflow-obs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">MODFLOW-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.prms.html">PRMS-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.obs.html">General observation processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release history</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-history.html"> Release History</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to modflow-obs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">modflow-obs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Modules</a> &raquo;</li>
+      <li>MODFLOW-related functions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/mfobs.modflow.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-mfobs.modflow">
+<span id="modflow-related-functions"></span><h1>MODFLOW-related functions<a class="headerlink" href="#module-mfobs.modflow" title="Permalink to this headline">¶</a></h1>
+<p>Functions specific to MODFLOW and flopy</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_gwf_obs_input">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_gwf_obs_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_gwf_obs_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_gwf_obs_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the first BEGIN continuous  FILEOUT block of an input
+file to the MODFLOW-6 GWF observation utility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>gwf_obs_input_file</strong><span class="classifier">str</span></dt><dd><p>Input file to MODFLOW-6 observation utility (contains layer information).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_ij">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_ij</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_ij"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_ij" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the row and column of a point or sequence of points
+in real-world coordinates. Uses the affine package. Basically,</p>
+<ul class="simple">
+<li><p>to get an x, y: transform * (col, row)</p></li>
+<li><p>the inverse, ~transform * (x, y) returns a fractional i, j location on the grid</p></li>
+</ul>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>transform</strong><span class="classifier">affine.Affine instance</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
+of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post272+g4d33098)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
+                                  <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for a uniform spacing of 1000 and upper left corner of 500955, 1205285
+with a rotation of 45 degrees, counter-clockwise about the upper left corner:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
+                                  <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="mf">45.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>An <code class="docutils literal notranslate"><span class="pre">affine.Affine</span></code> instance can also be created from a
+<a class="reference external" href="https://github.com/aleaf/modflow-setup">Modflow-setup</a>
+grid JSON file via the <a class="reference internal" href="#mfobs.modflow.get_modelgrid_transform" title="mfobs.modflow.get_modelgrid_transform"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_modelgrid_transform()</span></code></a> function.</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">scalar or sequence of x coordinates</span></dt><dd></dd>
+<dt><strong>y</strong><span class="classifier">scalar or sequence of y coordinates</span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>i</strong><span class="classifier">row or sequence of rows (zero-based)</span></dt><dd></dd>
+<dt><strong>j</strong><span class="classifier">column or sequence of columns (zero-based)</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_kstp_kper">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_kstp_kper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nstp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_kstp_kper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_kstp_kper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a sequence of the number of timesteps in each stress period,
+return a sequence of timestep, period tuples (kstp, kper) used
+by various flopy methods.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_layer">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_layer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_layer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas appends duplicate column names with a .*,
+where * is the number of duplicate names from left to right
+(e.g. obs, obs.1, obs.2, …). Modflow-setup writes observation input
+for each model layer, at each site location, with the same observation prefix (site identifier).
+MODFLOW-6 reports the result for each layer with duplicate column names,
+with layers increasing from left to right (e.g. obs, obs, obs, …).</p>
+<p>Parse the layer number from column_name, returning zero if there is no ‘.’ separator.</p>
+<p class="rubric">Notes</p>
+<p>The approach can’t be used if the model includes inactive cells (including pinched layers)
+at the locations of observations, because it assumes that the layer numbers are consecutive,
+starting at 0. For example, a pinched layer 2 in a 4 layer model would result in the observation
+being in layers 0, 1, 3, which would be misinterpreted as 0, 1, 2.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_mf6_single_variable_obs">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_mf6_single_variable_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'values'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_mf6_single_variable_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_mf6_single_variable_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read raw MODFLOW-6 observation output from csv table with
+times along the row axis and observations along the column axis. Reshape
+(stack) results to be n times x n sites rows, with a single observation value
+in each row. If there is more than one time in a stress period, retain only
+the last time (so that there is one observation per stress period for each site.
+If an input file to the MODFLOW-6 observation utility is included,
+include the observation layer number in the output.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>perioddata</strong><span class="classifier">str</span></dt><dd><p>Path to csv file with start/end dates for stress periods. Must have columns
+‘per’ (stress period number), ‘time’ (modflow time, in days), 
+‘start_datetime’ (start date for the stress period)
+and ‘end_datetime’ (end date for the stress period).</p>
+</dd>
+<dt><strong>model_output_file</strong><span class="classifier">str</span></dt><dd><p>Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).</p>
+</dd>
+<dt><strong>gwf_obs_input_file</strong><span class="classifier">str</span></dt><dd><p>Input file to MODFLOW-6 observation utility (contains layer information).</p>
+</dd>
+<dt><strong>variable_name</strong><span class="classifier">str, optional</span></dt><dd><p>Column with simulated output will be named “sim_&lt;variable_name”,
+by default ‘head’</p>
+</dd>
+<dt><strong>obsnme_date_suffix</strong><span class="classifier">bool</span></dt><dd><p>If true, give observations a date-based suffix. Otherwise, assign a 
+stress period-based suffix. In either case, the format of the suffix
+is controlled by obsnme_suffix_format.
+by default True</p>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes. Observation names are created following the format of
+&lt;obsprefix&gt;_&lt;date or stress period suffix&gt;. By default, <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>,
+which would yield <code class="docutils literal notranslate"><span class="pre">'202001'</span></code> for a Jan, 2020 observation 
+(obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+should be a decimal format in the “new-style” string format
+(e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
+</dd>
+<dt><strong>label_period_as_steady_state</strong><span class="classifier">int, optional</span></dt><dd><p>Zero-based model stress period where observations will be
+assigned the suffix ‘ss’ instead of a date suffix.
+By default, None, in which case all model output is assigned
+a date suffix based on the start date of the stress period.</p>
+</dd>
+<dt><strong>abs</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to convert simulated values to absolute values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>results</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with one head observation per row, with the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>per</p></td>
+<td><p>zero-based model stress period</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix</p></td>
+<td><p>prefix of observation name (site identifier)</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_&lt;variable_name&gt;</p></td>
+<td><p>column with simulated values</p></td>
+</tr>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period start date</p></td>
+</tr>
+<tr class="row-odd"><td><p>layer</p></td>
+<td><p>zero-based model layer</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_’%Y%m’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example observation names:</p>
+<p>site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)</p>
+<p>site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)</p>
+<p>a steady-state stress period specified with label_period_as_steady_state 
+is given the suffix of ‘ss’
+e.g. site1000_ss</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_mf_gage_package_obs">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_mf_gage_package_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_mf_gage_package_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_mf_gage_package_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read raw MODFLOW gage package text file output with
+times along the row axis and observations along the column axis. Reshape
+(stack) results to be n times x n sites rows, with a single observation value
+in each row.</p>
+<p>Observations can be aggregated from the raw model output to
+the stress period level (aggregate_obs_to_stress_periods=True), which is often desired
+for models with monthly stress periods. If there is more than one time in a stress period, 
+only the last timestep is retained (so that there is one observation per stress period for each site).</p>
+<p>Alternatively, for models with daily stresses on daily timesteps (for example, GSFLOW), observations 
+can be created for each timestep.</p>
+<p>If an input file to the MODFLOW observation package is specified,
+include the observation layer number in the output.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>perioddata</strong><span class="classifier">str</span></dt><dd><p>DataFrame with start/end dates for stress periods. Must have columns
+‘per’ (stress period number), ‘time’ (modflow time, in days), 
+‘start_datetime’ (start date for the stress period)
+and ‘end_datetime’ (end date for the stress period).</p>
+</dd>
+<dt><strong>model_output_files</strong><span class="classifier">str/pathlike, or list of pathlikes</span></dt><dd><p>Path to gage package output file(s). 
+Multiple files will be concatenated into one output table.</p>
+</dd>
+<dt><strong>model_obs_input_file</strong><span class="classifier">str</span></dt><dd><p>Input file to MODFLOW (hydmod or gage??) for observations.</p>
+</dd>
+<dt><strong>variable_name</strong><span class="classifier">str, optional</span></dt><dd><p>Column with simulated output will be named “sim_&lt;variable_name”,
+by default ‘head’</p>
+</dd>
+<dt><strong>obsnme_date_suffix</strong><span class="classifier">bool</span></dt><dd><p>If true, give observations a date-based suffix. Otherwise, assign a 
+stress period-based suffix. In either case, the format of the suffix
+is controlled by obsnme_suffix_format.
+by default True</p>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes. Observation names are created following the format of
+&lt;obsprefix&gt;_&lt;date, stress period or elapsed time suffix&gt;. By default, <code class="docutils literal notranslate"><span class="pre">'%Y%m%d'</span></code>,
+which would yield <code class="docutils literal notranslate"><span class="pre">'20200101'</span></code> for a Jan, 2020 observation 
+(obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+should be a decimal format in the “new-style” string format
+(e.g. ‘{:04d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'0001'</span></code> for stress period 1. or day 1). 
+Observation suffixes are based on stress period if <code class="docutils literal notranslate"><span class="pre">aggregate_obs_to_stress_periods=True</span></code>,
+otherwise they are based on elapsed time (under the assumption that the model is on a daily timestep 
+if timestep-based observations are selected, for example in a GSFLOW context).</p>
+</dd>
+<dt><strong>label_period_as_steady_state</strong><span class="classifier">int, optional</span></dt><dd><p>Zero-based model stress period where observations will be
+assigned the suffix ‘ss’ instead of a date suffix.
+By default, None, in which case all model output is assigned
+a date suffix based on the start date of the stress period.</p>
+</dd>
+<dt><strong>aggregate_obs_to_stress_periods</strong><span class="classifier">bool</span></dt><dd><p>Option to aggregate observations to stress periods, so that there only
+one observation representing a stress period at a given site. Alternatively,
+(aggregate_obs_to_stress_periods=False), aggregate observations at the timestep
+level, for example in a GSFLOW simulation where there are many daily timesteps
+within a single stress period.</p>
+</dd>
+<dt><strong>abs</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to convert simulated values to absolute values</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>results</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with one head observation per row, with the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>per</p></td>
+<td><p>zero-based model stress period</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix</p></td>
+<td><p>prefix of observation name (site identifier)</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_&lt;variable_name&gt;</p></td>
+<td><p>column with simulated values</p></td>
+</tr>
+<tr class="row-even"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period start date</p></td>
+</tr>
+<tr class="row-odd"><td><p>layer</p></td>
+<td><p>zero-based model layer</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_’%Y%m’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Example observation names:</p>
+<p>site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_suffix_format=’%Y%m’ and obsnme_date_suffix=True)</p>
+<p>site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)</p>
+<p>site1000_00001, for a day 1 observation at site1000 (aggregate_obs_to_stress_periods=False and obsnme_date_suffix=False)</p>
+<p>a steady-state stress period specified with label_period_as_steady_state 
+is given the suffix of ‘ss’
+e.g. site1000_ss</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_modelgrid_transform">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_modelgrid_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_json_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift_to_cell_centers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_modelgrid_transform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_modelgrid_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an affine.Affine that describes the model grid
+from a json file. The affine package comes with rasterio
+as a dependency or can be installed separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>grid_json_file</strong><span class="classifier">str</span></dt><dd><p>Model grid json file produced by modflow-setup</p>
+</dd>
+<dt><strong>shift_to_cell_centers</strong><span class="classifier">bool</span></dt><dd><p>By default, transform reflects the upper left corner of
+the first cell in the model, and any conversions of x, y
+coordinates to pixels will be relative to upper left corners.
+If shift_to_cell_centers=True, x,y points will be referenced
+to the nearest cell centers.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_modflow_mass_balance">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_modflow_mass_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modroot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_modflow_mass_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_modflow_mass_balance" title="Permalink to this definition">¶</a></dt>
+<dd><p>read in the percent discrepancy for inset and parent models</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>modroot: root name of the model scenario</strong></dt><dd></dd>
+<dt><strong>outfile: filepath for output</strong></dt><dd></dd>
+<dt><strong>write_ins: bool. whether or not to write instruction file</strong></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_perioddata">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_perioddata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tdis_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sto_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_datetime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_time_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_perioddata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_perioddata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the perioddata table required by other modflow-obs
+functions from a MODFLOW-6 Temporal Discretization (TDIS) file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>tdis_file</strong><span class="classifier">str or pathlike</span></dt><dd><p>MODFLOW 6 TDIS, or MODFLOW-2005 style DIS Package file.
+Model version is determined from the extension 
+(‘.tdis’ for MODFLOW 6; ‘.dis’ for MODFLOW-2005)</p>
+</dd>
+<dt><strong>sto_file</strong><span class="classifier">str or pathlike</span></dt><dd><p>MODFLOW 6 STO Package file</p>
+</dd>
+<dt><strong>start_datetime</strong><span class="classifier">str or pandas Timestamp</span></dt><dd><p>Start date for model, if start date isn’t specified in TDIS package file.
+Required for MODFLOW-2005 style models.</p>
+</dd>
+<dt><strong>end_datetime</strong><span class="classifier">str or pandas Timestamp (optional)</span></dt><dd><p>End date of model, only required for GSFLOW models, where time-step specification 
+is handled internally. end_datetime should be specified as midnight following
+the last full day simulated by the model. For example, if the model runs through
+12/31/2019, end_datetime should be specified as 01/01/2020.</p>
+</dd>
+<dt><strong>model_time_units</strong><span class="classifier">str (optional)</span></dt><dd><p>Time unit of model, in text understandable by pandas (e.g. “days”).
+Specification of time units will override what is read 
+from the TDIS or DIS package file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>perioddata</strong><span class="classifier">DataFrame</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.get_transmissivities">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_transmissivities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">botm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelgrid_transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_botm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_transmissivities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_transmissivities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes transmissivity in each model layer at specified locations and
+open intervals. A saturated thickness is determined for each row, column
+or x, y location supplied, based on the open interval (sctop, screen_botm),
+if supplied, otherwise the layer tops and bottoms and the water table
+are used.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>heads</strong><span class="classifier">2D array OR 3D array</span></dt><dd><p>numpy array of shape nlay by n locations (2D) OR complete heads array
+of the model for one time (3D)</p>
+</dd>
+<dt><strong>hk</strong><span class="classifier">3D numpy array</span></dt><dd><p>horizontal hydraulic conductivity values.</p>
+</dd>
+<dt><strong>top</strong><span class="classifier">2D numpy array</span></dt><dd><p>model top elevations.</p>
+</dd>
+<dt><strong>botm</strong><span class="classifier">3D numpy array</span></dt><dd><p>layer botm elevations.</p>
+</dd>
+<dt><strong>r</strong><span class="classifier">1D array-like of ints, of length n locations</span></dt><dd><p>row indices (optional; alternately specify x, y)</p>
+</dd>
+<dt><strong>c</strong><span class="classifier">1D array-like of ints, of length n locations</span></dt><dd><p>column indices (optional; alternately specify x, y)</p>
+</dd>
+<dt><strong>x</strong><span class="classifier">1D array-like of floats, of length n locations</span></dt><dd><p>x locations in real world coordinates (optional).
+If x and y are specified, a modelgrid_transform must also be provided.</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">1D array-like of floats, of length n locations</span></dt><dd><p>y locations in real world coordinates (optional)
+If x and y are specified, a modelgrid_transform must also be provided.</p>
+</dd>
+<dt><strong>modelgrid_transform</strong><span class="classifier">affine.Affine instance, optional</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
+of the model grid. Only required for getting i, j if x and y are specified.
+Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post272+g4d33098)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
+                                  <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>for a uniform spacing of 1000 and upper left corner of 500955, 1205285
+with a rotation of 45 degrees, counter-clockwise about the upper left corner:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
+                                  <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span><span class="o">.</span><span class="n">rotation</span><span class="p">(</span><span class="mf">45.</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>An <code class="docutils literal notranslate"><span class="pre">affine.Affine</span></code> instance can also be created from a
+<a class="reference external" href="https://github.com/aleaf/modflow-setup">Modflow-setup</a>
+grid JSON file via the <a class="reference internal" href="#mfobs.modflow.get_modelgrid_transform" title="mfobs.modflow.get_modelgrid_transform"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_modelgrid_transform()</span></code></a> function.</p>
+</dd>
+<dt><strong>screen_top</strong><span class="classifier">1D array-like of floats, of length n locations</span></dt><dd><p>open interval tops (optional; default is model top)</p>
+</dd>
+<dt><strong>screen_botm</strong><span class="classifier">1D array-like of floats, of length n locations</span></dt><dd><p>open interval bottoms (optional; default is model bottom)</p>
+</dd>
+<dt><strong>nodata</strong><span class="classifier">numeric</span></dt><dd><p>optional; locations where heads=nodata will be assigned T=0</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>T</strong><span class="classifier">2D array of same shape as heads (nlay x n locations)</span></dt><dd><p>Transmissivities in each layer at each location</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.read_mf6_block">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">read_mf6_block</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blockname</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#read_mf6_block"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.read_mf6_block" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.read_mf6_lake_obs">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">read_mf6_lake_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2012-01-01'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_only_last_timestep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#read_mf6_lake_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.read_mf6_lake_obs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.modflow.read_mf_gage_package_output_files">
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">read_mf_gage_package_output_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gage_package_output_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#read_mf_gage_package_output_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.read_mf_gage_package_output_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read one of more gage package output files into a single table. If multiple
+files are specified, a single variable to return must be specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>gage_package_output_files</strong><span class="classifier">str/pathlike, or list of pathlikes</span></dt><dd><p>Path to gage package output file(s). 
+Multiple files will be concatenated into one output table.</p>
+</dd>
+<dt><strong>variable</strong><span class="classifier">str</span></dt><dd><p>Variable to return. Only required if multiple files are 
+specified to gage_package_output_files.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>df</strong><span class="classifier">DataFrame</span></dt><dd><p>Gage package output, with times along the row axis, 
+and variables or sites along the column axis.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mfobs.heads.html" class="btn btn-neutral float-left" title="The head observations module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mfobs.prms.html" class="btn btn-neutral float-right" title="PRMS-related functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on Dec 29, 2021.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

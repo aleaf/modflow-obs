@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The general observation processing module &mdash; modflow-obs 0.post30.dev0+gb8e875c documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utility functions" href="mfobs.utils.html" />
+    <link rel="prev" title="PRMS-related functions" href="mfobs.prms.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> modflow-obs
+          </a>
+              <div class="version">
+                0.post30.dev0+gb8e875c
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html">Examples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/Example.html"> Demo of Modflow-obs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.prms.html">PRMS-related functions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">General observation processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Release history</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release-history.html"> Release History</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Developer</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to modflow-obs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">modflow-obs</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">Modules</a> &raquo;</li>
+      <li>The general observation processing module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/mfobs.obs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="module-mfobs.obs">
+<span id="the-general-observation-processing-module"></span><h1>The general observation processing module<a class="headerlink" href="#module-mfobs.obs" title="Permalink to this headline">¶</a></h1>
+<p>General functions that apply to multiple types of observations</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_spatial_differences">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_spatial_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gradients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-d-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_spatial_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_spatial_differences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the base_data dataframe output by <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code> and creates
+spatial difference observations. Optionally writes an output csvfile
+and a PEST instruction file.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code></p>
+</dd>
+<dt><strong>perioddata</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with start/end dates for stress periods. Must have columns
+‘time’ (modflow time, in days), ‘start_datetime’ (start date for the stress period)
+and ‘end_datetime’ (end date for the stress period).</p>
+</dd>
+<dt><strong>difference_sites</strong><span class="classifier">dict</span></dt><dd><p>Dictionary of site numbers (keys) and other site numbers to compare to (values).
+Values can be a string for a single site, a list of strings for multiple sites,
+or a string pattern contained in multiple site numbers;
+observations at the sites represented in the values will be compared to the observation
+at the site represented by the key, at times of coincident measurements. Differences
+are computed by subtracting the values site(s) from the key site, so for example,
+to represent a gain in streamflow as positive, the downstream site should be key site.</p>
+</dd>
+<dt><strong>obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code> with observed values</p>
+</dd>
+<dt><strong>sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <cite>base_data`</cite> with simulated equivalent values</p>
+</dd>
+<dt><strong>obstype</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
+columns are named in the format ‘sim_&lt;obstype&gt;’ and ‘obs_&lt;obstype&gt;’,
+respectively. If there is no ‘obgnme’ column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>,
+<code class="docutils literal notranslate"><span class="pre">obstype</span></code> is also used as a default base group name. Finally,
+a ‘type’ column is included in the output with the label
+‘vertical &lt;obstype&gt; gradient’ or ‘&lt;obstype&gt; difference’, depending on whether
+<code class="docutils literal notranslate"><span class="pre">use_gradients=True</span></code>.</p>
+</dd>
+<dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, compute vertical hydraulic gradients and use those for the
+observation values, if False, use differences. For this option,
+‘screen_top’ and ‘screen_botm’ columns are needed in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>.
+By default False.</p>
+</dd>
+<dt><strong>sep</strong><span class="classifier">str</span></dt><dd><p>Separator in spatial difference obsnnames. For example, with
+sites “site1” and “site2” at time “202001”, and sep=’-d-’, the obsnme
+would be “site1-d-site2_202001”.
+by default, ‘-d-’</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to. Nan values are filled with -9999.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>spatial_differences</strong><span class="classifier">DataFrame</span></dt><dd><p>Spatial difference observations. Columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 83%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>observation date-time labels</p></td>
+</tr>
+<tr class="row-even"><td><p>per</p></td>
+<td><p>model stress period</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix</p></td>
+<td><p>observation name prefix (site identifier)</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme1</p></td>
+<td><p>name of observation from keys of <code class="docutils literal notranslate"><span class="pre">difference_sites</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;obs_values_col&gt;1</p></td>
+<td><p>observed value associated with obsnme1</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;sim_values_col&gt;1</p></td>
+<td><p>simulated equivalent associated with obsnme1</p></td>
+</tr>
+<tr class="row-odd"><td><p>screen_top1</p></td>
+<td><p>well screen top (elevation) associated with obsnme1*</p></td>
+</tr>
+<tr class="row-even"><td><p>screen_botm1</p></td>
+<td><p>well screen botm (elevation) associated with obsnme1*</p></td>
+</tr>
+<tr class="row-odd"><td><p>layer1</p></td>
+<td><p>model layer associated with obsnme1*</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme2</p></td>
+<td><p>name of observation from value(s) in <code class="docutils literal notranslate"><span class="pre">difference_sites</span></code> (associated with obsnme1)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;obs_values_col&gt;2</p></td>
+<td><p>observed value associated with obsnme2</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;sim_values_col&gt;2</p></td>
+<td><p>simulated equivalent associated with obsnme2</p></td>
+</tr>
+<tr class="row-odd"><td><p>screen_top2</p></td>
+<td><p>well screen top (elevation) associated with obsnme2*</p></td>
+</tr>
+<tr class="row-even"><td><p>screen_botm2</p></td>
+<td><p>well screen botm (elevation) associated with obsnme2*</p></td>
+</tr>
+<tr class="row-odd"><td><p>layer2</p></td>
+<td><p>model layer associated with obsnme2*</p></td>
+</tr>
+<tr class="row-even"><td><p>obs_diff</p></td>
+<td><p>observed difference between obsnme1 and obsnme2</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_diff</p></td>
+<td><p>simulated equivalent difference between obsnme1 and obsnme2</p></td>
+</tr>
+<tr class="row-even"><td><p>dz</p></td>
+<td><p>distance between well screen midpoints for obsnme1 and obsnme2*</p></td>
+</tr>
+<tr class="row-odd"><td><p>obs_grad</p></td>
+<td><p>observed vertical hydraulic gradient between obsnme1 and obsnme2*</p></td>
+</tr>
+<tr class="row-even"><td><p>sim_grad</p></td>
+<td><p>simulated equivalent vertical hydraulic gradient between obsnme1 and obsnme2*</p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>spatial difference observation name</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsval</p></td>
+<td><p>observation value (i.e. for PEST control file)</p></td>
+</tr>
+<tr class="row-even"><td><p>sim_obsval</p></td>
+<td><p>simulated equivalent (i.e. for PEST instruction file)</p></td>
+</tr>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>description of spatial difference observations</p></td>
+</tr>
+<tr class="row-even"><td><p>uncertainty</p></td>
+<td><p>(loosely) error-based uncertainty, assumed to be 2x that of obsnme2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Notes:</p>
+<ul class="simple">
+<li><ul>
+<li><p>denotes optional columns that may not be present.</p></li>
+</ul>
+</li>
+<li><p>Columns relating to well open interval are only created if <code class="docutils literal notranslate"><span class="pre">obstype='head'</span></code>
+and <code class="docutils literal notranslate"><span class="pre">base_data</span></code> has ‘screen_top’ and ‘screen_botm’ columns.</p></li>
+<li><p>Negative difference or gradient values indicate a gradient towards the key site.</p></li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_temporal_differences">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_temporal_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_displacements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displacement_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_temporal_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_temporal_differences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the base_data dataframe output by <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code>,
+creates temporal difference observations. Optionally writes an output csvfile
+and a PEST instruction file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Head observation data with same column structure as
+output from <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code></p>
+</dd>
+<dt><strong>perioddata</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with start/end dates for stress periods. Must have columns
+‘time’ (modflow time, in days), ‘start_datetime’ (start date for the stress period)
+and ‘end_datetime’ (end date for the stress period).</p>
+</dd>
+<dt><strong>obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code> with observed values</p>
+</dd>
+<dt><strong>sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <cite>base_data`</cite> with simulated equivalent values</p>
+</dd>
+<dt><strong>obstype</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
+columns are named in the format ‘sim_&lt;obstype&gt;’ and ‘obs_&lt;obstype&gt;’,
+respectively. If there is no ‘obgnme’ column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>,
+<code class="docutils literal notranslate"><span class="pre">obstype</span></code> is also used as a default base group name.</p>
+</dd>
+<dt><strong>get_displacements</strong><span class="classifier">bool</span></dt><dd><p>If True, compute the displacement of each observation from 
+a datum (specified by <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code>). If False, difference
+each observation with the previous observation.
+by default, False</p>
+</dd>
+<dt><strong>displacement_from</strong><span class="classifier">str or date-like</span></dt><dd><p>Datum for computing displacements. Must be in a format that can be
+used for time slicing in pandas (e.g. ‘2010-01-01’, which would result
+in displacements from the first observation on or after ‘2010-01-01’ at each site,
+or None, which would result in displacements from the first observation 
+at each site. By default, None</p>
+</dd>
+<dt><strong>non-zero weighted observation</strong></dt><dd></dd>
+<dt><strong>obsnme_date_suffix</strong><span class="classifier">bool</span></dt><dd><p>If true, give observations a date-based suffix. Otherwise, assign a 
+stress period-based suffix. In either case, the format of the suffix
+is controlled by obsnme_suffix_format.
+by default True</p>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes. Observation names are created following the format of
+&lt;obsprefix&gt;_&lt;date or stress period suffix&gt;. By default, <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>,
+which would yield <code class="docutils literal notranslate"><span class="pre">'202001'</span></code> for a Jan, 2020 observation 
+(obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+should be a decimal format in the “new-style” string format
+(e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>exclude_obs</strong><span class="classifier">list-like</span></dt><dd><p>Sequence of observation names to exclude from return/written dataset. For example,
+if sequential head differences are also being computed, the first displacement observation
+after the reference observation will be a duplicate of the first sequential head difference
+observation. By default, None (no observations excluded).</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl class="simple">
+<dt><strong>period_diffs</strong><span class="classifier">DataFrame</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Differences are computed by subtracting the previous time from the current,
+so a positive value indicates an increase.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mfobs.prms.html" class="btn btn-neutral float-left" title="PRMS-related functions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mfobs.utils.html" class="btn btn-neutral float-right" title="Utility functions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+      <span class="lastupdated">Last updated on Dec 29, 2021.
+      </span></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
