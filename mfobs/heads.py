@@ -32,7 +32,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  drop_groups=None,
                  hk_arrays=None, top_array=None, botm_arrays=None,
                  label_period_as_steady_state=None, steady_state_period_start=None,
-                 steady_state_period_end=None,
+                 steady_state_period_end=None, forecast_sites=None,
+                 forecast_start_date=None, forecast_end_date=None,
                  write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
@@ -213,6 +214,21 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     steady_state_period_end : str, optional
         End date for the period representing steady-state conditions.
         By default None, in which case no steady-state observatons are created.
+    forecast_sites : str or sequence, optional
+        At these sites, observations will be created for each simulated value,
+        regardless is there is an observed equivalent. Can be supplied
+        as a sequence of site numbers (`site_id`s) or ``'all'`` to
+        include all sites. By default, None (no forecast sites).
+    forecast_start_date : str, optional
+        Start date for forecast period. When forecast_sites is not
+        ``None``, forecast observations will be generated for each
+        time between `forecast_start_date` and `forecast_end_date`.
+        By default, None (generate forecasts for any time with missing values).
+    forecast_end_date : str, optional
+        End date for forecast period. When forecast_sites is not
+        ``None``, forecast observations will be generated for each
+        time between `forecast_start_date` and `forecast_end_date`.
+        By default, None (generate forecasts for any time with missing values).
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -310,6 +326,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # convert obs names and prefixes to lower case
     observed['obsprefix'] = observed['obsprefix'].str.lower()
+    
+    # make a dictionary of site metadata for possible use later
+    temp = observed.copy()
+    temp.index = temp['obsprefix'].str.lower()
+    site_info_dict = temp.to_dict()
+    del site_info_dict['datetime']
+    del temp
 
     # cast datetimes to pandas datetimes
     observed['datetime'] = pd.to_datetime(observed['datetime'])
@@ -321,7 +344,19 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # but modflow-setup would include them in the MODFLOW observation input)
     # also drop sites that are in the obs information file, but not in the model results
     # these include sites outside of the model (i.e. in the inset when looking at the parent)
+    
+    # no forecast observations;
+    # drop sites that don't have an observed/sim equivalent pair
     no_info_sites = set(results.obsprefix).symmetric_difference(observed.obsprefix)
+    if forecast_sites == 'all':
+        # forecast observations at all simulated sites
+        # (only drop sites that aren't simulated)
+        no_info_sites = set(observed.obsprefix).difference(results.obsprefix)
+    elif forecast_sites is not None:
+        # remove selected forecast sites from 'no_info' sites to drop
+        forecast_sites = {s.lower() for s in forecast_sites}
+        no_info_sites = no_info_sites.difference(forecast_sites)
+        
     # dump these out to a csv
     if len(no_info_sites) > 0:
         print('Dropping {} sites with no information'.format(len(no_info_sites)))
@@ -377,29 +412,40 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             if steady_state_period_end is not None:
                 end = steady_state_period_end
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
-        if len(observed_in_period) == 0:
+        
+        # No forecast observations and no observed values in period
+        if forecast_sites is None and len(observed_in_period) == 0:
             warnings.warn(('Stress period {}: No observations between start and '
                            'end dates of {} and {}!'.format(per, start, end)))
             continue
-        observed_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
-        if 'n' not in observed_in_period.columns:
-            observed_in_period['n'] = 1
-        by_site = observed_in_period.groupby('obsprefix')
-        observed_in_period_rs = getattr(by_site, aggregrate_observed_values_by)()
-        observed_in_period_rs['n'] = by_site.n.sum()
-        observed_in_period_rs['datetime'] = pd.Timestamp(end)
-        observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
+        
+        # If there are forecast sites and observed data in this period
+        elif len(observed_in_period) > 0:
+        
+            observed_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
+            if 'n' not in observed_in_period.columns:
+                observed_in_period['n'] = 1
+            by_site = observed_in_period.groupby('obsprefix')
+            observed_in_period_rs = getattr(by_site, aggregrate_observed_values_by)()
+            observed_in_period_rs['n'] = by_site.n.sum()
+            observed_in_period_rs['datetime'] = pd.Timestamp(end)
+            observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
 
-        missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)
-        for col in missing_cols:
-            observed_in_period_rs[col] = by_site[col].first().values
-        observed_in_period_rs = observed_in_period_rs[observed_in_period.columns]
-        obsnames = ['{}_{}'.format(prefix.lower(), suffix)
-                    for prefix in observed_in_period_rs.obsprefix]
-        observed_in_period_rs['obsnme'] = obsnames
-        observed_in_period_rs.index = observed_in_period_rs['obsnme']
+            missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)
+            for col in missing_cols:
+                observed_in_period_rs[col] = by_site[col].first().values
+            observed_in_period_rs = observed_in_period_rs[observed_in_period.columns]
+            obsnames = ['{}_{}'.format(prefix.lower(), suffix)
+                        for prefix in observed_in_period_rs.obsprefix]
+            observed_in_period_rs['obsnme'] = obsnames
+            observed_in_period_rs.index = observed_in_period_rs['obsnme']
+            
+        # Forecast sites, but no observed data
+        else:
+            observed_in_period_rs = pd.DataFrame(columns=observed.columns)
 
-        # get head values based on T-weighted average of open interval
+        # Simulated equivalents
+        # Option to get head values based on T-weighted average of open interval        
         if observed_values_layer_col is None:
             # get a n layers x n sites array of simulated head observations
             data = data.reset_index(drop=True)
@@ -442,10 +488,17 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             assert not np.any(np.isnan(mean_t_weighted_heads))
 
             # add the simulated heads onto the list for all periods
-            mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads}, index=obsnme)
+            mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads}, 
+                                                    index=obsnme)
+            if forecast_sites is not None:
+                observed_in_period_rs = observed_in_period_rs.reindex(obsnme)
+                obsprefix = observed_in_period_rs.index.str.split('_', expand=True).levels[0]
+                observed_in_period_rs['obsprefix'] = obsprefix
+                observed_in_period_rs['datetime'] = data['datetime'].values[0]
+
             observed_in_period_rs[sim_values_column] = mean_t_weighted_heads_df[sim_values_column]
 
-        # Get head values for specified layers
+        # Alternative option to get head values for specified layers
         # (or closest layer if the specified layer doesn't have obs output)
         else:
             any_simulated_obs = data.obsnme.isin(observed_in_period_rs.obsnme).any()
@@ -485,14 +538,40 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     if drop_groups is not None and 'obgnme' in head_obs.columns:
         head_obs = head_obs.loc[~head_obs.obgnme.isin(drop_groups)].copy()
 
-    # nans are where sites don't have observation values for that period
-    # or sites that are in other model (inset or parent)
-    head_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
-
     # add standard obsval and obgmne columns
     head_obs['obsval'] = head_obs[obs_values_column]
     if 'obgnme' not in head_obs.columns:
         head_obs['obgnme'] = variable_name
+
+    # fill forecast obs with site info from observed dataframe
+    if forecast_sites is not None:
+        for k, v in site_info_dict.items():
+            head_obs[k] = [v[p] for p in head_obs['obsprefix']]
+        head_obs['obsnme'] = head_obs.index
+    else:
+        # nans are where sites don't have observation values for that period
+        # or sites that are in other model (inset or parent)
+        head_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
+
+    # label forecasts in own group
+    if forecast_sites is not None:
+        is_forecast = head_obs[obs_values_column].isna()
+        head_obs.loc[is_forecast, 'obgnme'] += '-forecast'
+    
+        # cull forecasts to specified date window
+        # and specific sites (if specified)
+        keep_forecasts = np.array([True] * len(head_obs))
+        if forecast_start_date is not None:
+            keep_forecasts = (head_obs['datetime'] >= forecast_start_date)
+        if forecast_end_date is not None:
+            keep_forecasts &= (head_obs['datetime'] <= forecast_end_date)
+        #drop = drop & is_forecast
+        #head_obs = head_obs.loc[~drop].copy()
+        #is_forecast = head_obs[obs_values_column].isna()
+        if forecast_sites != 'all':
+            keep_forecasts &= head_obs['obsprefix'].isin(forecast_sites)
+        keep = keep_forecasts | ~is_forecast
+        head_obs = head_obs.loc[keep].copy()
 
     # reorder the columns
     columns = ['datetime', 'per', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,

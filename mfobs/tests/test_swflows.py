@@ -182,3 +182,65 @@ def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_differen
     assert not results.obsval.isna().any()
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
+    
+    
+@pytest.mark.parametrize('forecast_sites,forecast_start_date,forecast_end_date', (
+    ('all', '2010-01-01', '2015-01-01'),
+    (['07281600', '07288500'], None, None)
+))
+def test_get_forecast_flux_obs(flux_obs_input, forecast_sites, 
+                               forecast_start_date, forecast_end_date):
+    
+    # test input with a dataframe too
+    observed_values = pd.read_csv(flux_obs_input.observed_values_file,
+                                  dtype={'obsprefix': object,
+                                         'site_no': object})
+    observed_values['obgnme'] = 'flux'
+    # for the sake of testing forecasts, pretend that the data stop in 2010
+    observed_values = observed_values.loc[observed_values['datetime'] < '2010']
+    
+    obs = get_flux_obs(flux_obs_input.perioddata,
+                            model_output_file=flux_obs_input.model_output_file,
+                            observed_values_file=observed_values,
+                            observed_values_site_id_col='site_no',
+                            observed_values_obsval_col='obsval',
+                            observed_values_group_column='obgnme',
+                            variable_name='flux',
+                            forecast_sites=forecast_sites,
+                            forecast_start_date=forecast_start_date,
+                            forecast_end_date=forecast_end_date,
+                            write_ins=False, outfile=None)
+        
+    # pick a site with an incomplete record
+    # the missing times should be filled with forecast obs
+    loc = (obs.obsprefix == '07281600') & obs.obsval.isna()
+    if forecast_start_date is not None and forecast_end_date is not None:
+        assert len(obs.loc[loc]) == 9
+    else:
+        assert len(obs.loc[loc]) == 12
+    if forecast_sites == 'all':
+        assert set(obs['obgnme']) == {'flux-forecast', 'flux',
+                                    # site that is in model results, 
+                                    # but missing site information
+                                    '07288580-forecast' 
+                                    }
+    else:
+        assert set(obs['obgnme']) == {'flux-forecast', 'flux',
+                                    }
+    
+    # outside of observed values
+    # the resulting dataframe should be entirely filled
+    assert not obs.drop(['obsval', 'obs_flux'], axis=1).isna().any().any()
+    
+    # if forecast_sites != 'all':
+    # check that only forecasts for specified sites were generated
+    if forecast_sites is not None and forecast_sites != 'all':
+        assert set(obs.loc[obs['obsval'].isna(), 'obsprefix']) ==\
+            set(forecast_sites)
+    # check that forecasts were only generated within specified time window
+    if forecast_start_date is not None:
+        assert not np.any(obs.loc[obs['obsval'].isna(), 'datetime'] <\
+            forecast_start_date)
+    if forecast_end_date is not None:
+        assert not np.any(obs.loc[obs['obsval'].isna(), 'datetime'] >\
+            forecast_end_date)

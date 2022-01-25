@@ -254,3 +254,66 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert not results.sim_obsval.isna().any()
     assert results.obsnme.str.islower().all()
     assert results.obgnme.unique().tolist() == ['head_sdiff']
+
+
+@pytest.mark.parametrize('forecast_sites,forecast_start_date,forecast_end_date', (
+    ('all', '2010-01-01', '2015-01-01'),
+    (['usgs:333145090261901', 'usgs:334630090274201'], None, None)
+))
+def test_get_forecast_head_obs(head_obs_input, forecast_sites, 
+                               forecast_start_date, forecast_end_date):
+    
+    # test input with a dataframe too
+    observed_values = pd.read_csv(head_obs_input.head_obs_file,
+                                  dtype={'obsprefix': object})
+    
+    head_obs = get_head_obs(head_obs_input.perioddata,
+                            modelgrid_transform=head_obs_input.modelgrid_transform,
+                            model_output_file=head_obs_input.headobs_output_file,
+                            observed_values_file=observed_values,
+                            observed_values_metadata_file=head_obs_input.head_obs_info_file,
+                            observed_values_obsval_col='head',
+                            observed_values_layer_col=None,
+                            gwf_obs_input_file=head_obs_input.headobs_input_file,
+                            hk_arrays=head_obs_input.hk_arrays,
+                            top_array=head_obs_input.top_array,
+                            botm_arrays=head_obs_input.botm_arrays,
+                            label_period_as_steady_state=head_obs_input.label_period_as_steady_state,
+                            steady_state_period_start=head_obs_input.steady_state_period_start,
+                            steady_state_period_end=head_obs_input.steady_state_period_end,
+                            forecast_sites=forecast_sites,
+                            forecast_start_date=forecast_start_date,
+                            forecast_end_date=forecast_end_date,
+                            write_ins=False, outfile=head_obs_input.outfile)
+        
+    # pick a site with an incomplete record
+    # the missing times should be filled with forecast obs
+    loc = (head_obs.obsprefix == 'usgs:333145090261901') & head_obs.obsval.isna()
+    if forecast_start_date is not None and forecast_end_date is not None:
+        assert len(head_obs.loc[loc]) == 9
+    else:
+        assert len(head_obs.loc[loc]) == 16
+    assert set(head_obs['obgnme']) == {'head-forecast', 'head'}
+    
+    # outside of observed values
+    # and top and bottom info at some sites
+    # the resulting dataframe should be entirely filled
+    loc = ~head_obs_input.head_obs_info_file[['screen_top', 
+                                                         'screen_botm']].isna().any(axis=1)
+    sites_with_screen_info = head_obs_input.head_obs_info_file.loc[loc, 'obsprefix'].str.lower()
+    head_obs_with_screen_info = head_obs.loc[head_obs.obsprefix.isin(sites_with_screen_info)]
+    assert not head_obs_with_screen_info.drop(['obsval', 'obs_head'], axis=1).isna().any().any()
+    
+    # if forecast_sites != 'all':
+    # check that only forecasts for specified sites were generated
+    if forecast_sites is not None and forecast_sites != 'all':
+        assert set(head_obs.loc[head_obs['obsval'].isna(), 'obsprefix']) ==\
+            set(forecast_sites)
+    # check that forecasts were only generated within specified time window
+    if forecast_start_date is not None:
+        assert not np.any(head_obs.loc[head_obs['obsval'].isna(), 'datetime'] <\
+            forecast_start_date)
+    if forecast_end_date is not None:
+        assert not np.any(head_obs.loc[head_obs['obsval'].isna(), 'datetime'] >\
+            forecast_end_date)
+    
