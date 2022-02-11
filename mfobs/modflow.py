@@ -2,6 +2,7 @@
 Functions specific to MODFLOW and flopy
 """
 import json
+import time
 from pathlib import Path
 from affine import Affine
 import numpy as np
@@ -211,6 +212,7 @@ def get_mf6_single_variable_obs(perioddata,
 
 
     """
+    t0 = time.time()
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
                         function_name='get_mf6_single_variable_obs')
@@ -221,6 +223,7 @@ def get_mf6_single_variable_obs(perioddata,
         perioddata = perioddata.sort_values(by='per')
     if 'perlen' not in perioddata.columns:
         perioddata['perlen'] = perioddata['time'].diff().fillna(0).tolist()
+        
     print('reading model output from {}...'.format(model_output_file))
     model_output = read_csv(model_output_file, dtype='float64')
 
@@ -327,6 +330,7 @@ def get_mf6_single_variable_obs(perioddata,
     sort_cols = [c for c in ['obsprefix', 'per', 'layer'] if c in stacked.columns]
     stacked.sort_values(by=sort_cols, inplace=True)
     results = stacked
+    print("Getting mf6 observations took {:.2f}s\n".format(time.time() - t0))
     return results
 
 

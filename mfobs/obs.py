@@ -340,13 +340,25 @@ def get_temporal_differences(base_data, perioddata,
     # group observations by site (prefix)
     sites = base_data.groupby('obsprefix')
     period_diffs = []
+    
+    # get index position for columns
+    # (to avoid setting on slices in loop below)
+    if 'obsval' in base_data.columns:
+        obsval_col_iloc = base_data.columns.get_loc('obsval')
+    else:
+        obsval_col_iloc = len(base_data.columns)
+    if 'sim_obsval' in base_data.columns:
+        sim_obsval_col_iloc = base_data.columns.get_loc('sim_obsval')
+    else:
+        sim_obsval_col_iloc = len(base_data.columns) + 1
+    
     for site_no, values in sites:
         values = values.sort_values(by=['per']).copy()
         values.index = values['datetime']
 
         # compute the differences
         if get_displacements:
-            values = values.loc[displacement_from:]
+            values = values.loc[displacement_from:].copy()
             
             # some sites may not have any measurements
             # after displacement datum; skip these
@@ -359,8 +371,10 @@ def get_temporal_differences(base_data, perioddata,
             # assign np.nan to starting displacements (of 0) 
             # (so they get dropped later on, 
             # consistent with workflow for sequential difference obs)
-            values['obsval'].iloc[0] = np.nan
-            values['sim_obsval'].iloc[0] = np.nan
+            values.iloc[0, obsval_col_iloc] = np.nan
+            values.iloc[0, sim_obsval_col_iloc] = np.nan
+            #values['obsval'].iloc[0] = np.nan
+            #values['sim_obsval'].iloc[0] = np.nan
         else:
             values['obsval'] = values[obs_values_col].diff()
             values['sim_obsval'] = values[sim_values_col].diff()

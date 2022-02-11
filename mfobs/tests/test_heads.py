@@ -256,12 +256,13 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
     assert results.obgnme.unique().tolist() == ['head_sdiff']
 
 
-@pytest.mark.parametrize('forecast_sites,forecast_start_date,forecast_end_date', (
-    ('all', '2010-01-01', '2015-01-01'),
-    (['usgs:333145090261901', 'usgs:334630090274201'], None, None)
+@pytest.mark.parametrize('forecast_sites,forecast_start_date,forecast_end_date,forecasts_only', (
+    ('all', '2010-01-01', '2015-01-01', True),
+    (['usgs:333145090261901', 'usgs:334630090274201'], None, None, False)
 ))
 def test_get_forecast_head_obs(head_obs_input, forecast_sites, 
-                               forecast_start_date, forecast_end_date):
+                               forecast_start_date, forecast_end_date,
+                               forecasts_only):
     
     # test input with a dataframe too
     observed_values = pd.read_csv(head_obs_input.head_obs_file,
@@ -284,6 +285,7 @@ def test_get_forecast_head_obs(head_obs_input, forecast_sites,
                             forecast_sites=forecast_sites,
                             forecast_start_date=forecast_start_date,
                             forecast_end_date=forecast_end_date,
+                            forecasts_only=forecasts_only,
                             write_ins=False, outfile=head_obs_input.outfile)
         
     # pick a site with an incomplete record

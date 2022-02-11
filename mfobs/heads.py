@@ -34,6 +34,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  label_period_as_steady_state=None, steady_state_period_start=None,
                  steady_state_period_end=None, forecast_sites=None,
                  forecast_start_date=None, forecast_end_date=None,
+                 forecasts_only=False, forecast_sites_only=False,
                  write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
@@ -229,6 +230,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         ``None``, forecast observations will be generated for each
         time between `forecast_start_date` and `forecast_end_date`.
         By default, None (generate forecasts for any time with missing values).
+    forecasts_only : bool, optional
+        Use this option to only output forecast observations 
+        (those without an observed equivalent), subject to the parameters of
+        `forecast_sites`, `forecast_start_date`, and `forecast_end_date`.
+    forecast_sites_only : bool, optional
+        Option to only output observations at sites specified
+        with `forecast_sites` (has no effect if ``forecast_sites='all'``). If
+        ``forecasts_only=False``, the output will include forecast and non-forecast
+        observations (for a continuous time-series).
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -560,7 +570,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     
         # cull forecasts to specified date window
         # and specific sites (if specified)
-        keep_forecasts = np.array([True] * len(head_obs))
+        keep_forecasts = is_forecast.copy()  #np.array([True] * len(head_obs))
         if forecast_start_date is not None:
             keep_forecasts = (head_obs['datetime'] >= forecast_start_date)
         if forecast_end_date is not None:
@@ -570,7 +580,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         #is_forecast = head_obs[obs_values_column].isna()
         if forecast_sites != 'all':
             keep_forecasts &= head_obs['obsprefix'].isin(forecast_sites)
-        keep = keep_forecasts | ~is_forecast
+        # option to only include forecast obs
+        # (those without observed equivalents)
+        if forecasts_only:
+            keep = keep_forecasts
+        else:
+            keep = keep_forecasts | ~is_forecast
+        # option to only include output from designated forecast sites
+        if forecast_sites_only:
+            keep = keep & head_obs['obsprefix'].isin(forecast_sites)
         head_obs = head_obs.loc[keep].copy()
 
     # reorder the columns
