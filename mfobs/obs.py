@@ -341,16 +341,20 @@ def get_temporal_differences(base_data, perioddata,
     sites = base_data.groupby('obsprefix')
     period_diffs = []
     
-    # get index position for columns
-    # (to avoid setting on slices in loop below)
+    # get index position for obsval columns,
+    # after adding them if needed
+    # (this allows assignment of new values purely by iloc, 
+    #  which avoids setting on slices in loop below)
     if 'obsval' in base_data.columns:
         obsval_col_iloc = base_data.columns.get_loc('obsval')
     else:
-        obsval_col_iloc = len(base_data.columns)
+        base_data['obsval'] = -9999
+        obsval_col_iloc = len(base_data.columns) - 1
     if 'sim_obsval' in base_data.columns:
         sim_obsval_col_iloc = base_data.columns.get_loc('sim_obsval')
     else:
-        sim_obsval_col_iloc = len(base_data.columns) + 1
+        base_data['sim_obsval'] = -9999
+        sim_obsval_col_iloc = len(base_data.columns) - 1
     
     for site_no, values in sites:
         values = values.sort_values(by=['per']).copy()
@@ -404,7 +408,14 @@ def get_temporal_differences(base_data, perioddata,
         # todo: is there a general uncertainty approach for temporal differences that makes sense?
 
         period_diffs.append(values)
+    
     period_diffs = pd.concat(period_diffs).reset_index(drop=True)
+    
+    # some checks to make sure the assignments from the above loop are correct
+    assert period_diffs.iloc[:, sim_obsval_col_iloc].name == 'sim_obsval'
+    assert period_diffs.iloc[:, obsval_col_iloc].name == 'obsval'
+    assert not np.any(period_diffs[['obsval', 'sim_obsval']] == -9999)
+    
     period_diffs['datetime'] = pd.to_datetime(period_diffs['datetime'])
 
     # name the temporal difference obs as
