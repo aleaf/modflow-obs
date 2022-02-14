@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post31.dev0+g320cf7b documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post34.dev0+ga10ed42 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -32,7 +32,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post31.dev0+g320cf7b
+                0.post34.dev0+ga10ed42
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -124,7 +124,9 @@
                  <span class="n">drop_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">hk_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">botm_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steady_state_period_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">steady_state_period_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">steady_state_period_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_sites</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">forecast_start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">forecasts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forecast_sites_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Post-processes model output to be read by PEST, and optionally,</span>
 <span class="sd">    writes a corresponding PEST instruction file. Reads model output</span>
@@ -305,6 +307,30 @@
 <span class="sd">    steady_state_period_end : str, optional</span>
 <span class="sd">        End date for the period representing steady-state conditions.</span>
 <span class="sd">        By default None, in which case no steady-state observatons are created.</span>
+<span class="sd">    forecast_sites : str or sequence, optional</span>
+<span class="sd">        At these sites, observations will be created for each simulated value,</span>
+<span class="sd">        regardless is there is an observed equivalent. Can be supplied</span>
+<span class="sd">        as a sequence of site numbers (`site_id`s) or ``&#39;all&#39;`` to</span>
+<span class="sd">        include all sites. By default, None (no forecast sites).</span>
+<span class="sd">    forecast_start_date : str, optional</span>
+<span class="sd">        Start date for forecast period. When forecast_sites is not</span>
+<span class="sd">        ``None``, forecast observations will be generated for each</span>
+<span class="sd">        time between `forecast_start_date` and `forecast_end_date`.</span>
+<span class="sd">        By default, None (generate forecasts for any time with missing values).</span>
+<span class="sd">    forecast_end_date : str, optional</span>
+<span class="sd">        End date for forecast period. When forecast_sites is not</span>
+<span class="sd">        ``None``, forecast observations will be generated for each</span>
+<span class="sd">        time between `forecast_start_date` and `forecast_end_date`.</span>
+<span class="sd">        By default, None (generate forecasts for any time with missing values).</span>
+<span class="sd">    forecasts_only : bool, optional</span>
+<span class="sd">        Use this option to only output forecast observations </span>
+<span class="sd">        (those without an observed equivalent), subject to the parameters of</span>
+<span class="sd">        `forecast_sites`, `forecast_start_date`, and `forecast_end_date`.</span>
+<span class="sd">    forecast_sites_only : bool, optional</span>
+<span class="sd">        Option to only output observations at sites specified</span>
+<span class="sd">        with `forecast_sites` (has no effect if ``forecast_sites=&#39;all&#39;``). If</span>
+<span class="sd">        ``forecasts_only=False``, the output will include forecast and non-forecast</span>
+<span class="sd">        observations (for a continuous time-series).</span>
 <span class="sd">    outfile : str, optional</span>
 <span class="sd">        CSV file to write output to.</span>
 <span class="sd">        By default, None (no output written)</span>
@@ -402,6 +428,13 @@
 
     <span class="c1"># convert obs names and prefixes to lower case</span>
     <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    
+    <span class="c1"># make a dictionary of site metadata for possible use later</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">temp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="n">site_info_dict</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">site_info_dict</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">temp</span>
 
     <span class="c1"># cast datetimes to pandas datetimes</span>
     <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span>
@@ -413,7 +446,19 @@
     <span class="c1"># but modflow-setup would include them in the MODFLOW observation input)</span>
     <span class="c1"># also drop sites that are in the obs information file, but not in the model results</span>
     <span class="c1"># these include sites outside of the model (i.e. in the inset when looking at the parent)</span>
+    
+    <span class="c1"># no forecast observations;</span>
+    <span class="c1"># drop sites that don&#39;t have an observed/sim equivalent pair</span>
     <span class="n">no_info_sites</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">)</span><span class="o">.</span><span class="n">symmetric_difference</span><span class="p">(</span><span class="n">observed</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">forecast_sites</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="c1"># forecast observations at all simulated sites</span>
+        <span class="c1"># (only drop sites that aren&#39;t simulated)</span>
+        <span class="n">no_info_sites</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observed</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># remove selected forecast sites from &#39;no_info&#39; sites to drop</span>
+        <span class="n">forecast_sites</span> <span class="o">=</span> <span class="p">{</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">forecast_sites</span><span class="p">}</span>
+        <span class="n">no_info_sites</span> <span class="o">=</span> <span class="n">no_info_sites</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">forecast_sites</span><span class="p">)</span>
+        
     <span class="c1"># dump these out to a csv</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">no_info_sites</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dropping </span><span class="si">{}</span><span class="s1"> sites with no information&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">no_info_sites</span><span class="p">)))</span>
@@ -469,29 +514,40 @@
             <span class="k">if</span> <span class="n">steady_state_period_end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">end</span> <span class="o">=</span> <span class="n">steady_state_period_end</span>
         <span class="n">observed_in_period</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        
+        <span class="c1"># No forecast observations and no observed values in period</span>
+        <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No observations between start and &#39;</span>
                            <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">per</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
             <span class="k">continue</span>
-        <span class="n">observed_in_period</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;n&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">observed_in_period</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">by_site</span> <span class="o">=</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">)</span>
-        <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">by_site</span><span class="p">,</span> <span class="n">aggregrate_observed_values_by</span><span class="p">)()</span>
-        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
-        <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># put obsprefix back</span>
+        
+        <span class="c1"># If there are forecast sites and observed data in this period</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        
+            <span class="n">observed_in_period</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s1">&#39;n&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="n">observed_in_period</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">by_site</span> <span class="o">=</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">)</span>
+            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">by_site</span><span class="p">,</span> <span class="n">aggregrate_observed_values_by</span><span class="p">)()</span>
+            <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+            <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># put obsprefix back</span>
 
-        <span class="n">missing_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">missing_cols</span><span class="p">:</span>
-            <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
-        <span class="n">obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">suffix</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
-        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsnames</span>
-        <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
+            <span class="n">missing_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">missing_cols</span><span class="p">:</span>
+                <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+            <span class="n">obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">suffix</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
+            <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsnames</span>
+            <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
+            
+        <span class="c1"># Forecast sites, but no observed data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">observed</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
-        <span class="c1"># get head values based on T-weighted average of open interval</span>
+        <span class="c1"># Simulated equivalents</span>
+        <span class="c1"># Option to get head values based on T-weighted average of open interval        </span>
         <span class="k">if</span> <span class="n">observed_values_layer_col</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># get a n layers x n sites array of simulated head observations</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -534,10 +590,17 @@
             <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">mean_t_weighted_heads</span><span class="p">))</span>
 
             <span class="c1"># add the simulated heads onto the list for all periods</span>
-            <span class="n">mean_t_weighted_heads_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">sim_values_column</span><span class="p">:</span> <span class="n">mean_t_weighted_heads</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="n">obsnme</span><span class="p">)</span>
+            <span class="n">mean_t_weighted_heads_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="n">sim_values_column</span><span class="p">:</span> <span class="n">mean_t_weighted_heads</span><span class="p">},</span> 
+                                                    <span class="n">index</span><span class="o">=</span><span class="n">obsnme</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">obsnme</span><span class="p">)</span>
+                <span class="n">obsprefix</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsprefix</span>
+                <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">sim_values_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_t_weighted_heads_df</span><span class="p">[</span><span class="n">sim_values_column</span><span class="p">]</span>
 
-        <span class="c1"># Get head values for specified layers</span>
+        <span class="c1"># Alternative option to get head values for specified layers</span>
         <span class="c1"># (or closest layer if the specified layer doesn&#39;t have obs output)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">any_simulated_obs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">obsnme</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">obsnme</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
@@ -577,14 +640,48 @@
     <span class="k">if</span> <span class="n">drop_groups</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;obgnme&#39;</span> <span class="ow">in</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">head_obs</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">head_obs</span><span class="o">.</span><span class="n">obgnme</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">drop_groups</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-    <span class="c1"># nans are where sites don&#39;t have observation values for that period</span>
-    <span class="c1"># or sites that are in other model (inset or parent)</span>
-    <span class="n">head_obs</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
     <span class="c1"># add standard obsval and obgmne columns</span>
     <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_obs</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">]</span>
     <span class="k">if</span> <span class="s1">&#39;obgnme&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
         <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obgnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable_name</span>
+
+    <span class="c1"># fill forecast obs with site info from observed dataframe</span>
+    <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">site_info_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">head_obs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]]</span>
+        <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">index</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># nans are where sites don&#39;t have observation values for that period</span>
+        <span class="c1"># or sites that are in other model (inset or parent)</span>
+        <span class="n">head_obs</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># label forecasts in own group</span>
+    <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">is_forecast</span> <span class="o">=</span> <span class="n">head_obs</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+        <span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">is_forecast</span><span class="p">,</span> <span class="s1">&#39;obgnme&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;-forecast&#39;</span>
+    
+        <span class="c1"># cull forecasts to specified date window</span>
+        <span class="c1"># and specific sites (if specified)</span>
+        <span class="n">keep_forecasts</span> <span class="o">=</span> <span class="n">is_forecast</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1">#np.array([True] * len(head_obs))</span>
+        <span class="k">if</span> <span class="n">forecast_start_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">keep_forecasts</span> <span class="o">=</span> <span class="p">(</span><span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">forecast_start_date</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">forecast_end_date</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">keep_forecasts</span> <span class="o">&amp;=</span> <span class="p">(</span><span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">forecast_end_date</span><span class="p">)</span>
+        <span class="c1">#drop = drop &amp; is_forecast</span>
+        <span class="c1">#head_obs = head_obs.loc[~drop].copy()</span>
+        <span class="c1">#is_forecast = head_obs[obs_values_column].isna()</span>
+        <span class="k">if</span> <span class="n">forecast_sites</span> <span class="o">!=</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+            <span class="n">keep_forecasts</span> <span class="o">&amp;=</span> <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">forecast_sites</span><span class="p">)</span>
+        <span class="c1"># option to only include forecast obs</span>
+        <span class="c1"># (those without observed equivalents)</span>
+        <span class="k">if</span> <span class="n">forecasts_only</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="n">keep_forecasts</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="n">keep_forecasts</span> <span class="o">|</span> <span class="o">~</span><span class="n">is_forecast</span>
+        <span class="c1"># option to only include output from designated forecast sites</span>
+        <span class="k">if</span> <span class="n">forecast_sites_only</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span> <span class="o">&amp;</span> <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">forecast_sites</span><span class="p">)</span>
+        <span class="n">head_obs</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># reorder the columns</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">,</span> <span class="n">obs_values_column</span><span class="p">,</span> <span class="n">sim_values_column</span><span class="p">,</span>
@@ -617,7 +714,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 29, 2021.
+      <span class="lastupdated">Last updated on Feb 14, 2022.
       </span></p>
   </div>
 

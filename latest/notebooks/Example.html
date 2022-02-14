@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post31.dev0+g320cf7b documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post34.dev0+ga10ed42 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -20,8 +20,8 @@
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
         <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post31.dev0+g320cf7b
+                0.post34.dev0+ga10ed42
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -369,7 +369,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -456,13 +456,11 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">matplotlib.dates</span> <span class="k">as</span> <span class="nn">mdates</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <section id="Inputs">
@@ -472,8 +470,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../mfobs/tests/data/shellmound/&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">data_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;../mfobs/tests/data/shellmound/&#39;</span><span class="p">)</span>
 
 <span class="n">output_folder</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">)</span>
 <span class="n">output_folder</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># make the output folder if it doesn&#39;t exist</span>
@@ -487,8 +484,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_modelgrid_transform</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_modelgrid_transform</span>
 
 <span class="n">modelgrid_transform</span> <span class="o">=</span> <span class="n">get_modelgrid_transform</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound_grid.json&#39;</span><span class="p">)</span>
 <span class="n">modelgrid_transform</span>
@@ -513,8 +509,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/stress_period_data.csv&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/stress_period_data.csv&#39;</span><span class="p">)</span>
 <span class="n">perioddata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -618,8 +613,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_perioddata</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_perioddata</span>
 
 <span class="n">perioddata</span> <span class="o">=</span> <span class="n">get_perioddata</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;mfsim.tdis&#39;</span><span class="p">,</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sto&#39;</span><span class="p">)</span>
 <span class="n">perioddata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -724,8 +718,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">steady_state_period_start</span> <span class="o">=</span> <span class="s1">&#39;2008-04-01&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">steady_state_period_start</span> <span class="o">=</span> <span class="s1">&#39;2008-04-01&#39;</span>
 <span class="n">steady_state_period_end</span> <span class="o">=</span> <span class="s1">&#39;2008-9-30&#39;</span>
 </pre></div>
 </div>
@@ -738,8 +731,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">top_array</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/top.dat&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">top_array</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/top.dat&#39;</span>
 <span class="n">botm_arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/botm</span><span class="si">{}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">)]</span>
 <span class="n">hk_arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;external/k</span><span class="si">{}</span><span class="s1">.dat&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
@@ -764,8 +756,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">head_obs_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs_info.csv&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">head_obs_info</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs_info.csv&#39;</span><span class="p">)</span>
 <span class="n">head_obs_info</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -947,8 +938,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">head_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs.csv&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">head_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/preprocessed_head_obs.csv&#39;</span><span class="p">)</span>
 <span class="n">head_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1052,8 +1042,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/processed_flow_obs.csv&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;site_no&#39;</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_obs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;tables/processed_flow_obs.csv&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;site_no&#39;</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
 <span class="n">flux_obs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1163,8 +1152,7 @@ Affine(1000.0, 0.0, 500955.0,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">headobs_input_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.obs&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">headobs_input_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.obs&#39;</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">headobs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">read</span><span class="p">()[:</span><span class="mi">500</span><span class="p">])</span>
@@ -1208,8 +1196,7 @@ BEGIN continuous  FILEOUT  shellmound.head.obs
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">headobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.head.obs&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">headobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.head.obs&#39;</span>
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">headobs_output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span><span class="p">[:</span><span class="mi">100</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]]))</span>
 </pre></div>
@@ -1231,8 +1218,7 @@ time,USGS:333145090261901,USGS:333145090261901,USGS:333145090261901,USGS:3331450
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fluxobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sfr.obs.output.csv&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fluxobs_output_file</span> <span class="o">=</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sfr.obs.output.csv&#39;</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fluxobs_output_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]]))</span>
@@ -1272,8 +1258,7 @@ time,07288280,07288580,07288500,07281600
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_head_obs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_head_obs</span>
 
 <span class="n">base_obs</span> <span class="o">=</span> <span class="n">get_head_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
                         <span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">modelgrid_transform</span><span class="p">,</span>
@@ -1303,6 +1288,8 @@ time,07288280,07288580,07288500,07281600
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
 took 0.02s
 
+Getting mf6 observations took 0.16s
+
 Dropping 191 sites with no information
 </pre></div></div>
 </div>
@@ -1311,12 +1298,10 @@ Dropping 191 sites with no information
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:267: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version.
+/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:46: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
 
 
-  gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:381: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
-  warnings.warn((&#39;Stress period {}: No observations between start and &#39;
+  df = pd.read_csv(src, delim_whitespace=True, header=None,
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1326,6 +1311,15 @@ Dropping 191 sites with no information
 <div class="highlight"><pre>
 wrote 581 observations to output/processed_head_obs.dat
 wrote 581 observation instructions to output/processed_head_obs.dat.ins
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:428: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
+  warnings.warn((&#39;Stress period {}: No observations between start and &#39;
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1464,8 +1458,7 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output/processed_head_obs.dat.ins&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output/processed_head_obs.dat.ins&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">src</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[:</span><span class="mi">4</span><span class="p">]]))</span>
 </pre></div>
 </div>
@@ -1489,8 +1482,7 @@ l1 w w w w w !usgs:333145090261901_201503! w w w w w
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
 <span class="n">site_values</span> <span class="o">=</span> <span class="n">base_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
@@ -1521,8 +1513,7 @@ l1 w w w w w !usgs:333145090261901_201503! w w w w w
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_temporal_differences</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_temporal_differences</span>
 
 <span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                        <span class="n">perioddata</span><span class="p">,</span>
@@ -1549,8 +1540,7 @@ wrote 499 observation instructions to output/processed_head_obs_tdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
 <span class="n">site_values</span> <span class="o">=</span> <span class="n">thead_diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">thead_diffs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
@@ -1577,8 +1567,7 @@ used as the datum for each site. * Displacement observations can help inform PES
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">thead_disp</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">thead_disp</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                        <span class="n">perioddata</span><span class="p">,</span>
                                        <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
                                        <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
@@ -1590,222 +1579,13 @@ used as the datum for each site. * Displacement observations can help inform PES
 </pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
+<div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 wrote 292 observations to output/processed_head_obs_disp.dat
 wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
-/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning:
-A value is trying to be set on a copy of a slice from a DataFrame
-
-See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-  self._setitem_single_block(indexer, value, name)
 </pre></div></div>
 </div>
 <section id="Plot-the-displacement-observations">
@@ -1815,8 +1595,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
 <span class="n">site_values</span> <span class="o">=</span> <span class="n">thead_disp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">thead_disp</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <span class="c1"># for some reason, pd.DataFrame.plot() incorrectly shifts the xticks in this case</span>
@@ -1849,8 +1628,7 @@ See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stab
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
 
 <span class="n">head_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;usgs:333904090123801&#39;</span><span class="p">:</span>  <span class="c1"># well in money, ms</span>
                          <span class="s1">&#39;usgs:333145090261901&#39;</span>  <span class="c1"># well approx. 15 mi southwest in cone of depression</span>
@@ -1880,8 +1658,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2037,8 +1814,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">site</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">site_values</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -2082,8 +1858,7 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">mfobs.swflows</span> <span class="kn">import</span> <span class="n">get_flux_obs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.swflows</span> <span class="kn">import</span> <span class="n">get_flux_obs</span>
 
 <span class="n">base_flux_obs</span> <span class="o">=</span> <span class="n">get_flux_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
                              <span class="n">model_output_file</span><span class="o">=</span><span class="n">fluxobs_output_file</span><span class="p">,</span>
@@ -2108,6 +1883,8 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv...
 took 0.00s
+
+Getting mf6 observations took 0.01s
 
 Dropping 1 sites with no information
 wrote 53 observations to output/processed_flux_obs.dat
@@ -2222,8 +1999,7 @@ wrote 53 observation instructions to output/processed_flux_obs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2240,8 +2016,7 @@ array([&#39;07281600&#39;, &#39;07288280&#39;, &#39;07288500&#39;], dtype=object
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
 <span class="n">site_values</span> <span class="o">=</span> <span class="n">base_flux_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -2277,8 +2052,7 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_tdiff</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span>
                                       <span class="n">perioddata</span><span class="p">,</span>
                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
@@ -2301,8 +2075,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2415,8 +2188,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">datetime</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
 <span class="n">site_data</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">site_data</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
@@ -2451,8 +2223,7 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;07288500&#39;</span><span class="p">:</span>   <span class="c1"># sunflower r. at sunflower</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;07288500&#39;</span><span class="p">:</span>   <span class="c1"># sunflower r. at sunflower</span>
                          <span class="s1">&#39;07288280&#39;</span>  <span class="c1"># sunflower r. at merigold</span>
                          <span class="p">}</span>
 
@@ -2479,8 +2250,7 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -2648,8 +2418,7 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="o">.</span><span class="n">datetime</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="o">.</span><span class="n">datetime</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="p">[[</span><span class="s1">&#39;obs_diff&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_diff&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Gain in streamflow, $m^3/d$&#39;</span><span class="p">)</span>
 </pre></div>
@@ -2675,8 +2444,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
@@ -2695,7 +2463,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 29, 2021.
+      <span class="lastupdated">Last updated on Feb 14, 2022.
       </span></p>
   </div>
 

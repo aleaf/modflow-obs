@@ -26,10 +26,10 @@
    "execution_count": 1,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:15.434549Z",
-     "iopub.status.busy": "2021-12-29T16:20:15.432807Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.378687Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.377494Z"
+     "iopub.execute_input": "2022-02-14T12:28:19.621621Z",
+     "iopub.status.busy": "2022-02-14T12:28:19.621210Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.441163Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.440271Z"
     }
    },
    "outputs": [],
@@ -54,10 +54,10 @@
    "execution_count": 2,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.384418Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.383022Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.388173Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.387435Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.445268Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.444806Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.447469Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.447748Z"
     }
    },
    "outputs": [],
@@ -81,10 +81,10 @@
    "execution_count": 3,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.397187Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.392198Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.436332Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.435911Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.455253Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.450958Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.489017Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.489364Z"
     }
    },
    "outputs": [
@@ -120,10 +120,10 @@
    "execution_count": 4,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.441811Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.440594Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.457008Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.457371Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.494058Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.493504Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.505665Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.506021Z"
     }
    },
    "outputs": [
@@ -249,10 +249,10 @@
    "execution_count": 5,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.465260Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.464660Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.475145Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.474688Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.519207Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.518733Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.522732Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.522326Z"
     }
    },
    "outputs": [
@@ -380,10 +380,10 @@
    "execution_count": 6,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.480195Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.479526Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.481799Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.482240Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.525572Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.525073Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.587070Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.586514Z"
     }
    },
    "outputs": [],
@@ -404,10 +404,10 @@
    "execution_count": 7,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.488147Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.487235Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.488676Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.489058Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.590555Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.590172Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.620618Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.620264Z"
     }
    },
    "outputs": [],
@@ -443,10 +443,10 @@
    "execution_count": 8,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.494580Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.493452Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.518229Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.518661Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.625631Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.625258Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.652265Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.652643Z"
     }
    },
    "outputs": [
@@ -674,10 +674,10 @@
    "execution_count": 9,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.523337Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.522792Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.537015Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.537501Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.655691Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.655246Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.688593Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.688922Z"
     }
    },
    "outputs": [
@@ -808,10 +808,10 @@
    "execution_count": 10,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.542632Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.541921Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.554890Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.555420Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.692508Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.691704Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.703162Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.702773Z"
     }
    },
    "outputs": [
@@ -948,10 +948,10 @@
    "execution_count": 11,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.561141Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.560679Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.562949Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.563336Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.707137Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.706628Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.710182Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.709849Z"
     }
    },
    "outputs": [
@@ -1006,10 +1006,10 @@
    "execution_count": 12,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.569945Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.568230Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.572064Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.572533Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.713564Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.713001Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.716116Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.715762Z"
     }
    },
    "outputs": [
@@ -1040,10 +1040,10 @@
    "execution_count": 13,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.577764Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.576979Z",
-     "iopub.status.idle": "2021-12-29T16:20:16.579362Z",
-     "shell.execute_reply": "2021-12-29T16:20:16.579858Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.720088Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.719659Z",
+     "iopub.status.idle": "2022-02-14T12:28:20.721658Z",
+     "shell.execute_reply": "2022-02-14T12:28:20.721988Z"
     }
    },
    "outputs": [
@@ -1087,10 +1087,10 @@
    "execution_count": 14,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:16.589941Z",
-     "iopub.status.busy": "2021-12-29T16:20:16.588551Z",
-     "iopub.status.idle": "2021-12-29T16:20:17.349898Z",
-     "shell.execute_reply": "2021-12-29T16:20:17.349129Z"
+     "iopub.execute_input": "2022-02-14T12:28:20.726032Z",
+     "iopub.status.busy": "2022-02-14T12:28:20.725585Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.273351Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.272696Z"
     }
    },
    "outputs": [
@@ -1101,6 +1101,8 @@
       "reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...\n",
       "took 0.02s\n",
       "\n",
+      "Getting mf6 observations took 0.16s\n",
+      "\n",
       "Dropping 191 sites with no information\n"
      ]
     },
@@ -1108,12 +1110,10 @@
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:267: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version.\n",
+      "/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:46: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.\n",
       "\n",
       "\n",
-      "  gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)\n",
-      "/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:381: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!\n",
-      "  warnings.warn(('Stress period {}: No observations between start and '\n"
+      "  df = pd.read_csv(src, delim_whitespace=True, header=None,\n"
      ]
     },
     {
@@ -1122,6 +1122,14 @@
      "text": [
       "wrote 581 observations to output/processed_head_obs.dat\n",
       "wrote 581 observation instructions to output/processed_head_obs.dat.ins\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:428: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!\n",
+      "  warnings.warn(('Stress period {}: No observations between start and '\n"
      ]
     },
     {
@@ -1324,10 +1332,10 @@
    "execution_count": 15,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:17.355484Z",
-     "iopub.status.busy": "2021-12-29T16:20:17.354867Z",
-     "iopub.status.idle": "2021-12-29T16:20:17.359598Z",
-     "shell.execute_reply": "2021-12-29T16:20:17.359009Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.276792Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.275269Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.279909Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.280188Z"
     }
    },
    "outputs": [
@@ -1360,10 +1368,10 @@
    "execution_count": 16,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:17.368569Z",
-     "iopub.status.busy": "2021-12-29T16:20:17.367328Z",
-     "iopub.status.idle": "2021-12-29T16:20:17.623847Z",
-     "shell.execute_reply": "2021-12-29T16:20:17.622895Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.284805Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.284316Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.460757Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.460383Z"
     }
    },
    "outputs": [
@@ -1408,10 +1416,10 @@
    "execution_count": 17,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:17.638727Z",
-     "iopub.status.busy": "2021-12-29T16:20:17.636467Z",
-     "iopub.status.idle": "2021-12-29T16:20:17.942004Z",
-     "shell.execute_reply": "2021-12-29T16:20:17.941314Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.472525Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.471117Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.639207Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.638874Z"
     }
    },
    "outputs": [
@@ -1448,10 +1456,10 @@
    "execution_count": 18,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:17.971685Z",
-     "iopub.status.busy": "2021-12-29T16:20:17.956765Z",
-     "iopub.status.idle": "2021-12-29T16:20:18.185951Z",
-     "shell.execute_reply": "2021-12-29T16:20:18.185372Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.643851Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.643488Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.799875Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.799552Z"
     }
    },
    "outputs": [
@@ -1496,226 +1504,19 @@
    "execution_count": 19,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:18.197494Z",
-     "iopub.status.busy": "2021-12-29T16:20:18.196320Z",
-     "iopub.status.idle": "2021-12-29T16:20:18.586312Z",
-     "shell.execute_reply": "2021-12-29T16:20:18.585581Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.808726Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.808199Z",
+     "iopub.status.idle": "2022-02-14T12:28:21.989033Z",
+     "shell.execute_reply": "2022-02-14T12:28:21.989375Z"
     }
    },
    "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n"
-     ]
-    },
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
       "wrote 292 observations to output/processed_head_obs_disp.dat\n",
       "wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins\n"
-     ]
-    },
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n",
-      "/usr/share/miniconda/envs/mfobs_ci/lib/python3.9/site-packages/pandas/core/indexing.py:1732: SettingWithCopyWarning: \n",
-      "A value is trying to be set on a copy of a slice from a DataFrame\n",
-      "\n",
-      "See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy\n",
-      "  self._setitem_single_block(indexer, value, name)\n"
      ]
     }
    ],
@@ -1744,10 +1545,10 @@
    "execution_count": 20,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:18.599875Z",
-     "iopub.status.busy": "2021-12-29T16:20:18.598058Z",
-     "iopub.status.idle": "2021-12-29T16:20:18.793003Z",
-     "shell.execute_reply": "2021-12-29T16:20:18.793412Z"
+     "iopub.execute_input": "2022-02-14T12:28:21.994705Z",
+     "iopub.status.busy": "2022-02-14T12:28:21.994111Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.203982Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.203600Z"
     }
    },
    "outputs": [
@@ -1796,10 +1597,10 @@
    "execution_count": 21,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:18.798551Z",
-     "iopub.status.busy": "2021-12-29T16:20:18.798001Z",
-     "iopub.status.idle": "2021-12-29T16:20:18.835741Z",
-     "shell.execute_reply": "2021-12-29T16:20:18.835295Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.208501Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.207980Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.229935Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.229571Z"
     }
    },
    "outputs": [
@@ -1834,10 +1635,10 @@
    "execution_count": 22,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:18.841609Z",
-     "iopub.status.busy": "2021-12-29T16:20:18.840856Z",
-     "iopub.status.idle": "2021-12-29T16:20:18.869064Z",
-     "shell.execute_reply": "2021-12-29T16:20:18.868598Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.239233Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.238816Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.247685Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.247350Z"
     }
    },
    "outputs": [
@@ -2041,10 +1842,10 @@
    "execution_count": 23,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:18.895265Z",
-     "iopub.status.busy": "2021-12-29T16:20:18.894439Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.039569Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.038919Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.253192Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.252786Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.352314Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.352691Z"
     }
    },
    "outputs": [
@@ -2100,10 +1901,10 @@
    "execution_count": 24,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.045775Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.045129Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.402598Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.402109Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.359479Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.358756Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.541398Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.541036Z"
     }
    },
    "outputs": [
@@ -2113,6 +1914,8 @@
      "text": [
       "reading model output from ../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv...\n",
       "took 0.00s\n",
+      "\n",
+      "Getting mf6 observations took 0.01s\n",
       "\n",
       "Dropping 1 sites with no information\n",
       "wrote 53 observations to output/processed_flux_obs.dat\n",
@@ -2267,10 +2070,10 @@
    "execution_count": 25,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.407632Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.407129Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.412403Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.412838Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.545457Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.544944Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.546806Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.547154Z"
     }
    },
    "outputs": [
@@ -2294,10 +2097,10 @@
    "execution_count": 26,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.429633Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.429009Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.769465Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.768929Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.553130Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.552549Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.783015Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.782597Z"
     }
    },
    "outputs": [
@@ -2349,10 +2152,10 @@
    "execution_count": 27,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.789231Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.786733Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.823571Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.823013Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.788661Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.788106Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.813388Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.813058Z"
     }
    },
    "outputs": [
@@ -2380,10 +2183,10 @@
    "execution_count": 28,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.829187Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.828525Z",
-     "iopub.status.idle": "2021-12-29T16:20:19.841458Z",
-     "shell.execute_reply": "2021-12-29T16:20:19.841936Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.823455Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.823094Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.827269Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.826965Z"
     }
    },
    "outputs": [
@@ -2520,10 +2323,10 @@
    "execution_count": 29,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:19.848247Z",
-     "iopub.status.busy": "2021-12-29T16:20:19.847639Z",
-     "iopub.status.idle": "2021-12-29T16:20:20.096394Z",
-     "shell.execute_reply": "2021-12-29T16:20:20.096948Z"
+     "iopub.execute_input": "2022-02-14T12:28:22.833180Z",
+     "iopub.status.busy": "2022-02-14T12:28:22.832352Z",
+     "iopub.status.idle": "2022-02-14T12:28:22.998273Z",
+     "shell.execute_reply": "2022-02-14T12:28:22.997836Z"
     }
    },
    "outputs": [
@@ -2573,10 +2376,10 @@
    "execution_count": 30,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:20.103505Z",
-     "iopub.status.busy": "2021-12-29T16:20:20.102838Z",
-     "iopub.status.idle": "2021-12-29T16:20:20.132750Z",
-     "shell.execute_reply": "2021-12-29T16:20:20.133154Z"
+     "iopub.execute_input": "2022-02-14T12:28:23.003317Z",
+     "iopub.status.busy": "2022-02-14T12:28:23.002563Z",
+     "iopub.status.idle": "2022-02-14T12:28:23.025119Z",
+     "shell.execute_reply": "2022-02-14T12:28:23.024773Z"
     }
    },
    "outputs": [
@@ -2608,10 +2411,10 @@
    "execution_count": 31,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:20.138532Z",
-     "iopub.status.busy": "2021-12-29T16:20:20.137898Z",
-     "iopub.status.idle": "2021-12-29T16:20:20.156080Z",
-     "shell.execute_reply": "2021-12-29T16:20:20.156545Z"
+     "iopub.execute_input": "2022-02-14T12:28:23.038715Z",
+     "iopub.status.busy": "2022-02-14T12:28:23.038324Z",
+     "iopub.status.idle": "2022-02-14T12:28:23.040539Z",
+     "shell.execute_reply": "2022-02-14T12:28:23.040908Z"
     }
    },
    "outputs": [
@@ -2821,10 +2624,10 @@
    "execution_count": 32,
    "metadata": {
     "execution": {
-     "iopub.execute_input": "2021-12-29T16:20:20.167010Z",
-     "iopub.status.busy": "2021-12-29T16:20:20.166234Z",
-     "iopub.status.idle": "2021-12-29T16:20:20.389849Z",
-     "shell.execute_reply": "2021-12-29T16:20:20.389319Z"
+     "iopub.execute_input": "2022-02-14T12:28:23.061381Z",
+     "iopub.status.busy": "2022-02-14T12:28:23.050272Z",
+     "iopub.status.idle": "2022-02-14T12:28:23.187943Z",
+     "shell.execute_reply": "2022-02-14T12:28:23.187324Z"
     }
    },
    "outputs": [
@@ -2881,7 +2684,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.9.9"
+   "version": "3.9.10"
   }
  },
  "nbformat": 4,
