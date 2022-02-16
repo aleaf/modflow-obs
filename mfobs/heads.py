@@ -462,6 +462,14 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             heads_2d = data.pivot(columns='layer', values='sim_head', index='obsnme').T.values
             obsnme = data.pivot(columns='layer', values='obsnme', index='obsnme').index.tolist()
 
+            # layers containing head values
+            # (in case there are any layers not represented in the head data)
+            head_layers = data['layer'].unique()
+            if heads_2d.shape[0] != botm.shape[0]:
+                heads_rs = np.ones((botm.shape[0], heads_2d.shape[1])) * np.nan
+                heads_rs[head_layers] = heads_2d
+                heads_2d = heads_rs
+
             # x, y, screen_top and screen_botm have one value for each site
             kwargs = {}
             for arg in 'x', 'y', 'screen_top', 'screen_botm':

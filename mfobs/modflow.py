@@ -767,6 +767,7 @@ def get_transmissivities(heads, hk, top, botm,
     # (make nlayer x n sites arrays)
     hk2d = hk[:, r, c]
     botm2d = botm[:, r, c]
+    assert hk2d.shape == botm2d.shape, 'hk and bottom arrays must have consistent dimensions'
 
     if len(heads.shape) == 3:
         heads = heads[:, r, c]
