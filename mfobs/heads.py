@@ -432,7 +432,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
         # get the equivalent observed values
         start, end = str(r['start_datetime']), str(r['end_datetime'])
-        
+        if start[:4] == '2010':
+            j=2
+            
         # date-based suffix
         if obsnme_date_suffix:  
             suffix = pd.Timestamp(end).strftime(obsnme_suffix_format)
@@ -450,20 +452,20 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 end = str(steady_state_period_end)
         # don't process observations for a steady-state period unless 
         # it is explicitly labeled as such and given a representative date range
-        elif r['steady']:
-            continue
+        #elif r['steady']:
+        #    continue
         
-        aggregrate_observed_values_method = 'mean'
+        #aggregrate_observed_values_method = 'mean'
         
-        observed_in_period_rs = aggregrate_to_period(
-            observed, start, end, 
-            aggregrate_observed_values_method=aggregrate_observed_values_method,
-            obsnme_suffix=suffix)
-        if observed_in_period_rs is None:
-            if per_column == 'per':
-                warnings.warn(('Stress period {}: No observations between start and '
-                                'end dates of {} and {}!'.format(r['per'], start, end)))
-            continue
+        #observed_in_period_rs = aggregrate_to_period(
+        #    observed, start, end, 
+        #    aggregrate_observed_values_method=aggregrate_observed_values_method,
+        #    obsnme_suffix=suffix)
+        #if observed_in_period_rs is None:
+        #    if per_column == 'per':
+        #        warnings.warn(('Stress period {}: No observations between start and '
+        #                        'end dates of {} and {}!'.format(r['per'], start, end)))
+        #    continue
 
         # for now, require results to have period or unique timestep column
         # otherwise, if slicing by datetimes, can run into problem of
@@ -478,7 +480,6 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         # until head obs handling gets refactored into obs.get_base_obs
         data['obsnme'] = ['{}_{}'.format(prefix.lower(), suffix)
                           for prefix in data.obsprefix]
-        
         data.index = data['obsnme']
         
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
@@ -486,7 +487,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         # No forecast observations and no observed values in period
         if forecast_sites is None and len(observed_in_period) == 0:
             warnings.warn(('Stress period {}: No observations between start and '
-                           'end dates of {} and {}!'.format(per, start, end)))
+                           'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
         
         # If there are forecast sites and observed data in this period

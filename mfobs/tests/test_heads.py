@@ -304,7 +304,7 @@ def test_get_forecast_head_obs(head_obs_input, forecast_sites,
                                                          'screen_botm']].isna().any(axis=1)
     sites_with_screen_info = head_obs_input.head_obs_info_file.loc[loc, 'obsprefix'].str.lower()
     head_obs_with_screen_info = head_obs.loc[head_obs.obsprefix.isin(sites_with_screen_info)]
-    assert not head_obs_with_screen_info.drop(['obsval', 'obs_head'], axis=1).isna().any().any()
+    assert not head_obs_with_screen_info.drop(['obsval'], axis=1).isna().any().any()
     
     # if forecast_sites != 'all':
     # check that only forecasts for specified sites were generated
