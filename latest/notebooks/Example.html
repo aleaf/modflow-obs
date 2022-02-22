@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post35.dev0+g0901707 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post52.dev0+g3fbb668 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post35.dev0+g0901707
+                0.post52.dev0+g3fbb668
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1288,26 +1288,6 @@ time,07288280,07288580,07288500,07281600
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
 took 0.02s
 
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:46: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
-
-
-  df = pd.read_csv(src, delim_whitespace=True, header=None,
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Getting mf6 observations took 0.21s
-
 Dropping 191 sites with no information
 </pre></div></div>
 </div>
@@ -1316,7 +1296,11 @@ Dropping 191 sites with no information
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:428: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
+/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:47: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
+
+
+  df = pd.read_csv(src, delim_whitespace=True, header=None,
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:489: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
   warnings.warn((&#39;Stress period {}: No observations between start and &#39;
 </pre></div></div>
 </div>
@@ -1354,14 +1338,14 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <th></th>
       <th>datetime</th>
       <th>per</th>
+      <th>site_no</th>
       <th>obsprefix</th>
       <th>obsnme</th>
-      <th>obs_head</th>
-      <th>sim_head</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
       <th>n</th>
       <th>screen_top</th>
       <th>screen_botm</th>
-      <th>obsval</th>
       <th>obgnme</th>
     </tr>
     <tr>
@@ -1384,6 +1368,7 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <th>usgs:333145090261901_201409</th>
       <td>2014-09-30</td>
       <td>16</td>
+      <td>USGS:333145090261901</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201409</td>
       <td>20.906667</td>
@@ -1391,13 +1376,13 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <td>27</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>20.906667</td>
       <td>head</td>
     </tr>
     <tr>
       <th>usgs:333145090261901_201503</th>
       <td>2015-03-31</td>
       <td>17</td>
+      <td>USGS:333145090261901</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201503</td>
       <td>20.985000</td>
@@ -1405,13 +1390,13 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <td>181</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>20.985000</td>
       <td>head</td>
     </tr>
     <tr>
       <th>usgs:333145090261901_201509</th>
       <td>2015-09-30</td>
       <td>18</td>
+      <td>USGS:333145090261901</td>
       <td>usgs:333145090261901</td>
       <td>usgs:333145090261901_201509</td>
       <td>21.060000</td>
@@ -1419,13 +1404,13 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <td>181</td>
       <td>-16.01</td>
       <td>-28.20</td>
-      <td>21.060000</td>
       <td>head</td>
     </tr>
     <tr>
       <th>usgs:333218090271101_ss</th>
       <td>2008-09-30</td>
       <td>0</td>
+      <td>USGS:333218090271101</td>
       <td>usgs:333218090271101</td>
       <td>usgs:333218090271101_ss</td>
       <td>19.320000</td>
@@ -1433,13 +1418,13 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <td>2</td>
       <td>-102.15</td>
       <td>-114.34</td>
-      <td>19.320000</td>
       <td>head</td>
     </tr>
     <tr>
       <th>usgs:333218090271101_200703</th>
       <td>2007-03-31</td>
       <td>1</td>
+      <td>USGS:333218090271101</td>
       <td>usgs:333218090271101</td>
       <td>usgs:333218090271101_200703</td>
       <td>20.111250</td>
@@ -1447,7 +1432,6 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
       <td>8</td>
       <td>-102.15</td>
       <td>-114.34</td>
-      <td>20.111250</td>
       <td>head</td>
     </tr>
   </tbody>
@@ -1477,8 +1461,8 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
 <div class="highlight"><pre>
 pif @
 @obsnme@
-l1 w w w w w !usgs:333145090261901_201409! w w w w w
-l1 w w w w w !usgs:333145090261901_201503! w w w w w
+l1 w w w w w w !usgs:333145090261901_201409! w w w w
+l1 w w w w w w !usgs:333145090261901_201503! w w w w
 
 </pre></div></div>
 </div>
@@ -1490,9 +1474,9 @@ l1 w w w w w !usgs:333145090261901_201503! w w w w w
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
-<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_head&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Head, in meters above sea level&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
@@ -1524,9 +1508,9 @@ l1 w w w w w !usgs:333145090261901_201503! w w w w w
 
 <span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                        <span class="n">perioddata</span><span class="p">,</span>
-                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
-                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
-                                       <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
+                                       <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
                                        <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                        <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_tdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1574,11 +1558,229 @@ used as the datum for each site. * Displacement observations can help inform PES
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_obs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>site_no</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>n</th>
+      <th>screen_top</th>
+      <th>screen_botm</th>
+      <th>obgnme</th>
+    </tr>
+    <tr>
+      <th>obsnme</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>usgs:333145090261901_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>USGS:333145090261901</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201409</td>
+      <td>20.906667</td>
+      <td>28.948277</td>
+      <td>27</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333145090261901_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>USGS:333145090261901</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201503</td>
+      <td>20.985000</td>
+      <td>29.139451</td>
+      <td>181</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333145090261901_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>USGS:333145090261901</td>
+      <td>usgs:333145090261901</td>
+      <td>usgs:333145090261901_201509</td>
+      <td>21.060000</td>
+      <td>29.057794</td>
+      <td>181</td>
+      <td>-16.01</td>
+      <td>-28.20</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333218090271101_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>USGS:333218090271101</td>
+      <td>usgs:333218090271101</td>
+      <td>usgs:333218090271101_ss</td>
+      <td>19.320000</td>
+      <td>30.279858</td>
+      <td>2</td>
+      <td>-102.15</td>
+      <td>-114.34</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:333218090271101_200703</th>
+      <td>2007-03-31</td>
+      <td>1</td>
+      <td>USGS:333218090271101</td>
+      <td>usgs:333218090271101</td>
+      <td>usgs:333218090271101_200703</td>
+      <td>20.111250</td>
+      <td>28.161395</td>
+      <td>8</td>
+      <td>-102.15</td>
+      <td>-114.34</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>usgs:334630090274201_201303</th>
+      <td>2013-03-31</td>
+      <td>13</td>
+      <td>USGS:334630090274201</td>
+      <td>usgs:334630090274201</td>
+      <td>usgs:334630090274201_201303</td>
+      <td>25.250000</td>
+      <td>32.533311</td>
+      <td>2</td>
+      <td>7.21</td>
+      <td>-69.26</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:334630090274201_201403</th>
+      <td>2014-03-31</td>
+      <td>15</td>
+      <td>USGS:334630090274201</td>
+      <td>usgs:334630090274201</td>
+      <td>usgs:334630090274201_201403</td>
+      <td>24.980000</td>
+      <td>32.572959</td>
+      <td>1</td>
+      <td>7.21</td>
+      <td>-69.26</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:334630090274201_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>USGS:334630090274201</td>
+      <td>usgs:334630090274201</td>
+      <td>usgs:334630090274201_201409</td>
+      <td>25.360000</td>
+      <td>32.508527</td>
+      <td>1</td>
+      <td>7.21</td>
+      <td>-69.26</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:334630090274201_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>USGS:334630090274201</td>
+      <td>usgs:334630090274201</td>
+      <td>usgs:334630090274201_201503</td>
+      <td>24.970000</td>
+      <td>32.794816</td>
+      <td>1</td>
+      <td>7.21</td>
+      <td>-69.26</td>
+      <td>head</td>
+    </tr>
+    <tr>
+      <th>usgs:334630090274201_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>USGS:334630090274201</td>
+      <td>usgs:334630090274201</td>
+      <td>usgs:334630090274201_201509</td>
+      <td>25.330000</td>
+      <td>32.683903</td>
+      <td>1</td>
+      <td>7.21</td>
+      <td>-69.26</td>
+      <td>head</td>
+    </tr>
+  </tbody>
+</table>
+<p>581 rows × 11 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">thead_disp</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                        <span class="n">perioddata</span><span class="p">,</span>
-                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
-                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
-                                       <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
+                                       <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
                                        <span class="n">get_displacements</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                        <span class="n">displacement_from</span><span class="o">=</span><span class="s1">&#39;2010-01-01&#39;</span><span class="p">,</span>
                                        <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
@@ -1599,7 +1801,7 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 <h3>Plot the displacement observations<a class="headerlink" href="#Plot-the-displacement-observations" title="Permalink to this headline">¶</a></h3>
 <p>Note: the datum observation (where displacement is zero) is excluded.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;usgs:334420090140101&#39;</span>
@@ -1620,7 +1822,7 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Example_40_0.png" src="../_images/notebooks_Example_40_0.png" />
+<img alt="../_images/notebooks_Example_41_0.png" src="../_images/notebooks_Example_41_0.png" />
 </div>
 </div>
 </section>
@@ -1632,7 +1834,7 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 <li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can also write an instruction file in tandem</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
@@ -1644,9 +1846,9 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 <span class="n">shead_diffs</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                       <span class="n">perioddata</span><span class="p">,</span>
                                       <span class="n">difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
-                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
-                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
-                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
+                                      <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_sdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1662,7 +1864,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">shead_diffs</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -1670,7 +1872,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1762,7 +1964,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.256667</td>
       <td>11.392636</td>
-      <td>spatial head difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>17</th>
@@ -1786,7 +1988,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.273333</td>
       <td>12.271304</td>
-      <td>spatial head difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>18</th>
@@ -1810,7 +2012,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.298333</td>
       <td>11.727924</td>
-      <td>spatial head difference</td>
+      <td>spatial  difference</td>
     </tr>
   </tbody>
 </table>
@@ -1818,7 +2020,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="n">shead_diffs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1831,7 +2033,7 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1843,7 +2045,7 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Example_44_1.png" src="../_images/notebooks_Example_44_1.png" />
+<img alt="../_images/notebooks_Example_45_1.png" src="../_images/notebooks_Example_45_1.png" />
 </div>
 </div>
 </section>
@@ -1862,13 +2064,37 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 <li><p>simulated and observed values are written to columns formatted with <code class="docutils literal notranslate"><span class="pre">sim_</span></code> or <code class="docutils literal notranslate"><span class="pre">obs_&lt;variable_name&gt;</span></code></p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.swflows</span> <span class="kn">import</span> <span class="n">get_flux_obs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fluxobs_output_file</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+PosixPath(&#39;../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_base_obs</span>
+<span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_mf6_single_variable_obs</span>
 
-<span class="n">base_flux_obs</span> <span class="o">=</span> <span class="n">get_flux_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
-                             <span class="n">model_output_file</span><span class="o">=</span><span class="n">fluxobs_output_file</span><span class="p">,</span>
+<span class="c1"># first read the MF6 SFR package results into a dataframe</span>
+<span class="c1"># with the appropriate formatting for get_base_obs</span>
+<span class="n">sfr_results</span> <span class="o">=</span> <span class="n">get_mf6_single_variable_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
+                                          <span class="n">model_output_file</span><span class="o">=</span><span class="n">fluxobs_output_file</span><span class="p">,</span>
+                                          <span class="p">)</span>
+
+<span class="n">base_flux_obs</span> <span class="o">=</span> <span class="n">get_base_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
+                             <span class="n">model_output</span><span class="o">=</span><span class="n">sfr_results</span><span class="p">,</span>
                              <span class="n">observed_values_file</span><span class="o">=</span><span class="n">flux_obs</span><span class="p">,</span>
                              <span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="s1">&#39;site_no&#39;</span><span class="p">,</span>
                              <span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
@@ -1891,15 +2117,13 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 reading model output from ../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv...
 took 0.00s
 
-Getting mf6 observations took 0.01s
-
 Dropping 1 sites with no information
 wrote 53 observations to output/processed_flux_obs.dat
 wrote 53 observation instructions to output/processed_flux_obs.dat.ins
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1923,11 +2147,11 @@ wrote 53 observation instructions to output/processed_flux_obs.dat.ins
       <th></th>
       <th>datetime</th>
       <th>per</th>
+      <th>site_no</th>
       <th>obsprefix</th>
       <th>obsnme</th>
-      <th>obs_flux</th>
-      <th>sim_flux</th>
       <th>obsval</th>
+      <th>sim_obsval</th>
       <th>obgnme</th>
     </tr>
     <tr>
@@ -1948,62 +2172,62 @@ wrote 53 observation instructions to output/processed_flux_obs.dat.ins
       <td>2008-09-30</td>
       <td>0</td>
       <td>07281600</td>
+      <td>07281600</td>
       <td>07281600_ss</td>
       <td>1.349688e+07</td>
-      <td>8203000.0</td>
-      <td>1.349688e+07</td>
-      <td>flux</td>
+      <td>6290400.0</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>07281600_200803</th>
       <td>2008-03-31</td>
       <td>3</td>
       <td>07281600</td>
+      <td>07281600</td>
       <td>07281600_200803</td>
       <td>8.919390e+06</td>
       <td>7155800.0</td>
-      <td>8.919390e+06</td>
-      <td>flux</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>07281600_200809</th>
       <td>2008-09-30</td>
       <td>4</td>
       <td>07281600</td>
+      <td>07281600</td>
       <td>07281600_200809</td>
       <td>1.349688e+07</td>
       <td>6290400.0</td>
-      <td>1.349688e+07</td>
-      <td>flux</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>07281600_200903</th>
       <td>2009-03-31</td>
       <td>5</td>
       <td>07281600</td>
+      <td>07281600</td>
       <td>07281600_200903</td>
       <td>1.547445e+07</td>
       <td>6740000.0</td>
-      <td>1.547445e+07</td>
-      <td>flux</td>
+      <td>None</td>
     </tr>
     <tr>
       <th>07281600_200909</th>
       <td>2009-09-30</td>
       <td>6</td>
       <td>07281600</td>
+      <td>07281600</td>
       <td>07281600_200909</td>
       <td>1.365627e+07</td>
       <td>7182900.0</td>
-      <td>1.365627e+07</td>
-      <td>flux</td>
+      <td>None</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
@@ -2011,7 +2235,7 @@ wrote 53 observation instructions to output/processed_flux_obs.dat.ins
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2020,20 +2244,20 @@ array([&#39;07281600&#39;, &#39;07288280&#39;, &#39;07288500&#39;], dtype=object
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">site</span> <span class="o">=</span> <span class="s1">&#39;07281600&#39;</span>
-<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_flux_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">site_values</span> <span class="o">=</span> <span class="n">base_flux_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_flux_obs</span><span class="o">.</span><span class="n">obsprefix</span> <span class="o">==</span> <span class="n">site</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="n">site_values</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">site_values</span><span class="o">.</span><span class="n">datetime</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_flux&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">site_values</span><span class="p">[[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">site</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Base flow, in $m^3/d$&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2045,7 +2269,7 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Example_48_1.png" src="../_images/notebooks_Example_48_1.png" />
+<img alt="../_images/notebooks_Example_50_1.png" src="../_images/notebooks_Example_50_1.png" />
 </div>
 </div>
 </section>
@@ -2056,14 +2280,654 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
 <li><p>Differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">base_flux_obs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>datetime</th>
+      <th>per</th>
+      <th>site_no</th>
+      <th>obsprefix</th>
+      <th>obsnme</th>
+      <th>obsval</th>
+      <th>sim_obsval</th>
+      <th>obgnme</th>
+    </tr>
+    <tr>
+      <th>obsnme</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>07281600_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_ss</td>
+      <td>1.349688e+07</td>
+      <td>6290400.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_200803</th>
+      <td>2008-03-31</td>
+      <td>3</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_200803</td>
+      <td>8.919390e+06</td>
+      <td>7155800.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_200809</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_200809</td>
+      <td>1.349688e+07</td>
+      <td>6290400.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_200903</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_200903</td>
+      <td>1.547445e+07</td>
+      <td>6740000.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_200909</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_200909</td>
+      <td>1.365627e+07</td>
+      <td>7182900.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201003</th>
+      <td>2010-03-31</td>
+      <td>7</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201003</td>
+      <td>3.217932e+07</td>
+      <td>7544900.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201009</th>
+      <td>2010-09-30</td>
+      <td>8</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201009</td>
+      <td>1.156270e+07</td>
+      <td>6223100.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201103</th>
+      <td>2011-03-31</td>
+      <td>9</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201103</td>
+      <td>5.627040e+06</td>
+      <td>7018200.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201109</th>
+      <td>2011-09-30</td>
+      <td>10</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201109</td>
+      <td>1.008706e+07</td>
+      <td>5969700.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201203</th>
+      <td>2012-03-31</td>
+      <td>11</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201203</td>
+      <td>1.292090e+07</td>
+      <td>6991600.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201209</th>
+      <td>2012-09-30</td>
+      <td>12</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201209</td>
+      <td>2.679248e+06</td>
+      <td>5844400.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201303</th>
+      <td>2013-03-31</td>
+      <td>13</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201303</td>
+      <td>1.772296e+07</td>
+      <td>6874300.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201309</th>
+      <td>2013-09-30</td>
+      <td>14</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201309</td>
+      <td>1.303247e+07</td>
+      <td>6117900.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201403</th>
+      <td>2014-03-31</td>
+      <td>15</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201403</td>
+      <td>1.353548e+07</td>
+      <td>6442100.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201409</td>
+      <td>1.065890e+07</td>
+      <td>6171300.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201503</td>
+      <td>1.473788e+07</td>
+      <td>8164100.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07281600_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>07281600</td>
+      <td>07281600</td>
+      <td>07281600_201509</td>
+      <td>1.607698e+07</td>
+      <td>6688300.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_ss</td>
+      <td>2.745655e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200703</th>
+      <td>2007-03-31</td>
+      <td>1</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200703</td>
+      <td>1.069265e+06</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200709</th>
+      <td>2007-09-30</td>
+      <td>2</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200709</td>
+      <td>3.478525e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200803</th>
+      <td>2008-03-31</td>
+      <td>3</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200803</td>
+      <td>2.555816e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200809</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200809</td>
+      <td>2.745655e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200903</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200903</td>
+      <td>2.805353e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_200909</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_200909</td>
+      <td>5.704373e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201003</th>
+      <td>2010-03-31</td>
+      <td>7</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201003</td>
+      <td>1.596739e+06</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201009</th>
+      <td>2010-09-30</td>
+      <td>8</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201009</td>
+      <td>2.497488e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201103</th>
+      <td>2011-03-31</td>
+      <td>9</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201103</td>
+      <td>1.064802e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201109</th>
+      <td>2011-09-30</td>
+      <td>10</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201109</td>
+      <td>2.067107e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201203</th>
+      <td>2012-03-31</td>
+      <td>11</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201203</td>
+      <td>3.397002e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201209</th>
+      <td>2012-09-30</td>
+      <td>12</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201209</td>
+      <td>1.080637e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201303</th>
+      <td>2013-03-31</td>
+      <td>13</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201303</td>
+      <td>2.233306e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201309</th>
+      <td>2013-09-30</td>
+      <td>14</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201309</td>
+      <td>3.354905e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201403</th>
+      <td>2014-03-31</td>
+      <td>15</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201403</td>
+      <td>2.422443e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201409</td>
+      <td>2.579483e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201503</td>
+      <td>9.891381e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288280_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>07288280</td>
+      <td>07288280</td>
+      <td>07288280_201509</td>
+      <td>4.557125e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_ss</th>
+      <td>2008-09-30</td>
+      <td>0</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_ss</td>
+      <td>8.167170e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_200803</th>
+      <td>2008-03-31</td>
+      <td>3</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_200803</td>
+      <td>4.251600e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_200809</th>
+      <td>2008-09-30</td>
+      <td>4</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_200809</td>
+      <td>8.167170e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_200903</th>
+      <td>2009-03-31</td>
+      <td>5</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_200903</td>
+      <td>4.680965e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_200909</th>
+      <td>2009-09-30</td>
+      <td>6</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_200909</td>
+      <td>9.767105e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201003</th>
+      <td>2010-03-31</td>
+      <td>7</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201003</td>
+      <td>2.503657e+06</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201009</th>
+      <td>2010-09-30</td>
+      <td>8</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201009</td>
+      <td>4.230712e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201103</th>
+      <td>2011-03-31</td>
+      <td>9</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201103</td>
+      <td>1.219689e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201109</th>
+      <td>2011-09-30</td>
+      <td>10</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201109</td>
+      <td>3.340273e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201203</th>
+      <td>2012-03-31</td>
+      <td>11</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201203</td>
+      <td>5.342074e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201209</th>
+      <td>2012-09-30</td>
+      <td>12</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201209</td>
+      <td>2.296468e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201303</th>
+      <td>2013-03-31</td>
+      <td>13</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201303</td>
+      <td>5.800736e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201309</th>
+      <td>2013-09-30</td>
+      <td>14</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201309</td>
+      <td>8.871058e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201403</th>
+      <td>2014-03-31</td>
+      <td>15</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201403</td>
+      <td>6.518142e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201409</th>
+      <td>2014-09-30</td>
+      <td>16</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201409</td>
+      <td>8.534180e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201503</th>
+      <td>2015-03-31</td>
+      <td>17</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201503</td>
+      <td>8.822385e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>07288500_201509</th>
+      <td>2015-09-30</td>
+      <td>18</td>
+      <td>07288500</td>
+      <td>07288500</td>
+      <td>07288500_201509</td>
+      <td>6.059555e+05</td>
+      <td>0.0</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span>
                                       <span class="n">perioddata</span><span class="p">,</span>
-                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
-                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
-                                      <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
+                                      <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_tdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -2079,7 +2943,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -2087,7 +2951,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2132,7 +2996,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
       <td>6290400.0</td>
       <td>4.577493e+06</td>
       <td>-865400.0</td>
-      <td>flux_tdiff</td>
+      <td>None_tdiff</td>
       <td>temporal flux difference</td>
     </tr>
     <tr>
@@ -2145,7 +3009,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
       <td>6740000.0</td>
       <td>1.977567e+06</td>
       <td>449600.0</td>
-      <td>flux_tdiff</td>
+      <td>None_tdiff</td>
       <td>temporal flux difference</td>
     </tr>
     <tr>
@@ -2158,7 +3022,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
       <td>7182900.0</td>
       <td>-1.818178e+06</td>
       <td>442900.0</td>
-      <td>flux_tdiff</td>
+      <td>None_tdiff</td>
       <td>temporal flux difference</td>
     </tr>
     <tr>
@@ -2171,7 +3035,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
       <td>7544900.0</td>
       <td>1.852304e+07</td>
       <td>362000.0</td>
-      <td>flux_tdiff</td>
+      <td>None_tdiff</td>
       <td>temporal flux difference</td>
     </tr>
     <tr>
@@ -2184,7 +3048,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
       <td>6223100.0</td>
       <td>-2.061661e+07</td>
       <td>-1321800.0</td>
-      <td>flux_tdiff</td>
+      <td>None_tdiff</td>
       <td>temporal flux difference</td>
     </tr>
   </tbody>
@@ -2192,7 +3056,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_tdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_tdiff</span><span class="o">.</span><span class="n">datetime</span>
@@ -2204,7 +3068,7 @@ wrote 47 observation instructions to output/processed_flux_obs_tdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2216,7 +3080,7 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Example_52_1.png" src="../_images/notebooks_Example_52_1.png" />
+<img alt="../_images/notebooks_Example_55_1.png" src="../_images/notebooks_Example_55_1.png" />
 </div>
 </div>
 </section>
@@ -2227,7 +3091,7 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
 <li><p>Differences are computed by subtracting the values site(s) from the key site, so for example, to represent a gain in streamflow as positive, the downstream site should be key site.</p></li>
 </ul>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;07288500&#39;</span><span class="p">:</span>   <span class="c1"># sunflower r. at sunflower</span>
@@ -2236,9 +3100,9 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
 
 <span class="n">flux_sdiff</span> <span class="o">=</span> <span class="n">get_spatial_differences</span><span class="p">(</span><span class="n">base_flux_obs</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
                                      <span class="n">flux_difference_sites</span><span class="p">,</span>
-                                     <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_flux&#39;</span><span class="p">,</span>
-                                     <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_flux&#39;</span><span class="p">,</span>
-                                     <span class="n">obstype</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
+                                     <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
+                                     <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
+                                     <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_sdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -2254,7 +3118,7 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -2262,7 +3126,7 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -2335,11 +3199,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>flux_sdiff</td>
+      <td>None_sdiff</td>
       <td>07288500-d-07288280_ss</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>spatial flux difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>3</th>
@@ -2354,11 +3218,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>169578.350000</td>
       <td>0.0</td>
-      <td>flux_sdiff</td>
+      <td>None_sdiff</td>
       <td>07288500-d-07288280_200803</td>
       <td>169578.350000</td>
       <td>0.0</td>
-      <td>spatial flux difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>4</th>
@@ -2373,11 +3237,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>flux_sdiff</td>
+      <td>None_sdiff</td>
       <td>07288500-d-07288280_200809</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>spatial flux difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>5</th>
@@ -2392,11 +3256,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>187561.166667</td>
       <td>0.0</td>
-      <td>flux_sdiff</td>
+      <td>None_sdiff</td>
       <td>07288500-d-07288280_200903</td>
       <td>187561.166667</td>
       <td>0.0</td>
-      <td>spatial flux difference</td>
+      <td>spatial  difference</td>
     </tr>
     <tr>
       <th>6</th>
@@ -2411,18 +3275,18 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>406273.166667</td>
       <td>0.0</td>
-      <td>flux_sdiff</td>
+      <td>None_sdiff</td>
       <td>07288500-d-07288280_200909</td>
       <td>406273.166667</td>
       <td>0.0</td>
-      <td>spatial flux difference</td>
+      <td>spatial  difference</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">flux_sdiff</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">flux_sdiff</span><span class="o">.</span><span class="n">datetime</span>
@@ -2432,7 +3296,7 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -2444,7 +3308,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_Example_56_1.png" src="../_images/notebooks_Example_56_1.png" />
+<img alt="../_images/notebooks_Example_59_1.png" src="../_images/notebooks_Example_59_1.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -2470,7 +3334,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 16, 2022.
+      <span class="lastupdated">Last updated on Feb 22, 2022.
       </span></p>
   </div>
 

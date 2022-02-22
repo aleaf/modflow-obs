@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post35.dev0+g0901707 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post52.dev0+g3fbb668 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -35,7 +35,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post35.dev0+g0901707
+                0.post52.dev0+g3fbb668
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -59,6 +59,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html"> Modules</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mfobs.heads.html">Head observations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mfobs.sep.html">Hydrograph separation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.prms.html">PRMS-related functions</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">General observation processing</a></li>
@@ -128,16 +129,756 @@
 <span id="the-general-observation-processing-module"></span><h1>The general observation processing module<a class="headerlink" href="#module-mfobs.obs" title="Permalink to this headline">¶</a></h1>
 <p>General functions that apply to multiple types of observations</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.aggregrate_to_period">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">aggregrate_to_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#aggregrate_to_period"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.aggregrate_to_period" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_annual_means">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_annual_means</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'annual-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_annual_means"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_annual_means" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create observations of annual mean values for a set of 
+base observations. Means are computed for all columns with 
+floating point data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns,
+in addition to columns of floating point data to aggregate 
+(which can have any name):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
+</ol>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘%Y’, which returns the 4-digit year</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
+obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
+by default, ‘annual-mean’</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>aggregated</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns (in addition to the data columns in <cite>base_data</cite>, 
+which now contain the aggregated values):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>year of annual mean, as datetime</p></td>
+</tr>
+<tr class="row-even"><td><p>year</p></td>
+<td><p>year of annual mean, as integer</p></td>
+</tr>
+<tr class="row-odd"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>obgnme</p></td>
+<td><p>observation group name<sup>3</sup></p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>With format &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>With suffix formatted with <cite>obsnme_suffix_format</cite></p></li>
+<li><dl class="simple">
+<dt>With format of &lt;original obgnme&gt;_&lt;obgnme_suffix&gt;</dt><dd><p>e.g. heads_annual-mean</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_base_obs">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_base_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_metadata_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_site_id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsprefix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_obsval_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_group_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obgnme'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_unc_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uncertainty'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_base_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_base_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a set of base observations from a tables of model output, observed 
+values, and model time discretizaton.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>perioddata</strong><span class="classifier">str, pathlike or DataFrame</span></dt><dd><p>Path to csv file or pandas DataFrame with start/end dates for stress periods or timesteps. 
+Must have the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>time</p></td>
+<td><p>modflow simulation time, in days</p></td>
+</tr>
+<tr class="row-even"><td><p>start_datetime</p></td>
+<td><p>start date for each stress period or timestep</p></td>
+</tr>
+<tr class="row-odd"><td><p>end_datetime</p></td>
+<td><p>end date for each stress period or timestep</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt><strong>model_output</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with one head observation per row, with the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>site_no</p></td>
+<td><p>unique identifier for each site</p></td>
+</tr>
+<tr class="row-even"><td><p>variable</p></td>
+<td><p>variable name for the simulated values</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix</p></td>
+<td><p>prefix of observation name (&lt;site_no&gt;-&lt;variable&gt;)</p></td>
+</tr>
+<tr class="row-even"><td><p>sim_&lt;variable_name&gt;</p></td>
+<td><p>column with simulated values</p></td>
+</tr>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>layer</p></td>
+<td><p>zero-based model layer</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_’%Y%m’</p></td>
+</tr>
+</tbody>
+</table>
+<p>Usually, a helper function such as <a class="reference internal" href="mfobs.modflow.html#mfobs.modflow.get_mf6_single_variable_obs" title="mfobs.modflow.get_mf6_single_variable_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.modflow.get_mf6_single_variable_obs()</span></code></a>
+or other custom code will be used to produce model_output from the 
+raw model output files.</p>
+<p>Observation prefixes in the <cite>obsprefix</cite> column are assumed to be formated as
+<strong>&lt;site_no&gt;-&lt;variable&gt;</strong>, where <cite>site_no</cite> is a unique identifier for a site
+contained in <cite>observed_values_file</cite> and <cite>variable</cite> matches the <cite>variable_name</cite> argument
+to this function (and is the variable name for the observed values in <cite>observed_values_file</cite>).</p>
+</dd>
+<dt><strong>observed_values_file</strong><span class="classifier">str, pathlike or DataFrame</span></dt><dd><p>Path to csv file or pandas DataFrame with observed values.
+Must have the following columns (column names in brackets &lt;&gt; are supplied
+with other arguments to this function):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 73%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>&lt;observed_values_obsval_col&gt;</p></td>
+<td><p>Column with observed values</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;observed_values_site_id_col&gt;</p></td>
+<td><p>Column with unique identifier for each site</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt;observed_values_datetime_col&gt;</p></td>
+<td><p>Column with date/time for each observation</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt;observed_values_unc_column&gt;</p></td>
+<td><p>Column with estimated uncertainty values for each observation</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+<dt><strong>variable_name</strong><span class="classifier">str, optional</span></dt><dd><p>Name for the type of values being processed, 
+e.g. ‘head’, ‘downstream-flow’ or ‘stage’. Required if the <cite>obsprefix</cite>
+values in the <cite>model_output</cite> table are formatted as <strong>&lt;site number&gt;-&lt;variable&gt;</strong>;
+if supplied, the observation names created for the observations in 
+<cite>observed_values_file</cite> will also have <strong>&lt;site number&gt;-&lt;variable&gt;</strong> prefixes,
+and the observed values and simulated equivalents can be aligned.</p>
+<p>By default, None, in which case the <cite>obsprefix</cite> values in the <cite>model_output</cite>
+table are assumed to be the site numbers; prefixes for observations
+in <cite>observed_values_file</cite> will also then be site numbers.</p>
+</dd>
+<dt><strong>observed_values_metadata_file</strong><span class="classifier">str, pathlike or DataFrame, optional</span></dt><dd><p>Table with site information for the observed values.</p>
+</dd>
+<dt><strong>observed_values_obsval_col</strong><span class="classifier">str, optional</span></dt><dd><p>Column in obs_values_file with measured values</p>
+</dd>
+<dt><strong>observed_values_site_id_col</strong><span class="classifier">str</span></dt><dd><p>Column with unique identifier for each site,
+by default, ‘obsprefix’</p>
+</dd>
+<dt><strong>observed_values_datetime_col</strong><span class="classifier">str</span></dt><dd><p>Column with date/time for each observation,
+by default, ‘datetime’</p>
+</dd>
+<dt><strong>observed_values_unc_column</strong><span class="classifier">str</span></dt><dd><p>Column with estimated uncertainty values for each observation,
+by default, ‘uncertainty’</p>
+</dd>
+<dt><strong>aggregrate_observed_values_method</strong><span class="classifier">str</span></dt><dd><p>Method for aggregating observed values to time periods bracked by 
+aggregate_start_dates and aggregate_end_dates.
+Can be any method used to aggregate values on a pandas groupby object
+(e.g. ‘mean’, ‘last’, etc.)</p>
+</dd>
+<dt><strong>obsnme_date_suffix</strong><span class="classifier">bool</span></dt><dd><p>If true, give observations a date-based suffix. Otherwise, assign a 
+stress period- or timestep-based suffix. In either case, the format of the suffix
+is controlled by obsnme_suffix_format.
+by default True</p>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes. Observation names are created following the format of
+&lt;obsprefix&gt;_&lt;date or stress period suffix&gt;. By default, <code class="docutils literal notranslate"><span class="pre">'%Y%m'</span></code>,
+which would yield <code class="docutils literal notranslate"><span class="pre">'202001'</span></code> for a Jan, 2020 observation 
+(obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
+should be a decimal format in the “new-style” string format
+(e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>[description], by default ‘processed_flux_obs.dat’</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>[description], by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>base_obs</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of base observations with the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>per</p></td>
+<td><p>MODFLOW stress period</p></td>
+</tr>
+<tr class="row-odd"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix</p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;</p></td>
+</tr>
+<tr class="row-even"><td><p>obsval</p></td>
+<td><p>observed values</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_obsval</p></td>
+<td><p>simulated equivalents to observed values</p></td>
+</tr>
+<tr class="row-even"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_baseflow_observations">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_baseflow_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d-bf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_obs_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_baseflow_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_baseflow_observations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create observations of base flow using the 
+BFI/Institute of Hydrology hydrograph separation method (<a class="reference internal" href="mfobs.sep.html#mfobs.sep.ih_method" title="mfobs.sep.ih_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.sep.ih_method()</span></code></a>).</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns,
+in addition to columns of floating point data to aggregate 
+(which can have any name):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
+</ol>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘’%Y%m%d-log’ (e.g. 20010101-log for Jan 1, 2001)</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
+obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
+by default, ‘annual-mean’</p>
+</dd>
+<dt><strong>missing_obs_fill_value</strong><span class="classifier">float</span></dt><dd><p>Baseflow observations are different from most other observation types in that
+they are produced by hydrograph separation, which can lead to different numbers
+of observations with changing conditions. For example, a given parameter set
+may produce a total flow hydrograph with a different number of ordinates (turning points),
+which in turn can change the interpolation of baseflow values between ordinates, potentially
+producing either ‘extra’ observations (not in the instruction file) or missing observations.
+Missing observations will be filled with <cite>missing_obs_value</cite>, so that PEST doesn’t crash. A
+value of 0. is recommended, as missing observations are often associated with low or no-flow
+periods, especially near the start or end of a timeseries.</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+<dt><strong>**kwargs</strong><span class="classifier">key-word arguments to <a class="reference internal" href="mfobs.sep.html#mfobs.sep.ih_method" title="mfobs.sep.ih_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.sep.ih_method()</span></code></a></span></dt><dd></dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>bf_base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns (in addition to the data columns in <cite>base_data</cite>, 
+which now contain the aggregated values):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>observation dates as datetimes</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name<sup>3</sup></p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>With format &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>With suffix formatted with <cite>obsnme_suffix_format</cite></p></li>
+<li><dl class="simple">
+<dt>With format of &lt;original obgnme&gt;_&lt;obgnme_suffix&gt;</dt><dd><p>e.g. heads_annual-mean</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_log10_observations">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_log10_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d-log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_zeros_with</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_log10_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_log10_observations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create observations of log values. Log values are computed for 
+all columns with floating point data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns,
+in addition to columns of floating point data to aggregate 
+(which can have any name):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
+</ol>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘’%Y%m%d-log’ (e.g. 20010101-log for Jan 1, 2001)</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
+obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
+by default, ‘annual-mean’</p>
+</dd>
+<dt><strong>fill_zeros_with</strong><span class="classifier">numeric</span></dt><dd><p>Fill value in log data for zero values in base_data.</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>log_base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns (in addition to the data columns in <cite>base_data</cite>, 
+which now contain the aggregated values):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>observation dates as datetimes</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name<sup>3</sup></p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>With format &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>With suffix formatted with <cite>obsnme_suffix_format</cite></p></li>
+<li><dl class="simple">
+<dt>With format of &lt;original obgnme&gt;_&lt;obgnme_suffix&gt;</dt><dd><p>e.g. heads_annual-mean</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_mean_monthly">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_mean_monthly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%b'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean-monthly'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_mean_monthly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_mean_monthly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create observations of mean monthly, or means for months of the year
+(for example, the mean for Jan. across all years). Means are computed for 
+all columns with floating point data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns,
+in addition to columns of floating point data to aggregate 
+(which can have any name):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
+</ol>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘%b’, which returns the abbreviated month name (e.g. ‘Jan’).</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
+obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
+by default, ‘annual-mean’</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>aggregated</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns (in addition to the data columns in <cite>base_data</cite>, 
+which now contain the aggregated values):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>datetimes that represent the mean of the period averaged</p></td>
+</tr>
+<tr class="row-even"><td><p>month</p></td>
+<td><p>month of monthly average values</p></td>
+</tr>
+<tr class="row-odd"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-even"><td><p>obgnme</p></td>
+<td><p>observation group name<sup>3</sup></p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>With format &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>With suffix formatted with <cite>obsnme_suffix_format</cite></p></li>
+<li><dl class="simple">
+<dt>With format of &lt;original obgnme&gt;_&lt;obgnme_suffix&gt;</dt><dd><p>e.g. heads_annual-mean</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mfobs.obs.get_monthly_means">
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_monthly_means</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'monthly-mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_monthly_means"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_monthly_means" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create observations of monthly mean values for a set of 
+base observations. Means are computed for all columns with 
+floating point data.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl>
+<dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns,
+in addition to columns of floating point data to aggregate 
+(which can have any name):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
+</ol>
+</dd>
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘%Y%m’, which returns the year and month as consecutive integers, 
+e.g. 200101 for Jan, 2001.</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+e.g. ‘ss’ to include steady-state observations.
+By default, ‘ss’</p>
+</dd>
+<dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
+obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
+by default, ‘annual-mean’</p>
+</dd>
+<dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>CSV file to write output to.
+By default, None (no output written)</p>
+</dd>
+<dt><strong>write_ins</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to write instruction file, by default False</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><dl>
+<dt><strong>aggregated</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns (in addition to the data columns in <cite>base_data</cite>, 
+which now contain the aggregated values):</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 22%" />
+<col style="width: 78%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>aggregated dates as datetime objects</p></td>
+</tr>
+<tr class="row-even"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-even"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;<sup>2</sup></p></td>
+</tr>
+<tr class="row-odd"><td><p>obgnme</p></td>
+<td><p>observation group name<sup>3</sup></p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>With format &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+<li><p>With suffix formatted with <cite>obsnme_suffix_format</cite></p></li>
+<li><dl class="simple">
+<dt>With format of &lt;original obgnme&gt;_&lt;obgnme_suffix&gt;</dt><dd><p>e.g. heads_annual-mean</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_spatial_differences">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_spatial_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gradients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-d-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_spatial_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_spatial_differences" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_spatial_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gradients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-d-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_spatial_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_spatial_differences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes the base_data dataframe output by <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code> and creates
 spatial difference observations. Optionally writes an output csvfile
 and a PEST instruction file.</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl class="simple">
+<dd class="field-odd"><dl>
 <dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>Table of preprocessed observations, such as that produced by
-<code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code></p>
+<a class="reference internal" href="#mfobs.obs.get_base_obs" title="mfobs.obs.get_base_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_base_obs()</span></code></a>. Must have the following columns:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 76%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>datetime</p></td>
+<td><p>pandas datetimes, based on stress period end date</p></td>
+</tr>
+<tr class="row-even"><td><p>per</p></td>
+<td><p>MODFLOW stress period</p></td>
+</tr>
+<tr class="row-odd"><td><p>site_no</p></td>
+<td><p>unique site identifier</p></td>
+</tr>
+<tr class="row-even"><td><p>obsprefix<sup>1</sup></p></td>
+<td><p>prefix of observation name</p></td>
+</tr>
+<tr class="row-odd"><td><p>obsnme</p></td>
+<td><p>observation name based on format of &lt;obsprefix&gt;_&lt;suffix&gt;</p></td>
+</tr>
+<tr class="row-even"><td><p>obsval</p></td>
+<td><p>observed values</p></td>
+</tr>
+<tr class="row-odd"><td><p>sim_obsval</p></td>
+<td><p>simulated equivalents to observed values</p></td>
+</tr>
+<tr class="row-even"><td><p>obgnme</p></td>
+<td><p>observation group name</p></td>
+</tr>
+</tbody>
+</table>
+<ol class="arabic simple">
+<li><p>where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</p></li>
+</ol>
 </dd>
 <dt><strong>perioddata</strong><span class="classifier">DataFrame</span></dt><dd><p>DataFrame with start/end dates for stress periods. Must have columns
 ‘time’ (modflow time, in days), ‘start_datetime’ (start date for the stress period)
@@ -155,12 +896,12 @@ to represent a gain in streamflow as positive, the downstream site should be key
 </dd>
 <dt><strong>sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <cite>base_data`</cite> with simulated equivalent values</p>
 </dd>
-<dt><strong>obstype</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
-columns are named in the format ‘sim_&lt;obstype&gt;’ and ‘obs_&lt;obstype&gt;’,
+<dt><strong>variable</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
+columns are named in the format ‘sim_&lt;variable&gt;’ and ‘obs_&lt;variable&gt;’,
 respectively. If there is no ‘obgnme’ column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>,
-<code class="docutils literal notranslate"><span class="pre">obstype</span></code> is also used as a default base group name. Finally,
+<code class="docutils literal notranslate"><span class="pre">variable</span></code> is also used as a default base group name. Finally,
 a ‘type’ column is included in the output with the label
-‘vertical &lt;obstype&gt; gradient’ or ‘&lt;obstype&gt; difference’, depending on whether
+‘vertical &lt;variable&gt; gradient’ or ‘&lt;variable&gt; difference’, depending on whether
 <code class="docutils literal notranslate"><span class="pre">use_gradients=True</span></code>.</p>
 </dd>
 <dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, compute vertical hydraulic gradients and use those for the
@@ -275,7 +1016,7 @@ By default, None (no output written)</p>
 <li><p>denotes optional columns that may not be present.</p></li>
 </ul>
 </li>
-<li><p>Columns relating to well open interval are only created if <code class="docutils literal notranslate"><span class="pre">obstype='head'</span></code>
+<li><p>Columns relating to well open interval are only created if <code class="docutils literal notranslate"><span class="pre">variable='head'</span></code>
 and <code class="docutils literal notranslate"><span class="pre">base_data</span></code> has ‘screen_top’ and ‘screen_botm’ columns.</p></li>
 <li><p>Negative difference or gradient values indicate a gradient towards the key site.</p></li>
 </ul>
@@ -287,7 +1028,7 @@ and <code class="docutils literal notranslate"><span class="pre">base_data</span
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_temporal_differences">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_temporal_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_displacements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displacement_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_temporal_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_temporal_differences" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_temporal_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_displacements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">displacement_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_obs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_temporal_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_temporal_differences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes the base_data dataframe output by <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code>,
 creates temporal difference observations. Optionally writes an output csvfile
 and a PEST instruction file.</p>
@@ -305,10 +1046,10 @@ and ‘end_datetime’ (end date for the stress period).</p>
 </dd>
 <dt><strong>sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <cite>base_data`</cite> with simulated equivalent values</p>
 </dd>
-<dt><strong>obstype</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
-columns are named in the format ‘sim_&lt;obstype&gt;’ and ‘obs_&lt;obstype&gt;’,
+<dt><strong>variable</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
+columns are named in the format ‘sim_&lt;variable&gt;’ and ‘obs_&lt;variable&gt;’,
 respectively. If there is no ‘obgnme’ column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>,
-<code class="docutils literal notranslate"><span class="pre">obstype</span></code> is also used as a default base group name.</p>
+<code class="docutils literal notranslate"><span class="pre">variable</span></code> is also used as a default base group name.</p>
 </dd>
 <dt><strong>get_displacements</strong><span class="classifier">bool</span></dt><dd><p>If True, compute the displacement of each observation from 
 a datum (specified by <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code>). If False, difference
@@ -375,7 +1116,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 16, 2022.
+      <span class="lastupdated">Last updated on Feb 22, 2022.
       </span></p>
   </div>
 

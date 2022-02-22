@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.modflow &mdash; modflow-obs 0.post35.dev0+g0901707 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post52.dev0+g3fbb668 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -32,7 +32,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post35.dev0+g0901707
+                0.post52.dev0+g3fbb668
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -103,8 +103,9 @@
     <span class="kn">import</span> <span class="nn">flopy</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">flopy</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="kn">from</span> <span class="nn">mfobs.checks</span> <span class="kn">import</span> <span class="n">check_obsnme_suffix</span>
+<span class="kn">from</span> <span class="nn">mfobs.utils</span> <span class="kn">import</span> <span class="n">set_period_start_end_dates</span>
 <span class="kn">from</span> <span class="nn">mfobs.fileio</span> <span class="kn">import</span> <span class="n">write_insfile</span><span class="p">,</span> <span class="n">read_csv</span>
+<span class="kn">from</span> <span class="nn">mfobs.utils</span> <span class="kn">import</span> <span class="n">set_period_start_end_dates</span>
 
 
 <span class="n">itmuni_text</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;undefined&quot;</span><span class="p">,</span>
@@ -230,10 +231,7 @@
 <div class="viewcode-block" id="get_mf6_single_variable_obs"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_mf6_single_variable_obs">[docs]</a><span class="k">def</span> <span class="nf">get_mf6_single_variable_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
                                 <span class="n">model_output_file</span><span class="p">,</span>
                                 <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;values&#39;</span><span class="p">,</span>
-                                <span class="n">obsnme_date_suffix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                                <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m&#39;</span><span class="p">,</span>
-                                <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                 <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
@@ -245,37 +243,35 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    perioddata : str</span>
-<span class="sd">        Path to csv file with start/end dates for stress periods. Must have columns</span>
-<span class="sd">        &#39;per&#39; (stress period number), &#39;time&#39; (modflow time, in days), </span>
-<span class="sd">        &#39;start_datetime&#39; (start date for the stress period)</span>
-<span class="sd">        and &#39;end_datetime&#39; (end date for the stress period).</span>
+<span class="sd">    perioddata : str, pathlike or DataFrame</span>
+<span class="sd">        Path to csv file or pandas DataFrame with start/end dates for stress periods. </span>
+<span class="sd">        Must have the following columns:</span>
+<span class="sd">        </span>
+<span class="sd">        =================== =================================================================</span>
+<span class="sd">        time                modflow simulation time, in days\ :sup:`1`</span>
+<span class="sd">        start_datetime      start date for each stress period</span>
+<span class="sd">        end_datetime        end date for each stress period</span>
+<span class="sd">        =================== =================================================================</span>
+<span class="sd">        </span>
+<span class="sd">        1) Times in the `time` column must correspond to times in the </span>
+<span class="sd">           `time` column of gage package output.</span>
+<span class="sd">        </span>
 <span class="sd">    model_output_file : str</span>
 <span class="sd">        Path to MODFLOW-6 observation csv output (shape: n times rows x n obs columns).</span>
 <span class="sd">    gwf_obs_input_file : str</span>
 <span class="sd">        Input file to MODFLOW-6 observation utility (contains layer information).</span>
-<span class="sd">    variable_name : str, optional</span>
-<span class="sd">        Column with simulated output will be named &quot;sim_&lt;variable_name&quot;,</span>
-<span class="sd">        by default &#39;head&#39;</span>
-<span class="sd">    obsnme_date_suffix : bool</span>
-<span class="sd">        If true, give observations a date-based suffix. Otherwise, assign a </span>
-<span class="sd">        stress period-based suffix. In either case, the format of the suffix</span>
-<span class="sd">        is controlled by obsnme_suffix_format.</span>
-<span class="sd">        by default True</span>
-<span class="sd">    obsnme_suffix_format : str, optional</span>
-<span class="sd">        Format for suffix of obsnmes. Observation names are created following the format of</span>
-<span class="sd">        &lt;obsprefix&gt;_&lt;date or stress period suffix&gt;. By default, ``&#39;%Y%m&#39;``,</span>
-<span class="sd">        which would yield ``&#39;202001&#39;`` for a Jan, 2020 observation </span>
-<span class="sd">        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format</span>
-<span class="sd">        should be a decimal format in the &quot;new-style&quot; string format</span>
-<span class="sd">        (e.g. &#39;{:03d}&#39;, which would yield ``&#39;001&#39;`` for stress period 1.)</span>
-<span class="sd">    label_period_as_steady_state : int, optional</span>
-<span class="sd">        Zero-based model stress period where observations will be</span>
-<span class="sd">        assigned the suffix &#39;ss&#39; instead of a date suffix.</span>
-<span class="sd">        By default, None, in which case all model output is assigned</span>
-<span class="sd">        a date suffix based on the start date of the stress period.</span>
+<span class="sd">    variable : str</span>
+<span class="sd">        Variable name for observations. If supplied, observation prefixes will</span>
+<span class="sd">        be named following the format &lt;site number&gt;-&lt;variable&gt;. </span>
+<span class="sd">        If observations are already set up in MODFLOW</span>
+<span class="sd">        with the format &lt;site number&gt;-&lt;variable&gt;, then this is not needed.</span>
+<span class="sd">        By default, None, in which case observation prefixes are the same </span>
+<span class="sd">        as the site numbers.</span>
 <span class="sd">    abs : bool, optional</span>
-<span class="sd">        Option to convert simulated values to absolute values</span>
+<span class="sd">        Option to convert simulated values to absolute values. For example,</span>
+<span class="sd">        downstream-flow observations, which by convention are reported as </span>
+<span class="sd">        negative by MODFLOW 6, but will be compared to positive observed values.</span>
+<span class="sd">        By default, True.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -283,38 +279,27 @@
 <span class="sd">        DataFrame with one head observation per row, with the following columns:</span>
 
 <span class="sd">        =================== =============================================================</span>
-<span class="sd">        per                 zero-based model stress period</span>
-<span class="sd">        obsprefix           prefix of observation name (site identifier)</span>
-<span class="sd">        sim_&lt;variable_name&gt; column with simulated values</span>
 <span class="sd">        datetime            pandas datetimes, based on stress period start date</span>
-<span class="sd">        layer               zero-based model layer</span>
-<span class="sd">        obsnme              observation name based on format of &lt;obsprefix&gt;_&#39;%Y%m&#39;</span>
-
+<span class="sd">        site_no             unique identifier for each site</span>
+<span class="sd">        variable            MODFLOW variable name for observed value</span>
+<span class="sd">        obsprefix           prefix of observation name (site identifier)</span>
+<span class="sd">        sim_obsval          simulated values</span>
+<span class="sd">        time                modflow simulation time, in days</span>
+<span class="sd">        per                 modflow stress period\ :sup:`1`</span>
 <span class="sd">        =================== =============================================================</span>
-
-<span class="sd">        Example observation names:</span>
-
-<span class="sd">        site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_date_suffix=True)</span>
 <span class="sd">        </span>
-<span class="sd">        site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)</span>
-
-<span class="sd">        a steady-state stress period specified with label_period_as_steady_state </span>
-<span class="sd">        is given the suffix of &#39;ss&#39;</span>
-<span class="sd">        e.g. site1000_ss</span>
+<span class="sd">        1) Stress period information is needed to differentiate between </span>
+<span class="sd">           steady-state and transient observations that may have the same timestamp.</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="c1"># validation checks</span>
-    <span class="n">check_obsnme_suffix</span><span class="p">(</span><span class="n">obsnme_date_suffix</span><span class="p">,</span> <span class="n">obsnme_suffix_format</span><span class="p">,</span> 
-                        <span class="n">function_name</span><span class="o">=</span><span class="s1">&#39;get_mf6_single_variable_obs&#39;</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">:</span>
-        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="c1"># read in/set up the perioddata table</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;per&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s1">&#39;perlen&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;perlen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>        
+    <span class="n">set_period_start_end_dates</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span>
+    <span class="n">perioddata</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
         
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;reading model output from </span><span class="si">{}</span><span class="s1">...&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_output_file</span><span class="p">))</span>
     <span class="n">model_output</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">model_output_file</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;float64&#39;</span><span class="p">)</span>
@@ -330,25 +315,37 @@
     <span class="n">perioddata</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
     <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span>
     <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;perioddata_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+    <span class="c1"># TODO: backfill head so that all times have SP and time info</span>
+    <span class="c1"># add timestep info as well</span>
     <span class="n">model_output</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">model_output</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">model_output</span><span class="o">.</span><span class="n">perioddata_time</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">model_output</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span>
+    <span class="c1">#model_output.index = model_output[&#39;per&#39;]</span>
 
     <span class="c1"># reshape the model output from (nper rows, nsites columns) to nper x nsites rows</span>
+    <span class="n">periods</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]))</span>
     <span class="n">stacked</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;perioddata_time&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">simval_col</span> <span class="o">=</span> <span class="s1">&#39;sim_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
-    <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="n">simval_col</span><span class="p">]</span>
+    <span class="n">simval_col</span> <span class="o">=</span> <span class="s1">&#39;sim_obsval&#39;</span>
+    <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="n">simval_col</span><span class="p">]</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> 
+                          <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">variable</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">periods</span><span class="p">[</span><span class="n">time</span><span class="p">]</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>
+    <span class="n">stacked</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
 
     <span class="c1"># optionally convert simulated values to absolute values</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">:</span>
         <span class="n">stacked</span><span class="p">[</span><span class="n">simval_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="n">simval_col</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-
+    
+    <span class="c1"># add dates</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;end_datetime&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">stacked</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    
     <span class="c1"># add dates</span>
     <span class="c1">#perlen = dict(zip(perioddata.per, perioddata.perlen))</span>
     <span class="c1">#period_start_dates = dict(zip(perioddata.per, perioddata.start_datetime))</span>
-    <span class="n">period_end_dates</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">perioddata</span><span class="o">.</span><span class="n">per</span><span class="p">,</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">end_datetime</span><span class="p">))</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">([</span><span class="n">period_end_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">per</span><span class="p">)</span> <span class="k">for</span> <span class="n">per</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="p">])</span>
+    <span class="c1">#period_end_dates = dict(zip(perioddata.per, perioddata.end_datetime))</span>
+    <span class="c1">#stacked[&#39;datetime&#39;] = pd.to_datetime([period_end_dates.get(per) for per in stacked.per])</span>
     <span class="c1"># get the start date of the next period</span>
     <span class="c1"># so that suffix for an observation would be consistent with the start date of the next obs</span>
     <span class="c1">#next_period_start = [period_start_dates.get(per) for per in stacked.per][1:]</span>
@@ -362,26 +359,26 @@
         <span class="n">gwf_obs_input</span> <span class="o">=</span> <span class="n">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span>
         <span class="c1"># Assign layer to each observation,</span>
         <span class="c1"># assuming that numbering in gwf_obs_input is repeated nper times</span>
-        <span class="n">nper</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gwf_obs_input</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">*</span> <span class="n">nper</span>
+        <span class="n">ntimes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+        <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gwf_obs_input</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">*</span> <span class="n">ntimes</span>
 
     <span class="c1"># reset the obsprefixes to be the same for different layers at a location</span>
     <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
 
     <span class="c1"># assign obsnames using the prefixes (location identifiers) and month</span>
-    <span class="n">obsnames</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">per</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">per</span> <span class="o">==</span> <span class="n">label_period_as_steady_state</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_ss&quot;</span>
-        <span class="k">elif</span> <span class="n">obsnme_date_suffix</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">obsnme_suffix_format</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">obsnme_date_suffix</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">per</span><span class="si">:{</span><span class="n">obsnme_suffix_format</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:}</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}}</span><span class="s2">&quot;</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span>
-        <span class="n">obsnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsnames</span>
+    <span class="c1">#obsnames = []</span>
+    <span class="c1">#for prefix, per, dt in zip(stacked.obsprefix, stacked.per, stacked.datetime):</span>
+    <span class="c1">#    if per == label_period_as_steady_state:</span>
+    <span class="c1">#        name = f&quot;{prefix}_ss&quot;</span>
+    <span class="c1">#    elif obsnme_date_suffix and not pd.isnull(dt):</span>
+    <span class="c1">#        name = f&quot;{prefix}_{dt.strftime(obsnme_suffix_format)}&quot;</span>
+    <span class="c1">#    elif not obsnme_date_suffix:</span>
+    <span class="c1">#        suffix = f&quot;{per:{obsnme_suffix_format.strip(&#39;{:}&#39;)}}&quot;</span>
+    <span class="c1">#        name = f&quot;{prefix}_{suffix}&quot;</span>
+    <span class="c1">#    else:</span>
+    <span class="c1">#        name = prefix</span>
+    <span class="c1">#    obsnames.append(name)</span>
+    <span class="c1">#stacked[&#39;obsnme&#39;] = obsnames</span>
 
     <span class="c1"># drop any duplicate observations, keeping those from transient periods</span>
     <span class="c1"># (for example, an initial steady-state period that isn&#39;t being used for observations</span>
@@ -389,40 +386,46 @@
     <span class="c1"># first make temp obsnames that include layer</span>
     <span class="c1"># steady state periods that are being used for observations (label_period_as_steady_state=True)</span>
     <span class="c1"># won&#39;t be dropped because their obs will have an &quot;ss&quot; suffix instead of a date suffix</span>
-    <span class="k">if</span> <span class="n">gwf_obs_input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span>
-                           <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">layer</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_obsnames</span>
-    <span class="n">are_duplicates</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="c1">#are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">are_duplicates</span><span class="p">):</span>
-        <span class="c1">#duplicated_obsnames = set(stacked.loc[are_duplicates.values, &#39;obsnme&#39;])</span>
-        <span class="n">steady_obs</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">perioddata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">perioddata</span><span class="o">.</span><span class="n">steady</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">drop</span> <span class="o">=</span> <span class="n">are_duplicates</span> <span class="o">&amp;</span> <span class="n">steady_obs</span>
-        <span class="n">stacked</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">drop</span><span class="p">]</span>
-        <span class="c1">#unique_obsnames = np.array(unique_obsnames)[~drop]</span>
-        <span class="c1">#assert not any(pd.Series(unique_obsnames).duplicated())</span>
-    <span class="k">if</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">duplicates</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span> \
-            <span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;mfobs.modflow.get_mf6_single_variable_obs:&quot;</span>
-               <span class="s2">&quot;Duplicate observation names. If obsnme_date_suffix=True, &quot;</span>
-               <span class="s2">&quot;you may need a more specific obsnme_suffix_format, e.g. &#39;%Y%m</span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;Or there may be a mismatch between the model results (e.g. perlen) &quot;</span>
-               <span class="s2">&quot;and start and end dates in the stress period data table (perioddata).</span><span class="se">\n</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;In the latter case, you may need to re-run the model &quot;</span>
-               <span class="sa">f</span><span class="s2">&quot;and possibly the model setup.</span><span class="se">\n</span><span class="s2">Duplicated obs:</span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;&quot;</span>
-               <span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-    <span class="n">stacked</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
-    <span class="n">sort_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;layer&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="c1">#if gwf_obs_input_file is not None:</span>
+    <span class="c1">#    unique_obsnames = [&#39;{}_{}&#39;.format(name, layer)</span>
+    <span class="c1">#                       for name, layer in zip(stacked.obsnme, stacked.layer)]</span>
+    <span class="c1">#else:</span>
+    <span class="c1">#    unique_obsnames = stacked.obsnme.to_list()</span>
+    <span class="c1">#stacked[&#39;unique_obsnames&#39;] = unique_obsnames</span>
+    <span class="c1">#are_duplicates = stacked[&#39;unique_obsnames&#39;].duplicated(keep=False)</span>
+    <span class="c1">##are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values</span>
+    <span class="c1">#if any(are_duplicates):</span>
+    <span class="c1">#    #duplicated_obsnames = set(stacked.loc[are_duplicates.values, &#39;obsnme&#39;])</span>
+    <span class="c1">#    steady_obs = stacked.per.isin(perioddata.loc[perioddata.steady, &#39;per&#39;].values)</span>
+    <span class="c1">#    drop = are_duplicates &amp; steady_obs</span>
+    <span class="c1">#    stacked = stacked.loc[~drop]</span>
+    <span class="c1">#    #unique_obsnames = np.array(unique_obsnames)[~drop]</span>
+    <span class="c1">#    #assert not any(pd.Series(unique_obsnames).duplicated())</span>
+    <span class="c1">#if stacked[&#39;unique_obsnames&#39;].duplicated().any():</span>
+    <span class="c1">#    duplicates = stacked.loc[stacked[&#39;unique_obsnames&#39;]. \</span>
+    <span class="c1">#        duplicated(keep=False)].sort_values(by=&#39;unique_obsnames&#39;)</span>
+    <span class="c1">#    msg = (&quot;mfobs.modflow.get_mf6_single_variable_obs:&quot;</span>
+    <span class="c1">#           &quot;Duplicate observation names.\n\nIf obsnme_date_suffix=True, &quot;</span>
+    <span class="c1">#           &quot;you may need a more specific obsnme_suffix_format, e.g. &#39;%Y%m%d\n\n&quot;</span>
+    <span class="c1">#           &quot;Or, if the head observation input to MODFLOW is set up with an observation in each layer,\n&quot;</span>
+    <span class="c1">#           &quot;supply a gwf_obs_input_file so that unique observations can identified in each layer.\n\n&quot;</span>
+    <span class="c1">#           &quot;There could also be a mismatch between the time discretization of the model results (e.g. perlen)\n&quot;</span>
+    <span class="c1">#           &quot;and the start and end dates in the stress period data table (perioddata).\n&quot;</span>
+    <span class="c1">#           &quot;In the latter case, you may need to re-run the model &quot;</span>
+    <span class="c1">#           f&quot;and possibly the model setup.\n\nDuplicated obs:{duplicates}&quot;</span>
+    <span class="c1">#           &quot;&quot;</span>
+    <span class="c1">#           )</span>
+    <span class="c1">#    raise ValueError(msg)</span>
+<span class="c1">#</span>
+    <span class="c1">#stacked.index = stacked[&#39;obsnme&#39;]</span>
+    <span class="n">stacked</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sort_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
     <span class="n">stacked</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sort_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">stacked</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Getting mf6 observations took </span><span class="si">{:.2f}</span><span class="s2">s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sn</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">sn</span><span class="p">)</span> 
+                            <span class="k">for</span> <span class="n">sn</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">],</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">])]</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
+            <span class="n">simval_col</span><span class="p">,</span> <span class="s1">&#39;layer&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">results</span></div>
 
 
@@ -475,12 +478,9 @@
 
         
 <div class="viewcode-block" id="get_mf_gage_package_obs"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_mf_gage_package_obs">[docs]</a><span class="k">def</span> <span class="nf">get_mf_gage_package_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
-                            <span class="n">model_output_files</span><span class="p">,</span>
+                            <span class="n">gage_package_output_files</span><span class="p">,</span>
                             <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                            <span class="n">variable_name</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
-                            <span class="n">obsnme_date_suffix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                            <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
-                            <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;flow&#39;</span><span class="p">,</span>
                             <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read raw MODFLOW gage package text file output with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
@@ -500,45 +500,26 @@
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    perioddata : str</span>
-<span class="sd">        DataFrame with start/end dates for stress periods. Must have columns</span>
-<span class="sd">        &#39;per&#39; (stress period number), &#39;time&#39; (modflow time, in days), </span>
-<span class="sd">        &#39;start_datetime&#39; (start date for the stress period)</span>
-<span class="sd">        and &#39;end_datetime&#39; (end date for the stress period).</span>
-<span class="sd">    model_output_files : str/pathlike, or list of pathlikes</span>
+<span class="sd">    perioddata : str, pathlike or DataFrame</span>
+<span class="sd">        Path to csv file or pandas DataFrame with start/end dates for stress periods. </span>
+<span class="sd">        Must have the following columns:</span>
+<span class="sd">        </span>
+<span class="sd">        =================== =================================================================</span>
+<span class="sd">        time                modflow simulation time, in days\ :sup:`1`</span>
+<span class="sd">        start_datetime      start date for each stress period</span>
+<span class="sd">        end_datetime        end date for each stress period</span>
+<span class="sd">        =================== =================================================================</span>
+<span class="sd">        </span>
+<span class="sd">        1) Times in the `time` column must correspond to times in the </span>
+<span class="sd">           `time` column of gage package output.</span>
+<span class="sd">        </span>
+<span class="sd">    gage_package_output_files : str/pathlike, or list of pathlikes</span>
 <span class="sd">        Path to gage package output file(s). </span>
 <span class="sd">        Multiple files will be concatenated into one output table.</span>
 <span class="sd">    model_obs_input_file : str</span>
 <span class="sd">        Input file to MODFLOW (hydmod or gage??) for observations.</span>
-<span class="sd">    variable_name : str, optional</span>
-<span class="sd">        Column with simulated output will be named &quot;sim_&lt;variable_name&quot;,</span>
-<span class="sd">        by default &#39;head&#39;</span>
-<span class="sd">    obsnme_date_suffix : bool</span>
-<span class="sd">        If true, give observations a date-based suffix. Otherwise, assign a </span>
-<span class="sd">        stress period-based suffix. In either case, the format of the suffix</span>
-<span class="sd">        is controlled by obsnme_suffix_format.</span>
-<span class="sd">        by default True</span>
-<span class="sd">    obsnme_suffix_format : str, optional</span>
-<span class="sd">        Format for suffix of obsnmes. Observation names are created following the format of</span>
-<span class="sd">        &lt;obsprefix&gt;_&lt;date, stress period or elapsed time suffix&gt;. By default, ``&#39;%Y%m%d&#39;``,</span>
-<span class="sd">        which would yield ``&#39;20200101&#39;`` for a Jan, 2020 observation </span>
-<span class="sd">        (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format</span>
-<span class="sd">        should be a decimal format in the &quot;new-style&quot; string format</span>
-<span class="sd">        (e.g. &#39;{:04d}&#39;, which would yield ``&#39;0001&#39;`` for stress period 1. or day 1). </span>
-<span class="sd">        Observation suffixes are based on stress period if ``aggregate_obs_to_stress_periods=True``,</span>
-<span class="sd">        otherwise they are based on elapsed time (under the assumption that the model is on a daily timestep </span>
-<span class="sd">        if timestep-based observations are selected, for example in a GSFLOW context).</span>
-<span class="sd">    label_period_as_steady_state : int, optional</span>
-<span class="sd">        Zero-based model stress period where observations will be</span>
-<span class="sd">        assigned the suffix &#39;ss&#39; instead of a date suffix.</span>
-<span class="sd">        By default, None, in which case all model output is assigned</span>
-<span class="sd">        a date suffix based on the start date of the stress period.</span>
-<span class="sd">    aggregate_obs_to_stress_periods : bool</span>
-<span class="sd">        Option to aggregate observations to stress periods, so that there only</span>
-<span class="sd">        one observation representing a stress period at a given site. Alternatively,</span>
-<span class="sd">        (aggregate_obs_to_stress_periods=False), aggregate observations at the timestep</span>
-<span class="sd">        level, for example in a GSFLOW simulation where there are many daily timesteps</span>
-<span class="sd">        within a single stress period.</span>
+<span class="sd">    variable : str or sequence</span>
+<span class="sd">        Variable(s) to read from gage package output.</span>
 <span class="sd">    abs : bool, optional</span>
 <span class="sd">        Option to convert simulated values to absolute values</span>
 
@@ -548,44 +529,43 @@
 <span class="sd">        DataFrame with one head observation per row, with the following columns:</span>
 
 <span class="sd">        =================== =============================================================</span>
-<span class="sd">        per                 zero-based model stress period</span>
-<span class="sd">        obsprefix           prefix of observation name (site identifier)</span>
-<span class="sd">        sim_&lt;variable_name&gt; column with simulated values</span>
 <span class="sd">        datetime            pandas datetimes, based on stress period start date</span>
-<span class="sd">        layer               zero-based model layer</span>
-<span class="sd">        obsnme              observation name based on format of &lt;obsprefix&gt;_&#39;%Y%m&#39;</span>
-
+<span class="sd">        site_no             unique identifier for each site</span>
+<span class="sd">        variable            PRMS variable name</span>
+<span class="sd">        obsprefix           prefix of observation name (site identifier)</span>
+<span class="sd">        sim_obsval          simulated values</span>
+<span class="sd">        time                modflow simulation time, in days</span>
+<span class="sd">        per                 modflow stress period\ :sup:`1`</span>
 <span class="sd">        =================== =============================================================</span>
-
-<span class="sd">        Example observation names:</span>
-
-<span class="sd">        site1000_202001, for a Jan. 2020 observation at site1000 (obsnme_suffix_format=&#39;%Y%m&#39; and obsnme_date_suffix=True)</span>
 <span class="sd">        </span>
-<span class="sd">        site1000_001, for a stress period 1 observation at site1000 (obsnme_date_suffix=False)</span>
-
-<span class="sd">        site1000_00001, for a day 1 observation at site1000 (aggregate_obs_to_stress_periods=False and obsnme_date_suffix=False)</span>
-<span class="sd">        </span>
-<span class="sd">        a steady-state stress period specified with label_period_as_steady_state </span>
-<span class="sd">        is given the suffix of &#39;ss&#39;</span>
-<span class="sd">        e.g. site1000_ss</span>
+<span class="sd">        1) Stress period information is needed to differentiate between </span>
+<span class="sd">           steady-state and transient observations that may have the same timestamp.</span>
 
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># validation checks</span>
-    <span class="n">check_obsnme_suffix</span><span class="p">(</span><span class="n">obsnme_date_suffix</span><span class="p">,</span> <span class="n">obsnme_suffix_format</span><span class="p">,</span> 
-                        <span class="n">function_name</span><span class="o">=</span><span class="s1">&#39;get_mf6_single_variable_obs&#39;</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">:</span>
-        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="c1"># read in/set up the perioddata table</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;per&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s1">&#39;perlen&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;perlen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>        
+    <span class="n">set_period_start_end_dates</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span>
+    <span class="n">perioddata</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
     
-    <span class="n">model_output</span> <span class="o">=</span> <span class="n">read_gage_package_output</span><span class="p">(</span><span class="n">model_output_files</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gage_package_output_files</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gage_package_output_files</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">gage_package_output_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gage_package_output_files</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">variable</span> <span class="o">=</span> <span class="p">[</span><span class="n">variable</span><span class="p">]</span>
+        
+    <span class="n">simval_col</span> <span class="o">=</span> <span class="s1">&#39;sim_obsval&#39;</span>
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variable</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">read_mf_gage_package_output_files</span><span class="p">(</span><span class="n">gage_package_output_files</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="n">simval_col</span><span class="p">]</span>
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">model_output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span>
 
-    <span class="c1"># convert all observation names to lower case</span>
-    <span class="n">model_output</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="c1"># (columns from read_mf_gage_package_output_files should all be lower case)</span>
 
     <span class="c1"># add stress period information to model output</span>
     <span class="c1"># by having pandas match time floats in indices</span>
@@ -597,23 +577,27 @@
     <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;perioddata_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
     <span class="n">model_output</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">model_output</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span>
+    <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">model_output</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span>
     <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">model_output</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">model_output</span><span class="o">.</span><span class="n">perioddata_time</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">model_output</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">model_output</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span>
+    <span class="c1">#model_output.index = model_output[&#39;time&#39;]</span>
 
     <span class="c1"># reshape the model output from (nper rows, nsites columns) to nper x nsites rows</span>
-    <span class="n">stacked</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;perioddata_time&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">simval_col</span> <span class="o">=</span> <span class="s1">&#39;sim_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span>
-    <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="n">simval_col</span><span class="p">]</span>
+    <span class="c1">#stacked = model_output.drop([&#39;time&#39;, &#39;perioddata_time&#39;, &#39;per&#39;], axis=1).stack(level=0).reset_index()</span>
+    <span class="c1">#simval_col = &#39;sim_{}&#39;.format(variable_name)</span>
+    <span class="c1">#stacked.columns = [&#39;per&#39;, &#39;obsprefix&#39;, simval_col]</span>
+    <span class="n">stacked</span> <span class="o">=</span> <span class="n">model_output</span>
 
     <span class="c1"># optionally convert simulated values to absolute values</span>
     <span class="k">if</span> <span class="nb">abs</span><span class="p">:</span>
         <span class="n">stacked</span><span class="p">[</span><span class="n">simval_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="n">simval_col</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
 
     <span class="c1"># add dates</span>
-    <span class="c1">#perlen = dict(zip(perioddata.per, perioddata.perlen))</span>
-    <span class="c1">#period_start_dates = dict(zip(perioddata.per, perioddata.start_datetime))</span>
-    <span class="n">period_end_dates</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">perioddata</span><span class="o">.</span><span class="n">per</span><span class="p">,</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">end_datetime</span><span class="p">))</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">([</span><span class="n">period_end_dates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">per</span><span class="p">)</span> <span class="k">for</span> <span class="n">per</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="p">])</span>
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;end_datetime&#39;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">stacked</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    
+    <span class="c1">#period_end_dates = dict(zip(perioddata.per, perioddata.end_datetime))</span>
+    <span class="c1">#stacked[&#39;datetime&#39;] = pd.to_datetime([period_end_dates.get(per) for per in stacked.per])</span>
     <span class="c1"># get the start date of the next period</span>
     <span class="c1"># so that suffix for an observation would be consistent with the start date of the next obs</span>
     <span class="c1">#next_period_start = [period_start_dates.get(per) for per in stacked.per][1:]</span>
@@ -623,30 +607,30 @@
     <span class="c1">#next_period_start.append(last_end_date)</span>
 
     <span class="c1"># parse the layers from the column positions (prior to stacking)</span>
-    <span class="k">if</span> <span class="n">gwf_obs_input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">gwf_obs_input</span> <span class="o">=</span> <span class="n">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span>
-        <span class="c1"># Assign layer to each observation,</span>
-        <span class="c1"># assuming that numbering in gwf_obs_input is repeated nper times</span>
-        <span class="n">nper</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
-        <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;layer&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gwf_obs_input</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="o">*</span> <span class="n">nper</span>
+    <span class="c1">#if gwf_obs_input_file is not None:</span>
+    <span class="c1">#    gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)</span>
+    <span class="c1">#    # Assign layer to each observation,</span>
+    <span class="c1">#    # assuming that numbering in gwf_obs_input is repeated nper times</span>
+    <span class="c1">#    nper = len(stacked.per.unique())</span>
+    <span class="c1">#    stacked[&#39;layer&#39;] = gwf_obs_input[&#39;k&#39;].tolist() * nper</span>
 
     <span class="c1"># reset the obsprefixes to be the same for different layers at a location</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
+    <span class="c1">#stacked[&#39;obsprefix&#39;] = [prefix.split(&#39;.&#39;)[0] for prefix in stacked.obsprefix]</span>
 
     <span class="c1"># assign obsnames using the prefixes (location identifiers) and month</span>
-    <span class="n">obsnames</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">per</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">per</span> <span class="o">==</span> <span class="n">label_period_as_steady_state</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_ss&quot;</span>
-        <span class="k">elif</span> <span class="n">obsnme_date_suffix</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">dt</span><span class="p">):</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="n">obsnme_suffix_format</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">obsnme_date_suffix</span><span class="p">:</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">per</span><span class="si">:{</span><span class="n">obsnme_suffix_format</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:}</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}}</span><span class="s2">&quot;</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">prefix</span>
-        <span class="n">obsnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsnames</span>
+    <span class="c1">#obsnames = []</span>
+    <span class="c1">#for prefix, per, dt in zip(stacked.obsprefix, stacked.per, stacked.datetime):</span>
+    <span class="c1">#    if per == label_period_as_steady_state:</span>
+    <span class="c1">#        name = f&quot;{prefix}_ss&quot;</span>
+    <span class="c1">#    elif obsnme_date_suffix and not pd.isnull(dt):</span>
+    <span class="c1">#        name = f&quot;{prefix}_{dt.strftime(obsnme_suffix_format)}&quot;</span>
+    <span class="c1">#    elif not obsnme_date_suffix:</span>
+    <span class="c1">#        suffix = f&quot;{per:{obsnme_suffix_format.strip(&#39;{:}&#39;)}}&quot;</span>
+    <span class="c1">#        name = f&quot;{prefix}_{suffix}&quot;</span>
+    <span class="c1">#    else:</span>
+     <span class="c1">#       name = prefix</span>
+    <span class="c1">#    obsnames.append(name)</span>
+    <span class="c1">#stacked[&#39;obsnme&#39;] = obsnames</span>
 
     <span class="c1"># drop any duplicate observations, keeping those from transient periods</span>
     <span class="c1"># (for example, an initial steady-state period that isn&#39;t being used for observations</span>
@@ -654,39 +638,41 @@
     <span class="c1"># first make temp obsnames that include layer</span>
     <span class="c1"># steady state periods that are being used for observations (label_period_as_steady_state=True)</span>
     <span class="c1"># won&#39;t be dropped because their obs will have an &quot;ss&quot; suffix instead of a date suffix</span>
-    <span class="k">if</span> <span class="n">gwf_obs_input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">layer</span><span class="p">)</span>
-                           <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="p">,</span> <span class="n">stacked</span><span class="o">.</span><span class="n">layer</span><span class="p">)]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">unique_obsnames</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsnme</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">unique_obsnames</span>
-    <span class="n">are_duplicates</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1">#if gwf_obs_input_file is not None:</span>
+    <span class="c1">#    unique_obsnames = [&#39;{}_{}&#39;.format(name, layer)</span>
+    <span class="c1">#                       for name, layer in zip(stacked.obsnme, stacked.layer)]</span>
+    <span class="c1">#else:</span>
+    <span class="c1">#    unique_obsnames = stacked.obsnme.to_list()</span>
+    <span class="c1">#stacked[&#39;unique_obsnames&#39;] = unique_obsnames</span>
+    <span class="c1">#are_duplicates = stacked[&#39;unique_obsnames&#39;].duplicated(keep=False)</span>
     <span class="c1">#are_duplicates = pd.Series(unique_obsnames).duplicated(keep=False).values</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">are_duplicates</span><span class="p">):</span>
-        <span class="c1">#duplicated_obsnames = set(stacked.loc[are_duplicates.values, &#39;obsnme&#39;])</span>
-        <span class="n">steady_obs</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">per</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">perioddata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">perioddata</span><span class="o">.</span><span class="n">steady</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-        <span class="n">drop</span> <span class="o">=</span> <span class="n">are_duplicates</span> <span class="o">&amp;</span> <span class="n">steady_obs</span>
-        <span class="n">stacked</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">drop</span><span class="p">]</span>
-        <span class="c1">#unique_obsnames = np.array(unique_obsnames)[~drop]</span>
-        <span class="c1">#assert not any(pd.Series(unique_obsnames).duplicated())</span>
-    <span class="k">if</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">duplicates</span> <span class="o">=</span> <span class="n">stacked</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">]</span><span class="o">.</span> \
-            <span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;unique_obsnames&#39;</span><span class="p">)</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;mfobs.modflow.get_mf6_single_variable_obs:&quot;</span>
-               <span class="s2">&quot;Duplicate observation names. If obsnme_date_suffix=True, &quot;</span>
-               <span class="s2">&quot;you may need a more specific obsnme_suffix_format, e.g. &#39;%Y%m</span><span class="si">%d</span><span class="se">\n</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;Or there may be a mismatch between the model results (e.g. perlen) &quot;</span>
-               <span class="s2">&quot;and start and end dates in the stress period data table (perioddata).</span><span class="se">\n</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;In the latter case, you may need to re-run the model &quot;</span>
-               <span class="sa">f</span><span class="s2">&quot;and possibly the model setup.</span><span class="se">\n</span><span class="s2">Duplicated obs:</span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2">&quot;</span>
-               <span class="s2">&quot;&quot;</span>
-               <span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-
-    <span class="n">stacked</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span>
-    <span class="n">sort_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;layer&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
+    <span class="c1">#if any(are_duplicates):</span>
+    <span class="c1">#    #duplicated_obsnames = set(stacked.loc[are_duplicates.values, &#39;obsnme&#39;])</span>
+    <span class="c1">#    steady_obs = stacked.per.isin(perioddata.loc[perioddata.steady, &#39;per&#39;].values)</span>
+    <span class="c1">#    drop = are_duplicates &amp; steady_obs</span>
+    <span class="c1">#    stacked = stacked.loc[~drop]</span>
+    <span class="c1">#    #unique_obsnames = np.array(unique_obsnames)[~drop]</span>
+    <span class="c1">#    #assert not any(pd.Series(unique_obsnames).duplicated())</span>
+    <span class="c1">#if stacked[&#39;unique_obsnames&#39;].duplicated().any():</span>
+    <span class="c1">#    duplicates = stacked.loc[stacked[&#39;unique_obsnames&#39;]. \</span>
+    <span class="c1">#        duplicated(keep=False)].sort_values(by=&#39;unique_obsnames&#39;)</span>
+    <span class="c1">#    msg = (&quot;mfobs.modflow.get_mf6_single_variable_obs:&quot;</span>
+    <span class="c1">#           &quot;Duplicate observation names. If obsnme_date_suffix=True, &quot;</span>
+    <span class="c1">#           &quot;you may need a more specific obsnme_suffix_format, e.g. &#39;%Y%m%d\n&quot;</span>
+    <span class="c1">#           &quot;Or there may be a mismatch between the model results (e.g. perlen) &quot;</span>
+    <span class="c1">#           &quot;and start and end dates in the stress period data table (perioddata).\n&quot;</span>
+    <span class="c1">#           &quot;In the latter case, you may need to re-run the model &quot;</span>
+    <span class="c1">#           f&quot;and possibly the model setup.\nDuplicated obs:{duplicates}&quot;</span>
+    <span class="c1">#           &quot;&quot;</span>
+    <span class="c1">#           )</span>
+    <span class="c1">#    raise ValueError(msg)</span>
+<span class="c1">#</span>
+    <span class="c1">#stacked.index = stacked[&#39;obsnme&#39;]</span>
+    <span class="n">stacked</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">sort_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
     <span class="n">stacked</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">sort_cols</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">results</span> <span class="o">=</span> <span class="n">stacked</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
+                       <span class="n">simval_col</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">]]</span>
     <span class="k">return</span> <span class="n">results</span></div>
 
 
@@ -963,7 +949,7 @@
 
 
 <div class="viewcode-block" id="get_perioddata"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_perioddata">[docs]</a><span class="k">def</span> <span class="nf">get_perioddata</span><span class="p">(</span><span class="n">tdis_file</span><span class="p">,</span> <span class="n">sto_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
-                   <span class="n">end_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_time_units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                   <span class="n">end_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_timesteps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">model_time_units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make the perioddata table required by other modflow-obs</span>
 <span class="sd">    functions from a MODFLOW-6 Temporal Discretization (TDIS) file.</span>
 
@@ -983,6 +969,10 @@
 <span class="sd">        is handled internally. end_datetime should be specified as midnight following</span>
 <span class="sd">        the last full day simulated by the model. For example, if the model runs through</span>
 <span class="sd">        12/31/2019, end_datetime should be specified as 01/01/2020.</span>
+<span class="sd">    include_timesteps : bool</span>
+<span class="sd">        If True, return a perioddata table with one row for each time step,</span>
+<span class="sd">        otherwise, return one row per stress period.</span>
+<span class="sd">        By default, False</span>
 <span class="sd">    model_time_units : str (optional)</span>
 <span class="sd">        Time unit of model, in text understandable by pandas (e.g. &quot;days&quot;).</span>
 <span class="sd">        Specification of time units will override what is read </span>
@@ -1085,8 +1075,6 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">steady</span><span class="p">)</span> <span class="ow">and</span> <span class="n">steady</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">actual_period_length</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">elapsed_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">actual_period_length</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-    <span class="c1"># modflow time (includes length of initial steady-state period)</span>
-    <span class="n">mf_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">perlen</span><span class="p">)</span>
     <span class="n">start_elapsed_times</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">elapsed_time</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">start_datetimes</span> <span class="o">=</span> <span class="n">start_datetime</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">start_elapsed_times</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">time_units</span><span class="p">)</span>
     
@@ -1099,6 +1087,8 @@
         <span class="n">nstp</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">perlen</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="n">end_datetimes</span> <span class="o">=</span> <span class="n">start_datetimes</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">perlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+    <span class="c1"># modflow time (includes length of initial steady-state period)</span>
+    <span class="n">mf_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">perlen</span><span class="p">)</span>
     
     <span class="n">perioddata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">:</span> <span class="n">start_datetimes</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">),</span>
                                <span class="s1">&#39;end_datetime&#39;</span><span class="p">:</span> <span class="n">end_datetimes</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">),</span>
@@ -1109,7 +1099,63 @@
                                <span class="s1">&#39;tsmult&#39;</span><span class="p">:</span> <span class="n">tsmult</span><span class="p">,</span>
                                <span class="s1">&#39;steady&#39;</span><span class="p">:</span> <span class="n">steady</span>
                                <span class="p">})</span>
+    
+    <span class="k">if</span> <span class="n">include_timesteps</span><span class="p">:</span>
+        <span class="n">perioddata</span> <span class="o">=</span> <span class="n">add_timesteps_to_perioddata</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">perioddata</span></div>
+
+
+<div class="viewcode-block" id="add_timesteps_to_perioddata"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.add_timesteps_to_perioddata">[docs]</a><span class="k">def</span> <span class="nf">add_timesteps_to_perioddata</span><span class="p">(</span><span class="n">perioddata</span><span class="p">):</span>
+    
+    <span class="c1"># check that perlens are consistent with elapsed MODFLOW times</span>
+    <span class="n">calc_perlen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">calc_perlen</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;perlen&#39;</span><span class="p">]):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Specified perlen and times are inconsistent</span><span class="se">\n</span><span class="s1">&#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;times: </span><span class="si">{</span><span class="n">perioddata</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+               <span class="sa">f</span><span class="s1">&#39;perlen: </span><span class="si">{</span><span class="n">perioddata</span><span class="o">.</span><span class="n">perlen</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span>
+               <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+    <span class="n">dfs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        
+        <span class="n">perlen</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;perlen&#39;</span><span class="p">]</span>
+        <span class="n">tsmult</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;tsmult&#39;</span><span class="p">]</span>
+        <span class="n">nstp</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;nstp&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tsmult</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">perlen</span> <span class="o">/</span> <span class="n">nstp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># get the initial timestep size</span>
+            <span class="n">ti</span> <span class="o">=</span> <span class="n">perlen</span><span class="o">*</span><span class="p">(</span><span class="n">tsmult</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">tsmult</span><span class="o">**</span><span class="n">nstp</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># remaining timestep sizes</span>
+        <span class="n">timesteps</span> <span class="o">=</span> <span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">ti</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cumprod</span><span class="p">([</span><span class="n">tsmult</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">nstp</span> <span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">timesteps</span><span class="p">),</span> <span class="n">perlen</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">nstp</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># make a dataframe for the stress period</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">]</span> <span class="o">*</span> <span class="n">nstp</span><span class="p">)</span>
+            <span class="n">end_datetimes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_timedelta</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">timesteps</span><span class="p">),</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+            <span class="n">start_datetimes</span> <span class="o">=</span> <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">])]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">end_datetimes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">start_datetimes</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;end_datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_datetimes</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">timesteps</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;perlen&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">perlen</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;nstp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nstp</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;tsmult&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tsmult</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">nstp</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">df</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            
+        <span class="n">dfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+    <span class="n">timestepdata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">dfs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;perlen&#39;</span><span class="p">,</span> <span class="s1">&#39;tsmult&#39;</span><span class="p">:</span>
+        <span class="n">timestepdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestepdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;nstp&#39;</span><span class="p">,</span> <span class="s1">&#39;timestep&#39;</span><span class="p">:</span>
+        <span class="n">timestepdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">timestepdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">timestepdata</span>        </div>
 </pre></div>
 
            </div>
@@ -1120,7 +1166,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 16, 2022.
+      <span class="lastupdated">Last updated on Feb 22, 2022.
       </span></p>
   </div>
 
