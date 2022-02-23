@@ -1,11 +1,13 @@
 """
 Functions for reading and writing files
 """
+from operator import index
 from pathlib import Path
 import re
 import time
 import numpy as np
 import pandas as pd
+from mfobs.utils import get_input_arguments
 
 
 def load_array(files, shape=None):
@@ -87,9 +89,21 @@ def read_csv(csvfile, col_limit=1e4, **kwargs):
                 append_column_name = f"{col}.{col_counts[col]}"
                 col_counts[col] += 1
             new_header.append(append_column_name)
-            
-        df = pd.DataFrame(lines, columns=new_header, **kwargs)
+        index_col = None
+        index = None
+        if 'index_col' in kwargs:
+            index_col = kwargs['index_col']
+            index = pd.read_csv(csvfile, usecols=[index_col], index_col=0).index
+            if not isinstance(index_col, int):
+                index_col = new_header.index(index_col)
+            del new_header[index_col]
+            for l in lines:
+                del l[index_col]
+        kwargs = get_input_arguments(kwargs, pd.DataFrame)
+        df = pd.DataFrame(lines, columns=new_header, index=index,
+                          **kwargs)
     else:
+        kwargs = get_input_arguments(kwargs, pd.read_csv)
         df = pd.read_csv(csvfile, **kwargs)
     print("took {:.2f}s\n".format(time.time() - t0))
     return df
