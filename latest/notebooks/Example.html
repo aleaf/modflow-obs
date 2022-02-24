@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post52.dev0+g3fbb668 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post54.dev0+g80b2439 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post52.dev0+g3fbb668
+                0.post54.dev0+g80b2439
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1286,9 +1286,8 @@ time,07288280,07288580,07288500,07281600
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
-took 0.02s
+took 0.03s
 
-Dropping 191 sites with no information
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1300,6 +1299,21 @@ Dropping 191 sites with no information
 
 
   df = pd.read_csv(src, delim_whitespace=True, header=None,
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dropping 191 sites with no information
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
 /home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:489: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
   warnings.warn((&#39;Stress period {}: No observations between start and &#39;
 </pre></div></div>
@@ -3334,7 +3348,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 22, 2022.
+      <span class="lastupdated">Last updated on Feb 24, 2022.
       </span></p>
   </div>
 
