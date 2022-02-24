@@ -367,7 +367,7 @@ def get_base_obs(perioddata,
 
     base_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
-        base_obs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        base_obs.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(base_obs):,} observations to {outfile}')
 
         # write the instruction file
@@ -472,7 +472,7 @@ def get_spatial_differences(base_data, perioddata,
         would be "site1-d-site2_202001".
         by default, '-d-'
     outfile : str, optional
-        CSV file to write output to. Nan values are filled with -9999.
+        CSV file to write output to. Nan values are filled with -1e30.
         By default, None (no output written)
     write_ins : bool, optional
         Option to write instruction file, by default False
@@ -673,7 +673,7 @@ def get_spatial_differences(base_data, perioddata,
     fill_nats(spatial_differences, perioddata)
 
     if outfile is not None:
-        spatial_differences.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        spatial_differences.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(spatial_differences):,} observations to {outfile}')
 
         # write the instruction file
@@ -822,12 +822,12 @@ def get_temporal_differences(base_data, perioddata,
     if 'obsval' in base_data.columns:
         obsval_col_iloc = base_data.columns.get_loc('obsval')
     else:
-        base_data['obsval'] = -9999
+        base_data['obsval'] = -1e30
         obsval_col_iloc = len(base_data.columns) - 1
     if 'sim_obsval' in base_data.columns:
         sim_obsval_col_iloc = base_data.columns.get_loc('sim_obsval')
     else:
-        base_data['sim_obsval'] = -9999
+        base_data['sim_obsval'] = -1e30
         sim_obsval_col_iloc = len(base_data.columns) - 1
     
     for site_no, values in sites:
@@ -888,7 +888,7 @@ def get_temporal_differences(base_data, perioddata,
     # some checks to make sure the assignments from the above loop are correct
     assert period_diffs.iloc[:, sim_obsval_col_iloc].name == 'sim_obsval'
     assert period_diffs.iloc[:, obsval_col_iloc].name == 'obsval'
-    assert not np.any(period_diffs[['obsval', 'sim_obsval']] == -9999)
+    assert not np.any(period_diffs[['obsval', 'sim_obsval']] == -1e30)
     
     period_diffs['datetime'] = pd.to_datetime(period_diffs['datetime'])
 
@@ -925,7 +925,7 @@ def get_temporal_differences(base_data, perioddata,
     fill_nats(period_diffs, perioddata)
 
     if outfile is not None:
-        period_diffs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        period_diffs.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(period_diffs):,} observations to {outfile}')
 
         # write the instruction file
@@ -1040,7 +1040,7 @@ def get_annual_means(base_data,
     aggregated = aggregated[cols]
     
     if outfile is not None:
-        aggregated.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        aggregated.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(aggregated):,} observations to {outfile}')
 
         # write the instruction file
@@ -1157,7 +1157,7 @@ def get_monthly_means(base_data,
     aggregated = aggregated[cols]
     
     if outfile is not None:
-        aggregated.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        aggregated.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(aggregated):,} observations to {outfile}')
 
         # write the instruction file
@@ -1275,7 +1275,7 @@ def get_mean_monthly(base_data,
     aggregated = aggregated[cols]
     
     if outfile is not None:
-        aggregated.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        aggregated.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(aggregated):,} observations to {outfile}')
 
         # write the instruction file
@@ -1383,7 +1383,7 @@ def get_log10_observations(base_data,
     log_base_data = log_base_data[cols]
     
     if outfile is not None:
-        log_base_data.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        log_base_data.fillna(-1e30).to_csv(outfile, sep=' ', index=False)
         print(f'wrote {len(log_base_data):,} observations to {outfile}')
 
         # write the instruction file
