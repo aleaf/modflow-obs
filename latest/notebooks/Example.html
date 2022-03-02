@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post54.dev0+g80b2439 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post54.dev0+g80b2439
+                0.post55.dev0+g98d0718
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -1314,7 +1314,7 @@ Dropping 191 sites with no information
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:489: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:510: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
   warnings.warn((&#39;Stress period {}: No observations between start and &#39;
 </pre></div></div>
 </div>
@@ -1862,7 +1862,6 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
                                       <span class="n">difference_sites</span><span class="o">=</span><span class="n">head_difference_sites</span><span class="p">,</span>
                                       <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
                                       <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
-                                      <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
                                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                       <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_head_obs_sdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1912,22 +1911,22 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <th>per</th>
       <th>obsprefix</th>
       <th>obsnme1</th>
-      <th>obs_head1</th>
-      <th>sim_head1</th>
+      <th>base_obsval1</th>
+      <th>base_sim_obsval1</th>
       <th>screen_top1</th>
       <th>screen_botm1</th>
       <th>obsnme2</th>
-      <th>obs_head2</th>
+      <th>base_obsval2</th>
       <th>...</th>
       <th>obs_diff</th>
       <th>sim_diff</th>
       <th>dz</th>
       <th>obs_grad</th>
       <th>sim_grad</th>
-      <th>obgnme</th>
       <th>obsnme</th>
       <th>obsval</th>
       <th>sim_obsval</th>
+      <th>obgnme</th>
       <th>type</th>
     </tr>
     <tr>
@@ -1974,11 +1973,11 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>39.16</td>
       <td>0.364062</td>
       <td>0.290925</td>
-      <td>head_sdiff</td>
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.256667</td>
       <td>11.392636</td>
-      <td>spatial  difference</td>
+      <td>head_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>17</th>
@@ -1998,11 +1997,11 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>39.16</td>
       <td>0.364488</td>
       <td>0.313363</td>
-      <td>head_sdiff</td>
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.273333</td>
       <td>12.271304</td>
-      <td>spatial  difference</td>
+      <td>head_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>18</th>
@@ -2022,11 +2021,11 @@ wrote 3 observation instructions to output/processed_head_obs_sdiffs.dat.ins
       <td>39.16</td>
       <td>0.365126</td>
       <td>0.299487</td>
-      <td>head_sdiff</td>
       <td>usgs:333904090123801-d-usgs:333145090261901_20...</td>
       <td>14.298333</td>
       <td>11.727924</td>
-      <td>spatial  difference</td>
+      <td>head_sdiff</td>
+      <td>spatial difference</td>
     </tr>
   </tbody>
 </table>
@@ -3116,7 +3115,6 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
                                      <span class="n">flux_difference_sites</span><span class="p">,</span>
                                      <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span>
                                      <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
-                                     <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span>
                                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                      <span class="n">outfile</span><span class="o">=</span><span class="n">output_folder</span> <span class="o">/</span> <span class="s1">&#39;processed_flux_obs_sdiffs.dat&#39;</span><span class="p">)</span>
 </pre></div>
@@ -3166,17 +3164,17 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <th>per</th>
       <th>obsprefix</th>
       <th>obsnme1</th>
-      <th>obs_flux1</th>
-      <th>sim_flux1</th>
+      <th>base_obsval1</th>
+      <th>base_sim_obsval1</th>
       <th>obsnme2</th>
-      <th>obs_flux2</th>
-      <th>sim_flux2</th>
+      <th>base_obsval2</th>
+      <th>base_sim_obsval2</th>
       <th>obs_diff</th>
       <th>sim_diff</th>
-      <th>obgnme</th>
       <th>obsnme</th>
       <th>obsval</th>
       <th>sim_obsval</th>
+      <th>obgnme</th>
       <th>type</th>
     </tr>
     <tr>
@@ -3213,11 +3211,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>None_sdiff</td>
       <td>07288500-d-07288280_ss</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>spatial  difference</td>
+      <td>None_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>3</th>
@@ -3232,11 +3230,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>169578.350000</td>
       <td>0.0</td>
-      <td>None_sdiff</td>
       <td>07288500-d-07288280_200803</td>
       <td>169578.350000</td>
       <td>0.0</td>
-      <td>spatial  difference</td>
+      <td>None_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>4</th>
@@ -3251,11 +3249,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>None_sdiff</td>
       <td>07288500-d-07288280_200809</td>
       <td>542151.500000</td>
       <td>0.0</td>
-      <td>spatial  difference</td>
+      <td>None_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>5</th>
@@ -3270,11 +3268,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>187561.166667</td>
       <td>0.0</td>
-      <td>None_sdiff</td>
       <td>07288500-d-07288280_200903</td>
       <td>187561.166667</td>
       <td>0.0</td>
-      <td>spatial  difference</td>
+      <td>None_sdiff</td>
+      <td>spatial difference</td>
     </tr>
     <tr>
       <th>6</th>
@@ -3289,11 +3287,11 @@ wrote 17 observation instructions to output/processed_flux_obs_sdiffs.dat.ins
       <td>0.0</td>
       <td>406273.166667</td>
       <td>0.0</td>
-      <td>None_sdiff</td>
       <td>07288500-d-07288280_200909</td>
       <td>406273.166667</td>
       <td>0.0</td>
-      <td>spatial  difference</td>
+      <td>None_sdiff</td>
+      <td>spatial difference</td>
     </tr>
   </tbody>
 </table>
@@ -3348,7 +3346,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 24, 2022.
+      <span class="lastupdated">Last updated on Mar 02, 2022.
       </span></p>
   </div>
 

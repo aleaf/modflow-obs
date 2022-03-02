@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post54.dev0+g80b2439 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -35,7 +35,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post54.dev0+g80b2439
+                0.post55.dev0+g98d0718
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -835,7 +835,7 @@ which now contain the aggregated values):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_spatial_differences">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_spatial_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gradients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-d-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_spatial_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_spatial_differences" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_spatial_differences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difference_sites</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obs_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_values_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sim_head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_gradients</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-d-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_spatial_differences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_spatial_differences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Takes the base_data dataframe output by <code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.obs.get_obs()</span></code> and creates
 spatial difference observations. Optionally writes an output csvfile
 and a PEST instruction file.</p>
@@ -895,14 +895,6 @@ to represent a gain in streamflow as positive, the downstream site should be key
 <dt><strong>obs_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code> with observed values</p>
 </dd>
 <dt><strong>sim_values_col</strong><span class="classifier">str</span></dt><dd><p>Column in <cite>base_data`</cite> with simulated equivalent values</p>
-</dd>
-<dt><strong>variable</strong><span class="classifier">str  {‘head’, ‘flux’, or other}</span></dt><dd><p>Type of observation being processed. Simulated and observed values
-columns are named in the format ‘sim_&lt;variable&gt;’ and ‘obs_&lt;variable&gt;’,
-respectively. If there is no ‘obgnme’ column in <code class="docutils literal notranslate"><span class="pre">base_data</span></code>,
-<code class="docutils literal notranslate"><span class="pre">variable</span></code> is also used as a default base group name. Finally,
-a ‘type’ column is included in the output with the label
-‘vertical &lt;variable&gt; gradient’ or ‘&lt;variable&gt; difference’, depending on whether
-<code class="docutils literal notranslate"><span class="pre">use_gradients=True</span></code>.</p>
 </dd>
 <dt><strong>use_gradients</strong><span class="classifier">bool</span></dt><dd><p>If True, compute vertical hydraulic gradients and use those for the
 observation values, if False, use differences. For this option,
@@ -1016,8 +1008,8 @@ By default, None (no output written)</p>
 <li><p>denotes optional columns that may not be present.</p></li>
 </ul>
 </li>
-<li><p>Columns relating to well open interval are only created if <code class="docutils literal notranslate"><span class="pre">variable='head'</span></code>
-and <code class="docutils literal notranslate"><span class="pre">base_data</span></code> has ‘screen_top’ and ‘screen_botm’ columns.</p></li>
+<li><p>Columns relating to well open interval are only created if 
+<code class="docutils literal notranslate"><span class="pre">base_data</span></code> has ‘screen_top’ and ‘screen_botm’ columns.</p></li>
 <li><p>Negative difference or gradient values indicate a gradient towards the key site.</p></li>
 </ul>
 </dd>
@@ -1116,7 +1108,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Feb 24, 2022.
+      <span class="lastupdated">Last updated on Mar 02, 2022.
       </span></p>
   </div>
 
