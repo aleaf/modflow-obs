@@ -336,7 +336,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         observed.index = observed['obsprefix'].values
         join_cols = [c for c in ['screen_top', 'screen_botm', 'x', 'y', 'layer']
                      if c in metadata.columns]
-        observed = observed.join(metadata[join_cols])
+        observed = observed.join(metadata[join_cols], rsuffix='_m')
         assert not observed[['x', 'y']].isna().any().any()
 
     # convert obs names and prefixes to lower case
@@ -346,12 +346,23 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     temp = observed.copy()
     temp.index = temp['obsprefix'].str.lower()
     site_info_dict = temp.to_dict()
-    del site_info_dict['datetime']
+    if 'datetime' in site_info_dict:
+        del site_info_dict['datetime']
     del temp
 
     # cast datetimes to pandas datetimes
-    observed['datetime'] = pd.to_datetime(observed['datetime'])
-    observed['steady'] = False  # flag for steady-state observations
+    # (observed data may not have a datetime col. if model is steady-state)
+    if 'datetime' in observed.columns:
+        observed['datetime'] = pd.to_datetime(observed['datetime'])
+        # not necessarily True
+        observed['steady'] = False  # flag for steady-state observations
+    else:
+        if len(perioddata) == 1:
+            observed['datetime'] = pd.to_datetime(perioddata['start_datetime'][0])
+            observed['steady'] = True
+        else:
+            raise ValueError("Model has more than one stress period "
+                             "but observed data have no 'datetime' column.")
 
     # drop model results that aren't in the obs information file
     # these are probably observations that aren't in the model time period
@@ -406,8 +417,18 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # get head values based on T-weighted average of open interval
     if observed_values_layer_col is None:
-        screen_top = dict(zip(observed['obsprefix'], observed['screen_top']))
-        screen_botm = dict(zip(observed['obsprefix'], observed['screen_botm']))
+        if 'screen_top' in observed.columns:
+            screen_top = dict(zip(observed['obsprefix'], observed['screen_top']))
+            if 'screen_botm' not in observed.columns:
+                screen_botm = screen_top
+        elif 'screen_botm' not in observed.columns:
+            raise ValueError('Observed values need at least a screen top or screen bottom column')
+        if 'screen_botm' in observed.columns:
+            screen_botm = dict(zip(observed['obsprefix'], observed['screen_botm']))
+            if 'screen_top' not in observed.columns:
+                screen_top = screen_botm
+        elif 'screen_top' not in observed.columns:
+            raise ValueError('Observed values need at least a screen top or screen bottom column')
         results['screen_top'] = [screen_top[obsprefix] for obsprefix in results.obsprefix]
         results['screen_botm'] = [screen_botm[obsprefix] for obsprefix in results.obsprefix]
 

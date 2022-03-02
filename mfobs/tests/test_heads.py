@@ -230,7 +230,7 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
                                       head_difference_sites,
                                       obs_values_col='obsval',
                                       sim_values_col='sim_obsval',
-                                      variable='head',
+                                      #variable='head',
                                       use_gradients=False,
                                       write_ins=write_ins,
                                       outfile=head_obs_input.shead_diff_obs_outfile)
@@ -245,10 +245,10 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
 
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix',
-                   'obsnme1', 'obs_head1', 'sim_head1', 'screen_top1', 'screen_botm1', 'layer1',
-                   'obsnme2', 'obs_head2', 'sim_head2', 'screen_top2', 'screen_botm2', 'layer2',
-                   'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obgnme', 'obsnme',
-                   'obsval', 'sim_obsval', 'type'])
+                   'obsnme1', 'base_obsval1', 'base_sim_obsval1', 'screen_top1', 'screen_botm1', 'layer1',
+                   'obsnme2', 'base_obsval2', 'base_sim_obsval2', 'screen_top2', 'screen_botm2', 'layer2',
+                   'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obsnme',
+                   'obsval', 'sim_obsval', 'obgnme', 'type'])
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
     assert not results.sim_obsval.isna().any()

@@ -228,18 +228,18 @@ def test_get_temporal_flux_differences(flux_obs_input, write_ins,
             per2 = int(suffix1)
     
     
-@pytest.mark.parametrize('flux_difference_sites, write_ins, variable',
+@pytest.mark.parametrize('flux_difference_sites, write_ins',
                          (({'07288280':  # sunflower r. at merigold
                            '07288500'   # sunflower r. at sunflower
-                             }, True, 'flux'),
-                          ({'07288500': '07288280' }, False, 'stage')))
-def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_difference_sites, variable, write_ins):
+                             }, True),
+                          ({'07288500': '07288280' }, False)))
+def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_difference_sites, write_ins):
 
     results = get_spatial_differences(flux_obs, flux_obs_input.perioddata,
                                       flux_difference_sites,
                                       obs_values_col='obsval',
                                       sim_values_col='sim_obsval',
-                                      variable=variable,
+                                      #variable=variable,
                                       use_gradients=False,
                                       write_ins=write_ins,
                                       outfile=flux_obs_input.sflux_diff_obs_outfile)
@@ -254,10 +254,10 @@ def test_get_spatial_flux_difference_obs(flux_obs, flux_obs_input, flux_differen
 
     assert np.all(results.columns ==
                   ['datetime', 'per', 'obsprefix',
-                   'obsnme1', f'obs_{variable}1', f'sim_{variable}1',
-                   'obsnme2', f'obs_{variable}2', f'sim_{variable}2',
-                   'obs_diff', 'sim_diff', 'obgnme', 'obsnme',
-                   'obsval', 'sim_obsval', 'type']
+                   'obsnme1', 'base_obsval1', 'base_sim_obsval1',
+                   'obsnme2', 'base_obsval2', 'base_sim_obsval2',
+                   'obs_diff', 'sim_diff', 'obsnme',
+                   'obsval', 'sim_obsval', 'obgnme', 'type']
                   )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()

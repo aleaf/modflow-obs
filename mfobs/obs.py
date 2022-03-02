@@ -409,7 +409,6 @@ def get_spatial_differences(base_data, perioddata,
                             difference_sites,
                             obs_values_col='obs_head',
                             sim_values_col='sim_head',
-                            variable='head',
                             use_gradients=False,
                             sep='-d-',
                             write_ins=False, outfile=None):
@@ -453,14 +452,6 @@ def get_spatial_differences(base_data, perioddata,
         Column in ``base_data`` with observed values
     sim_values_col : str
         Column in `base_data`` with simulated equivalent values
-    variable : str  {'head', 'flux', or other}
-        Type of observation being processed. Simulated and observed values
-        columns are named in the format 'sim_<variable>' and 'obs_<variable>',
-        respectively. If there is no 'obgnme' column in ``base_data``,
-        ``variable`` is also used as a default base group name. Finally,
-        a 'type' column is included in the output with the label
-        'vertical <variable> gradient' or '<variable> difference', depending on whether
-        ``use_gradients=True``.
     use_gradients : bool
         If True, compute vertical hydraulic gradients and use those for the
         observation values, if False, use differences. For this option,
@@ -514,8 +505,8 @@ def get_spatial_differences(base_data, perioddata,
         Notes:
 
         * * denotes optional columns that may not be present.
-        * Columns relating to well open interval are only created if ``variable='head'``
-          and ``base_data`` has 'screen_top' and 'screen_botm' columns.
+        * Columns relating to well open interval are only created if 
+          ``base_data`` has 'screen_top' and 'screen_botm' columns.
         * Negative difference or gradient values indicate a gradient towards the key site.
 
     """
@@ -527,16 +518,36 @@ def get_spatial_differences(base_data, perioddata,
     perioddata.index = perioddata.per
 
     # rename the observed and sim. eq. values columns
-    renames = {obs_values_col: f'obs_{variable}',
-               sim_values_col: f'sim_{variable}',
-               }
-    base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+    #if variable is not None:
+    #    renames = {obs_values_col: f'obs_{variable}',
+    #            sim_values_col: f'sim_{variable}',
+    #            }
+    #    obs_values_col = f'obs_{variable}'
+    #    sim_values_col = f'sim_{variable}'
+    #else:
+    renames = {obs_values_col: 'base_obsval',  # f'obs_{variable}',
+            sim_values_col: 'base_sim_obsval',  # f'sim_{variable}',
+            }
+    obs_values_col = f'base_obsval'
+    sim_values_col = f'base_sim_obsval'
+    base_data.drop([#f'obs_{variable}', f'sim_{variable}', 
+                    'base_obsval', 'bas_sim_obsval'], axis=1, 
                    inplace=True, errors='ignore')
     base_data.rename(columns=renames, inplace=True)
-    obs_values_col = f'obs_{variable}'
-    sim_values_col = f'sim_{variable}'
     
-    # get a list of unique variables
+    # rename the observed and sim. eq. values columns
+    #renames = {obs_values_col: f'obs_{variable}',
+    #           sim_values_col: f'sim_{variable}',
+    #           }
+    #base_data.drop([f'obs_{variable}', f'sim_{variable}'], axis=1, 
+    #               inplace=True, errors='ignore')
+    #base_data.rename(columns=renames, inplace=True)
+    #obs_values_col = f'obs_{variable}'
+    #sim_values_col = f'sim_{variable}'
+    
+    # get a set of unique variables
+    # (including '', which signifies no variable in the obsprefix, 
+    #  just a site number)
     variables = {s.split('-')[1] if len(s.split('-')) > 1 else '' 
                  for s in base_data['obsprefix']}
     
@@ -545,6 +556,9 @@ def get_spatial_differences(base_data, perioddata,
     groups = base_data.groupby('obsprefix')
     spatial_differences = []
     
+    # key site: value/comparison sites can be include variables or not
+    # if they don't, and the base_data includes variables, 
+    # process each obsprefix with that site number
     for variable in variables:
         for key_obsprefix, patterns in difference_sites.items():
             
@@ -566,7 +580,7 @@ def get_spatial_differences(base_data, perioddata,
             # which will match any string
             for pattern in patterns:
                 matches = [True if pattern in obsprefix and variable in obsprefix 
-                           else False for obsprefix in base_data.obsprefix]
+                            else False for obsprefix in base_data.obsprefix]
                 compare.append(matches)
             compare = np.any(compare, axis=0)
             prefixes = set(base_data.loc[compare, 'obsprefix'])
@@ -611,7 +625,35 @@ def get_spatial_differences(base_data, perioddata,
                             site_obs['dz'] = (screen_midpoint1 - screen_midpoint2)
                             site_obs['obs_grad'] = site_obs['obs_diff'] / site_obs['dz']
                             site_obs['sim_grad'] = site_obs['sim_diff'] / site_obs['dz']
+                            
+                    # default obgnme prefix
+                    if 'obgnme' not in site_obs.columns:
+                        if len(variable) == 0:
+                            site_obs['obgnme'] = 'sdiff'
+                        else:
+                            site_obs['obgnme'] = variable
+                    # obgnme = <prefix>_sdiff
+                    # unless there is no prefix
+                    site_obs['obgnme'] = [f'{g}_sdiff' if g != 'sdiff' else g 
+                                          for g in site_obs['obgnme']]
+                        
+                     # whether to use gradients for the obsvals, or just head differences
+                    if use_gradients:
+                        site_obs['obsval'] = site_obs['obs_grad']
+                        site_obs['sim_obsval'] = site_obs['sim_grad']
+                        if len(variable) == 0:
+                            site_obs['type'] = f'gradient'
+                        else:
+                            site_obs['type'] = f'{variable} gradient'
+                    else:
+                        site_obs['obsval'] = site_obs['obs_diff']
+                        site_obs['sim_obsval'] = site_obs['sim_diff']
+                        if len(variable) == 0:
+                            site_obs['type'] = f'spatial difference'
+                        else:
+                            site_obs['type'] = f'spatial {variable} difference'
                     spatial_differences.append(site_obs)
+    
     if len(spatial_differences) == 0:
         raise ValueError('No spatial difference site/variable pairs found! '
                          'Check that the key sites and their compare patterns exist in the base_data.')
@@ -629,36 +671,24 @@ def get_spatial_differences(base_data, perioddata,
 
         assert suffix1 == suffix2, "Observations are at different times! {}, {}".format(r.obsnme1,
                                                                                         r.obsnme2)
-        prefix = '{}{}{}'.format(prefix1, sep, prefix2, )
+        # if the obsprefixes include variables; only retain the the second instance
+        prefix = '{}{}{}'.format(prefix1.split('-')[0], sep, prefix2, )
         obsnme.append('{}_{}'.format(prefix, suffix2))
         obsprefix.append(prefix)
     spatial_differences['obsnme'] = obsnme
     spatial_differences['obsprefix'] = obsprefix
-    if 'obgnme' not in spatial_differences.columns:
-        spatial_differences['obgnme'] = variable
-    spatial_differences['obgnme'] = ['{}_sdiff'.format(g)
-                                         for g in spatial_differences['obgnme']]
 
     # clean up columns
-    cols = ['datetime', 'per', 'obsprefix',
+    cols = ['datetime', 'per', 'obsprefix', 
             'obsnme1', f"{obs_values_col}1", f"{sim_values_col}1", 'screen_top1', 'screen_botm1', 'layer1',
             'obsnme2', f"{obs_values_col}2", f"{sim_values_col}2", 'screen_top2', 'screen_botm2', 'layer2',
-            'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obgnme', 'obsnme'
+            'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 
+            'obsnme', 'obsval', 'sim_obsval', 'obgnme', 'type'
             ]
     cols = [c for c in cols if c in spatial_differences.columns]
     spatial_differences = spatial_differences[cols]
 
-    # whether to use gradients for the obsvals, or just head differences
-    if use_gradients:
-        spatial_differences['obsval'] = spatial_differences['obs_grad']
-        spatial_differences['sim_obsval'] = spatial_differences['sim_grad']
-        variable = f'{variable} gradients'
-    else:
-        spatial_differences['obsval'] = spatial_differences['obs_diff']
-        spatial_differences['sim_obsval'] = spatial_differences['sim_diff']
-        variable = f'spatial {variable} difference'
     spatial_differences.dropna(axis=0, subset=['obsval'], inplace=True)
-    spatial_differences['type'] = variable
 
     # uncertainty column is from base_data;
     # assume that spatial head differences have double the uncertainty
