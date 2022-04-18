@@ -672,7 +672,7 @@ def get_spatial_differences(base_data, perioddata,
         assert suffix1 == suffix2, "Observations are at different times! {}, {}".format(r.obsnme1,
                                                                                         r.obsnme2)
         # if the obsprefixes include variables; only retain the the second instance
-        prefix = '{}{}{}'.format(prefix1.split('-')[0], sep, prefix2, )
+        prefix = f"{prefix1.split('-')[0]}{sep}{prefix2}"
         obsnme.append('{}_{}'.format(prefix, suffix2))
         obsprefix.append(prefix)
     spatial_differences['obsnme'] = obsnme
