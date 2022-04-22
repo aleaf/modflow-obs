@@ -24,7 +24,7 @@ itmuni_text = {0: "undefined",
                5: "years"
                  }
 
-def get_gwf_obs_input(gwf_obs_input_file):
+def get_gwf_obs_input(gwf_obs_input_file, gwf_obs_block=None):
     """Read the first BEGIN continuous  FILEOUT block of an input
     file to the MODFLOW-6 GWF observation utility.
 
@@ -32,25 +32,51 @@ def get_gwf_obs_input(gwf_obs_input_file):
     ----------
     gwf_obs_input_file : str
         Input file to MODFLOW-6 observation utility (contains layer information).
+    gwf_obs_block : None or int
+        Optional argument to read a specific observation block or all blocks 
+        from GWF observation utility file. Value of None returns observations 
+        from all blocks. Integer value returns obs from a specifc block, in 
+        (zero-based) order from top to bottom. For example, a value of 0 would 
+        return the first obs block, value of 1 would return the second obs 
+        block, and so on.
 
     Note
     ----
-    As-is, this only reads the first block. Modflow-setup writes all of the
-    observation input to a single block, but observation input can
-    be broken out into multiple blocks (one per file).
+    Modflow-setup writes all of the observation input to a single block, but 
+    observation input can be broken out into multiple blocks (one per file).
 
     This also doesn't work with open/close statements.
     """
-    with open(gwf_obs_input_file) as src:
-        for line in src:
-            if 'BEGIN continuous' in line:
-                df = pd.read_csv(src, delim_whitespace=True, header=None,
-                                 error_bad_lines=False)
+    if gwf_obs_block == None:
+        with open(gwf_obs_input_file) as src:
+            for line in src:
+                if 'BEGIN continuous' in line:
+                    df = pd.read_csv(src, delim_whitespace=True, header=None,
+                                     error_bad_lines=False)
+    elif isinstance(gwf_obs_block, int):    
+        with open(gwf_obs_input_file) as src:
+            begin_idxs = []
+            end_idxs = []
+            for i, line in enumerate(src):
+                if 'BEGIN continuous' in line:
+                    begin_idxs.append(i+1)
+                if 'END continuous' in line:
+                    end_idxs.append(i-1)
+
+        df = pd.read_csv(gwf_obs_input_file, 
+                         skiprows=begin_idxs[gwf_obs_block],
+                         skipfooter=(i-end_idxs[gwf_obs_block]),
+                         delim_whitespace=True, 
+                         engine='python',
+                         header=None)
+    else:
+        raise ValueError("gwf_obs_block must be 'None' or an integer")
+
     df.dropna(axis=0, inplace=True)
     df.columns = ['obsname', 'obstype', 'k', 'i', 'j']
-    # cast columns as ints and convert to zero-based
     for index_col in 'k', 'i', 'j':
         df[index_col] = df[index_col].astype(int) - 1
+
     return df
 
 
@@ -140,7 +166,8 @@ def get_mf6_single_variable_obs(perioddata,
                                 model_output_file,
                                 gwf_obs_input_file=None,
                                 variable=None,
-                                abs=True):
+                                abs=True,
+                                gwf_obs_block=None):
     """Read raw MODFLOW-6 observation output from csv table with
     times along the row axis and observations along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
@@ -180,6 +207,15 @@ def get_mf6_single_variable_obs(perioddata,
         downstream-flow observations, which by convention are reported as 
         negative by MODFLOW 6, but will be compared to positive observed values.
         By default, True.
+    gwf_obs_block : None or int
+        Argument to read a specific observation block or all blocks from GWF 
+        observation utility file. Value of None returns observations from all 
+        blocks. Integer value returns obs from a specifc block, in (zero-based)
+        order, from top to bottom. For example, a value of 0 would return the 
+        first obs block, value of 1 would return the second obs block, and so 
+        on. Modflow-setup writes all of the observation input to a single block, 
+        but observation input can be broken out into multiple blocks (one per 
+        file). By default, None (All blocks)
 
     Returns
     -------
@@ -264,7 +300,8 @@ def get_mf6_single_variable_obs(perioddata,
 
     # parse the layers from the column positions (prior to stacking)
     if gwf_obs_input_file is not None:
-        gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file)
+        gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file, 
+                                          gwf_obs_block=gwf_obs_block)
         # Assign layer to each observation,
         # assuming that numbering in gwf_obs_input is repeated nper times
         ntimes = len(stacked['time'].unique())

@@ -387,7 +387,7 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
 #
     # Check handling of zero flow periods
     # and interpolation down to zero
-    base_obs_w_zeros = pd.read_csv('mfobs/tests/data/bf_with_zeros.csv')
+    base_obs_w_zeros = pd.read_csv(test_data_path / 'bf_with_zeros.csv')
     base_obs_w_zeros['obsval'] = 10.
     base_obs_w_zeros['site_no'] = 'site1'
     base_obs_w_zeros['obsprefix'] = 'site1-flow'
@@ -416,7 +416,7 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
     results2.loc['2015-04-28', 'sim_obsval'] > 1e3
     
     # test for missing obs
-    df = pd.read_csv('mfobs/tests/data/br_missing_test_data.csv')
+    df = pd.read_csv(test_data_path / 'br_missing_test_data.csv') 
     results3 = get_baseflow_observations(df)
     
     
@@ -447,8 +447,9 @@ def test_fill_missing_obs(gage_package_obs, test_data_path,
                            outfile=None,
                            write_ins=False)
     # test for missing obs
-    shutil.copy('mfobs/tests/data/br_missing_test_data2.dat.ins', test_output_folder)
-    df = pd.read_csv('mfobs/tests/data/br_missing_test_data2.dat', 
+    shutil.copy(test_data_path / 'br_missing_test_data2.dat.ins', 
+                test_output_folder)
+    df = pd.read_csv(test_data_path / 'br_missing_test_data2.dat', 
                      delim_whitespace=True)
     outfile = test_data_path / 'br_missing_test_data2.dat'
     results3 = get_baseflow_observations(df, write_ins=False, 
