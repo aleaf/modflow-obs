@@ -30,6 +30,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  observed_values_group_column='obgnme',
                  observed_values_unc_column='uncertainty',
                  aggregrate_observed_values_by='mean',
+                 gwf_obs_block=None,
                  drop_groups=None,
                  hk_arrays=None, top_array=None, botm_arrays=None,
                  label_period_as_steady_state=None, steady_state_period_start=None,
@@ -186,6 +187,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         of the method calls on the pandas
         `Resampler <https://pandas.pydata.org/pandas-docs/stable/reference/resampling.html>`_
         object. By default, 'mean'
+    gwf_obs_block : None or int
+        Argument to read a specific observation block or all blocks from GWF 
+        observation utility file. Value of None returns observations from all 
+        blocks. Integer value returns obs from a specifc block, in (zero-based)
+        order, from top to bottom. For example, a value of 0 would return the 
+        first obs block, value of 1 would return the second obs block, and so 
+        on. Modflow-setup writes all of the observation input to a single block, 
+        but observation input can be broken out into multiple blocks (one per 
+        file). by default, None (All blocks)
     drop_groups : sequence, optional
         Observation groups to exclude from output, by default None
     hk_arrays : list-like of pathlikes or ndarray, optional
@@ -298,7 +308,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                                           #variable_name=variable_name,
                                           #obsnme_date_suffix=obsnme_date_suffix,
                                           #obsnme_suffix_format=obsnme_suffix_format,
-                                          #label_period_as_steady_state=label_period_as_steady_state
+                                          #label_period_as_steady_state=label_period_as_steady_state,
+                                          gwf_obs_block=gwf_obs_block
                                           )
 
     # rename columns to their defaults

@@ -12,6 +12,7 @@ from mfobs.modflow import (
     get_mf6_single_variable_obs,
     read_mf_gage_package_output_files,
     get_mf_gage_package_obs,
+    get_gwf_obs_input
 )
 
 
@@ -184,6 +185,19 @@ def test_get_mf6_single_variable_obs_daily(test_data_path, gwf_obs_input_file):
                                           model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           variable='head',
-                                          abs=True)
+                                          abs=True,
+                                          gwf_obs_block=None)
     # 1 steady-state period; 39 timesteps in transient period
     assert len(results.datetime.unique()) == 39
+
+@pytest.mark.parametrize('gwf_obs_block', (None, 0, 1))
+def test_get_gwf_obs(test_data_path, gwf_obs_block):
+    gwf_obs_input_file = test_data_path / 'shellmound/shellmound.alt.obs'
+    gwf_obs_input = get_gwf_obs_input(gwf_obs_input_file, gwf_obs_block)
+    if gwf_obs_block is None:
+        gwf_obs_input.shape[0] == 489
+    elif gwf_obs_block == 0:
+        gwf_obs_input.shape[0] == 389
+    else:
+        gwf_obs_input.shape[0] == 109
+        
