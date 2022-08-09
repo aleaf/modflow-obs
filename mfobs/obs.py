@@ -1,5 +1,7 @@
 """
-General functions that apply to multiple types of observations
+General functions for creating observation input for PEST, 
+including base observations representing field measurements and simulated equivalents, 
+and derivative observations that are created from the base observations.
 """
 from pathlib import Path
 import warnings

@@ -3,6 +3,7 @@
 numpy
 pandas
 affine
+pyemu
 codecov
 coverage
 flake8

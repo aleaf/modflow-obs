@@ -13,3 +13,4 @@ dependencies:
   - pandas
   - pip:
     - affine
+    - pyemu

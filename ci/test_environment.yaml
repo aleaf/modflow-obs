@@ -23,4 +23,4 @@ dependencies:
 - pip
 - pip:
   - affine
-  - doctr
+  - pyemu

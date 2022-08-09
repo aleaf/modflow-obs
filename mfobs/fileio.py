@@ -158,6 +158,7 @@ def write_insfile(results_dataframe, outfile, obsnme_column='obsnme',
         ins.to_csv(dest, sep=' ', index=True, header=False)
         print(f'wrote {len(ins):,} observation instructions to {outfile}')
         
+
 def get_insfile_observations(insfile):
     """Return observation names listed in a PEST 
     instruction file (in order)."""
