@@ -465,3 +465,69 @@ def test_fill_missing_obs(gage_package_obs, test_data_path,
                  if 'float' in dtype.name]
     filled = results3['obgnme'] == 'filled-bf'
     assert np.all(results3.loc[filled, data_cols] == 0)
+
+
+@pytest.mark.parametrize('forecast_sites,forecast_start_date,forecast_end_date,forecasts_only', (
+    ('all', '2010-01-01', '2015-01-01', True),
+    (['07281600', '07288580'], None, None, False)
+))
+def test_get_forecast_obs(flux_obs_input, forecast_sites, 
+                               forecast_start_date, forecast_end_date,
+                               forecasts_only, test_output_folder):
+    
+    # get dataframe of model output
+    sfr_results = get_mf6_single_variable_obs(flux_obs_input.perioddata, 
+                                              model_output_file=flux_obs_input.model_output_file,
+                                              variable='flux'
+                                              )
+    
+    # test input with a dataframe too
+    observed_values = pd.read_csv(flux_obs_input.observed_values_file,
+                                  dtype={'site_no': object})
+    observed_values.index = pd.to_datetime(observed_values['datetime'])
+    observed_values = observed_values.loc[:'2009']
+    
+    results = get_base_obs(flux_obs_input.perioddata,
+                            model_output=sfr_results,
+                            observed_values_file=observed_values,
+                            variable_name='flux',
+                            observed_values_site_id_col='site_no',
+                            observed_values_obsval_col='obsval',
+                            label_period_as_steady_state=0,
+                            #steady_state_period_start=head_obs_input.steady_state_period_start,
+                            #steady_state_period_end=head_obs_input.steady_state_period_end,
+                            forecast_sites=forecast_sites,
+                            forecast_start_date=forecast_start_date,
+                            forecast_end_date=forecast_end_date,
+                            forecasts_only=forecasts_only,
+                            write_ins=False, 
+                            outfile=test_output_folder / 'processed_flux_obs.dat'
+                            )
+    
+    # pick a site with an incomplete record
+    # the missing times should be filled with forecast obs
+    loc = (results.obsprefix == '07288580-flux') & results.obsval.isna()
+    if forecast_start_date is not None and forecast_end_date is not None:
+        assert len(results.loc[loc]) == 10
+    else:
+        assert len(results.loc[loc]) == 19
+    assert set(results['obgnme']) == {'flux-forecast', 'flux'}
+    
+    # outside of observed values
+    # the resulting dataframe should be entirely filled
+    # except for site 07288580, which isn't in the observed data
+    assert not results.loc[results.obsprefix.isin(observed_values['obsprefix'])]\
+        .drop(['obsval', 'obs_flux'], axis=1).isna().any().any()
+    
+    # if forecast_sites != 'all':
+    # check that only forecasts for specified sites were generated
+    if forecast_sites is not None and forecast_sites != 'all':
+        assert set(results.loc[results['obsval'].isna(), 'obsprefix']) ==\
+            {f"{sn}-flux" for sn in forecast_sites}
+    # check that forecasts were only generated within specified time window
+    if forecast_start_date is not None:
+        assert not np.any(results.loc[results['obsval'].isna(), 'datetime'] <\
+            forecast_start_date)
+    if forecast_end_date is not None:
+        assert not np.any(results.loc[results['obsval'].isna(), 'datetime'] >\
+            forecast_end_date)

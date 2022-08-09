@@ -27,7 +27,9 @@ def get_base_obs(perioddata,
             aggregrate_observed_values_method='mean',
             drop_groups=None,
             label_period_as_steady_state=None, steady_state_period_start=None,
-            steady_state_period_end=None,
+            steady_state_period_end=None, forecast_sites=None,
+            forecast_start_date=None, forecast_end_date=None,
+            forecasts_only=False, forecast_sites_only=False,
             outfile=None,
             write_ins=False):
     """Get a set of base observations from a tables of model output, observed 
@@ -122,6 +124,30 @@ def get_base_obs(perioddata,
         (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
         should be a decimal format in the "new-style" string format
         (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
+    forecast_sites : str or sequence, optional
+        At these sites, observations will be created for each simulated value,
+        regardless is there is an observed equivalent. Can be supplied
+        as a sequence of site numbers (`site_id`s) or ``'all'`` to
+        include all sites. By default, None (no forecast sites).
+    forecast_start_date : str, optional
+        Start date for forecast period. When forecast_sites is not
+        ``None``, forecast observations will be generated for each
+        time between `forecast_start_date` and `forecast_end_date`.
+        By default, None (generate forecasts for any time with missing values).
+    forecast_end_date : str, optional
+        End date for forecast period. When forecast_sites is not
+        ``None``, forecast observations will be generated for each
+        time between `forecast_start_date` and `forecast_end_date`.
+        By default, None (generate forecasts for any time with missing values).
+    forecasts_only : bool, optional
+        Use this option to only output forecast observations 
+        (those without an observed equivalent), subject to the parameters of
+        `forecast_sites`, `forecast_start_date`, and `forecast_end_date`.
+    forecast_sites_only : bool, optional
+        Option to only output observations at sites specified
+        with `forecast_sites` (has no effect if ``forecast_sites='all'``). If
+        ``forecasts_only=False``, the output will include forecast and non-forecast
+        observations (for a continuous time-series).
     outfile : str, optional
         [description], by default 'processed_flux_obs.dat'
     write_ins : bool, optional
@@ -191,8 +217,13 @@ def get_base_obs(perioddata,
         if variable_name is not None:
             observed['obsprefix'] = [f"{sn}-{variable_name}" 
                                      for sn in observed['site_no']]
+            if forecast_sites is not None and forecast_sites != 'all':
+                forecast_sites = [f"{sn}-{variable_name}" 
+                                     for sn in forecast_sites]
         else:
-            observed['obsprefix'] = observed['site_no']
+            observed['obsprefix'] = observed['site_no'].astype(str)
+    else:
+        observed['obsprefix'] = observed['obsprefix'].astype(str)
 
     # read in the observed values metadata
     if observed_values_metadata_file is not None:
@@ -215,6 +246,14 @@ def get_base_obs(perioddata,
     # convert obs names and prefixes to lower case
     observed['obsprefix'] = observed['obsprefix'].str.lower()
 
+    # make a dictionary of site metadata for possible use later
+    temp = observed.copy()
+    temp.index = temp['obsprefix'].str.lower()
+    site_info_dict = temp.to_dict()
+    if 'datetime' in site_info_dict:
+        del site_info_dict['datetime']
+    del temp
+    
     # cast datetimes to pandas datetimes
     observed['datetime'] = pd.to_datetime(observed['datetime'])
     observed['steady'] = False  # flag for steady-state observations
@@ -226,6 +265,15 @@ def get_base_obs(perioddata,
     # also drop sites that are in the obs information file, but not in the model results
     # these include sites outside of the model (i.e. in the inset when looking at the parent)
     no_info_sites = set(results.obsprefix).symmetric_difference(observed.obsprefix)
+    if forecast_sites == 'all':
+        # forecast observations at all simulated sites
+        # (only drop sites that aren't simulated)
+        no_info_sites = set(observed.obsprefix).difference(results.obsprefix)
+    elif forecast_sites is not None:
+        # remove selected forecast sites from 'no_info' sites to drop
+        forecast_sites = {s.lower() for s in forecast_sites}
+        no_info_sites = no_info_sites.difference(forecast_sites)
+        
     # dump these out to a csv
     print('Dropping {} sites with no information'.format(len(no_info_sites)))
     dropped_obs_outfile = outpath / 'dropped_head_observation_sites.csv'
@@ -284,7 +332,7 @@ def get_base_obs(perioddata,
             observed, start, end, 
             aggregrate_observed_values_method=aggregrate_observed_values_method,
             obsnme_suffix=suffix)
-        if observed_in_period_rs is None:
+        if forecast_sites is None and len(observed_in_period_rs) == 0:
             if per_column == 'per':
                 warnings.warn(('Stress period {}: No observations between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
@@ -302,14 +350,19 @@ def get_base_obs(perioddata,
                 warnings.warn(('Stress period {}: No simulated equivalents between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
-        
+        if forecast_sites is not None:
+            observed_in_period_rs = observed_in_period_rs.reindex(sim_in_period_rs['obsnme'].values, axis=0)
+            obsprefix = observed_in_period_rs.index.str.split('_', expand=True).levels[0]
+            observed_in_period_rs['obsprefix'] = obsprefix
+            observed_in_period_rs['obsnme'] = observed_in_period_rs.index
+            observed_in_period_rs['datetime'] = sim_in_period_rs['datetime'].values[0]
         any_simulated_obs = sim_in_period_rs.obsnme.isin(observed_in_period_rs.obsnme).any()
         
         if not any_simulated_obs and (per_column == 'per'):
             warnings.warn(('Stress period {}: No observation/simulated equivalent pairs for start and '
                             'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
-
+                
         observed_in_period_rs[sim_values_column] = sim_in_period_rs.reindex(observed_in_period_rs.index)[sim_values_column]
 
         # add stress period and observed values
@@ -342,19 +395,56 @@ def get_base_obs(perioddata,
     # (e.g. lake stages that should be compared with lake package output)
     if drop_groups is not None and 'obgnme' in obsdata.columns:
         obsdata = obsdata.loc[~obsdata.obgnme.isin(drop_groups)].copy()
+        
+    if 'obgnme' not in obsdata.columns:
+        obsdata['obgnme'] = variable_name
+    
+    # fill forecast obs with site info from observed dataframe
+    if forecast_sites is not None:
+        for k, v in site_info_dict.items():
+            obsdata[k] = [v.get(p, current) 
+                          for p, current in zip(obsdata['obsprefix'], obsdata[k])]
+        obsdata['obsnme'] = obsdata.index
+    else:  
+        # nans are where sites don't have observation values for that period
+        # or sites that are in other model (inset or parent)
+        obsdata.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
-    # nans are where sites don't have observation values for that period
-    # or sites that are in other model (inset or parent)
-    obsdata.dropna(subset=[obs_values_column], axis=0, inplace=True)
-
+    # label forecasts in own group
+    if forecast_sites is not None:
+        is_forecast = obsdata[obs_values_column].isna()
+        obsdata.loc[is_forecast, 'obgnme'] += '-forecast'
+    
+        # cull forecasts to specified date window
+        # and specific sites (if specified)
+        keep_forecasts = is_forecast.copy()  #np.array([True] * len(head_obs))
+        if forecast_start_date is not None:
+            keep_forecasts = (obsdata['datetime'] >= forecast_start_date)
+        if forecast_end_date is not None:
+            keep_forecasts &= (obsdata['datetime'] <= forecast_end_date)
+        #drop = drop & is_forecast
+        #head_obs = head_obs.loc[~drop].copy()
+        #is_forecast = head_obs[obs_values_column].isna()
+        if forecast_sites != 'all':
+            keep_forecasts &= obsdata['obsprefix'].isin(forecast_sites)
+        # option to only include forecast obs
+        # (those without observed equivalents)
+        if forecasts_only:
+            keep = keep_forecasts
+        else:
+            keep = keep_forecasts | ~is_forecast
+        # option to only include output from designated forecast sites
+        if forecast_sites_only:
+            keep = keep & obsdata['obsprefix'].isin(forecast_sites)
+        obsdata = obsdata.loc[keep].copy()
+        
     # add standard obsval and obgmne columns
     columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
                'uncertainty', 'obgnme']
     if obs_values_column != 'obsval':
         obsdata['obsval'] = obsdata[obs_values_column]
         columns.insert(-1, 'obsval')
-    if 'obgnme' not in obsdata.columns:
-        obsdata['obgnme'] = variable_name
+
 
     # reorder the columns
     columns = [c for c in columns if c in obsdata.columns]
@@ -384,7 +474,10 @@ def aggregrate_to_period(data, start, end, obsnme_suffix,
     data_in_period = data.loc[start:end].reset_index(drop=True)
         
     if (len(data_in_period) == 0):
-        return
+        cols = list(data.columns) + ['obsnme']
+        data_in_period_rs = pd.DataFrame(columns=cols)
+        data_in_period_rs.index = data_in_period_rs['obsnme']
+        return data_in_period_rs
     data_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
     if 'n' not in data_in_period.columns:
         data_in_period['n'] = 1
