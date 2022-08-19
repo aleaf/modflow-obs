@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -37,7 +38,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post55.dev0+g98d0718
+                0.post59.dev0+g43e05e8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -374,6 +375,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
 div.rendered_html table {
   border: none;
   border-collapse: collapse;
@@ -382,10 +384,14 @@ div.rendered_html table {
   font-size: 12px;
   table-layout: fixed;
 }
+.jp-RenderedHTMLCommon thead,
 div.rendered_html thead {
   border-bottom: 1px solid black;
   vertical-align: bottom;
 }
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
 div.rendered_html tr,
 div.rendered_html th,
 div.rendered_html td {
@@ -397,12 +403,15 @@ div.rendered_html td {
   max-width: none;
   border: none;
 }
+.jp-RenderedHTMLCommon th,
 div.rendered_html th {
   font-weight: bold;
 }
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
 div.rendered_html tbody tr:nth-child(odd) {
   background: #f5f5f5;
 }
+.jp-RenderedHTMLCommon tbody tr:hover,
 div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
@@ -430,7 +439,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="Demo-of-modflow-obs">
-<h1>Demo of modflow-obs<a class="headerlink" href="#Demo-of-modflow-obs" title="Permalink to this headline">¶</a></h1>
+<h1>Demo of modflow-obs<a class="headerlink" href="#Demo-of-modflow-obs" title="Permalink to this heading">¶</a></h1>
 <p>This page demonstrates some of the core features of modflow-obs. Specifically:</p>
 <ul class="simple">
 <li><p>creation of ‘base’ head and stream flow observations from time series, including</p>
@@ -464,7 +473,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="Inputs">
-<h2>Inputs<a class="headerlink" href="#Inputs" title="Permalink to this headline">¶</a></h2>
+<h2>Inputs<a class="headerlink" href="#Inputs" title="Permalink to this heading">¶</a></h2>
 <p>Input and output paths</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -478,7 +487,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="model-grid-definition">
-<h3>model grid definition<a class="headerlink" href="#model-grid-definition" title="Permalink to this headline">¶</a></h3>
+<h3>model grid definition<a class="headerlink" href="#model-grid-definition" title="Permalink to this heading">¶</a></h3>
 <p>read the model grid json file created by <code class="docutils literal notranslate"><span class="pre">modflow-setup</span></code> and create an <code class="docutils literal notranslate"><span class="pre">affine.Affine</span></code> instance describing the grid orientation</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -503,7 +512,7 @@ Affine(1000.0, 0.0, 500955.0,
 </div>
 </section>
 <section id="model-time-discretization">
-<h3>model time discretization<a class="headerlink" href="#model-time-discretization" title="Permalink to this headline">¶</a></h3>
+<h3>model time discretization<a class="headerlink" href="#model-time-discretization" title="Permalink to this heading">¶</a></h3>
 <p>read table of stress period information created by <code class="docutils literal notranslate"><span class="pre">modflow-setup</span></code></p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -608,7 +617,7 @@ Affine(1000.0, 0.0, 500955.0,
 </div></div>
 </div>
 <section id="alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files">
-<h4>alternatively, get the stress period information from the TDIS and STO files<a class="headerlink" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files" title="Permalink to this headline">¶</a></h4>
+<h4>alternatively, get the stress period information from the TDIS and STO files<a class="headerlink" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files" title="Permalink to this heading">¶</a></h4>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -726,7 +735,7 @@ Affine(1000.0, 0.0, 500955.0,
 </section>
 </section>
 <section id="model-property-information-for-T-weighted-averaging">
-<h3>model property information for T-weighted averaging<a class="headerlink" href="#model-property-information-for-T-weighted-averaging" title="Permalink to this headline">¶</a></h3>
+<h3>model property information for T-weighted averaging<a class="headerlink" href="#model-property-information-for-T-weighted-averaging" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
@@ -741,7 +750,7 @@ Affine(1000.0, 0.0, 500955.0,
 </div>
 </section>
 <section id="head-observation-data">
-<h3>head observation data<a class="headerlink" href="#head-observation-data" title="Permalink to this headline">¶</a></h3>
+<h3>head observation data<a class="headerlink" href="#head-observation-data" title="Permalink to this heading">¶</a></h3>
 <p>We start with some head observation data that already has</p>
 <ul class="simple">
 <li><p>been culled to model area, reprojected to model CRS, converted to model units, etc.</p></li>
@@ -1032,7 +1041,7 @@ Affine(1000.0, 0.0, 500955.0,
 </div>
 </section>
 <section id="streamflow-observations">
-<h3>streamflow observations<a class="headerlink" href="#streamflow-observations" title="Permalink to this headline">¶</a></h3>
+<h3>streamflow observations<a class="headerlink" href="#streamflow-observations" title="Permalink to this heading">¶</a></h3>
 <p>Flux observation inputs are similar to heads, except the metadata aren’t needed</p>
 <ul class="simple">
 <li><p>only a site number, datetime, and values column are required</p></li>
@@ -1142,7 +1151,7 @@ Affine(1000.0, 0.0, 500955.0,
 </div>
 </section>
 <section id="MODFLOW-6-observation-input">
-<h3>MODFLOW-6 observation input<a class="headerlink" href="#MODFLOW-6-observation-input" title="Permalink to this headline">¶</a></h3>
+<h3>MODFLOW-6 observation input<a class="headerlink" href="#MODFLOW-6-observation-input" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>the MODFLOW observation names (representing sites) must match those in the <code class="docutils literal notranslate"><span class="pre">obsprefix</span></code> column of the preprocessed head data above</p></li>
 <li><p>a key feature of <strong>Modflow-obs</strong> is computation of simulated heads from transmissivity-weighted averages of the head values simulated for the layers that intersect each well open interval. To take advantage of this feature, for each location (site), a MODFLOW observation must be entered for each layer.</p></li>
@@ -1188,7 +1197,7 @@ BEGIN continuous  FILEOUT  shellmound.head.obs
 </ul>
 </section>
 <section id="MODFLOW-6-observation-output">
-<h3>MODFLOW-6 observation output<a class="headerlink" href="#MODFLOW-6-observation-output" title="Permalink to this headline">¶</a></h3>
+<h3>MODFLOW-6 observation output<a class="headerlink" href="#MODFLOW-6-observation-output" title="Permalink to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>simulated values at observation locations are returned in a csv file with model timesteps along the row axis, and individual observation locations (1 per layer) along the column axis</p></li>
 </ul>
@@ -1240,7 +1249,7 @@ time,07288280,07288580,07288500,07281600
 </section>
 </section>
 <section id="Create-a-base-set-of-head-observations">
-<h2>Create a base set of head observations<a class="headerlink" href="#Create-a-base-set-of-head-observations" title="Permalink to this headline">¶</a></h2>
+<h2>Create a base set of head observations<a class="headerlink" href="#Create-a-base-set-of-head-observations" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>reads head observation data and model output and matches values</p>
 <ul>
@@ -1286,26 +1295,8 @@ time,07288280,07288580,07288500,07281600
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
-took 0.03s
+took 0.02s
 
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:47: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
-
-
-  df = pd.read_csv(src, delim_whitespace=True, header=None,
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
 Dropping 191 sites with no information
 </pre></div></div>
 </div>
@@ -1314,7 +1305,11 @@ Dropping 191 sites with no information
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:510: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
+/home/runner/work/modflow-obs/modflow-obs/mfobs/modflow.py:54: FutureWarning: The error_bad_lines argument has been deprecated and will be removed in a future version. Use on_bad_lines in the future.
+
+
+  df = pd.read_csv(src, delim_whitespace=True, header=None,
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:521: UserWarning: Stress period 8: No observations between start and end dates of 2010-04-01 and 2010-09-30!
   warnings.warn((&#39;Stress period {}: No observations between start and &#39;
 </pre></div></div>
 </div>
@@ -1453,7 +1448,7 @@ wrote 581 observation instructions to output/processed_head_obs.dat.ins
 </div></div>
 </div>
 <section id="PEST-instruction-files">
-<h3>PEST instruction files<a class="headerlink" href="#PEST-instruction-files" title="Permalink to this headline">¶</a></h3>
+<h3>PEST instruction files<a class="headerlink" href="#PEST-instruction-files" title="Permalink to this heading">¶</a></h3>
 <p>Can be written in tandem with the processed observation output (<code class="docutils literal notranslate"><span class="pre">write_ins=True</span></code>). This way,</p>
 <ul class="simple">
 <li><p>observation processing functions like <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can be used initially to get an instruction file and a set of observed values for making a PEST control file</p></li>
@@ -1482,7 +1477,7 @@ l1 w w w w w w !usgs:333145090261901_201503! w w w w
 </div>
 </section>
 <section id="plot-base-data-for-a-site">
-<h3>plot base data for a site<a class="headerlink" href="#plot-base-data-for-a-site" title="Permalink to this headline">¶</a></h3>
+<h3>plot base data for a site<a class="headerlink" href="#plot-base-data-for-a-site" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
@@ -1507,7 +1502,7 @@ l1 w w w w w w !usgs:333145090261901_201503! w w w w
 </section>
 </section>
 <section id="Changes-in-head-through-time">
-<h2>Changes in head through time<a class="headerlink" href="#Changes-in-head-through-time" title="Permalink to this headline">¶</a></h2>
+<h2>Changes in head through time<a class="headerlink" href="#Changes-in-head-through-time" title="Permalink to this heading">¶</a></h2>
 <p>The base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can be processed further into temporal head differences:</p>
 <ul class="simple">
 <li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also write an instruction file in tandem</p></li>
@@ -1540,7 +1535,7 @@ wrote 499 observation instructions to output/processed_head_obs_tdiffs.dat.ins
 </pre></div></div>
 </div>
 <section id="plot-temporal-head-differences-for-a-site">
-<h3>plot temporal head differences for a site<a class="headerlink" href="#plot-temporal-head-differences-for-a-site" title="Permalink to this headline">¶</a></h3>
+<h3>plot temporal head differences for a site<a class="headerlink" href="#plot-temporal-head-differences-for-a-site" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
@@ -1565,7 +1560,7 @@ wrote 499 observation instructions to output/processed_head_obs_tdiffs.dat.ins
 </section>
 </section>
 <section id="Displacement-in-head-through-time">
-<h2>Displacement in head through time<a class="headerlink" href="#Displacement-in-head-through-time" title="Permalink to this headline">¶</a></h2>
+<h2>Displacement in head through time<a class="headerlink" href="#Displacement-in-head-through-time" title="Permalink to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also be used to compute displacement (total change) from a reference time, via the <code class="docutils literal notranslate"><span class="pre">get_displacement</span></code> flag. * Displacements are computed at sites with 2 or more observations. * The reference time is specified by the <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code> argument. * The first observation at each site that occurs on or after the reference time is then used as the datum in computing the displacements. * If no reference time is specified, the first observation is
 used as the datum for each site. * Displacement observations can help inform PEST about longer-term temporal trends in the observation data.</p>
 <div class="nbinput docutils container">
@@ -1812,7 +1807,7 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 </pre></div></div>
 </div>
 <section id="Plot-the-displacement-observations">
-<h3>Plot the displacement observations<a class="headerlink" href="#Plot-the-displacement-observations" title="Permalink to this headline">¶</a></h3>
+<h3>Plot the displacement observations<a class="headerlink" href="#Plot-the-displacement-observations" title="Permalink to this heading">¶</a></h3>
 <p>Note: the datum observation (where displacement is zero) is excluded.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -1842,7 +1837,7 @@ wrote 292 observation instructions to output/processed_head_obs_disp.dat.ins
 </section>
 </section>
 <section id="Head-differences-between-sites">
-<h2>Head differences between sites<a class="headerlink" href="#Head-differences-between-sites" title="Permalink to this headline">¶</a></h2>
+<h2>Head differences between sites<a class="headerlink" href="#Head-differences-between-sites" title="Permalink to this heading">¶</a></h2>
 <p>Similarly, the base values returned by <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> can also be processed into spatial head differences. These may represent nested wells, well-lake differences or simply two nearby wells that represent an important head gradient.</p>
 <ul class="simple">
 <li><p>similar to <code class="docutils literal notranslate"><span class="pre">get_head_obs</span></code> the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can also write an instruction file in tandem</p></li>
@@ -2063,7 +2058,7 @@ Text(0, 0.5, &#39;Head difference, in meters&#39;)
 </div>
 </section>
 <section id="Create-a-base-set-of-flux-observations">
-<h2>Create a base set of flux observations<a class="headerlink" href="#Create-a-base-set-of-flux-observations" title="Permalink to this headline">¶</a></h2>
+<h2>Create a base set of flux observations<a class="headerlink" href="#Create-a-base-set-of-flux-observations" title="Permalink to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>similar to head observations, the first step in flux observation processing is to create a set of base observations</p></li>
 <li><p>observation data and model output are read and matched</p>
@@ -2287,7 +2282,7 @@ Text(0, 0.5, &#39;Base flow, in $m^3/d$&#39;)
 </div>
 </section>
 <section id="Changes-in-streamflow-through-time">
-<h2>Changes in streamflow through time<a class="headerlink" href="#Changes-in-streamflow-through-time" title="Permalink to this headline">¶</a></h2>
+<h2>Changes in streamflow through time<a class="headerlink" href="#Changes-in-streamflow-through-time" title="Permalink to this heading">¶</a></h2>
 <p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can be used to create observations of the changes in streamflow through time at each site.</p>
 <ul class="simple">
 <li><p>Differences are computed by subtracting the previous time from the current, so a positive value indicates an increase.</p></li>
@@ -3098,7 +3093,7 @@ Text(0, 0.5, &#39;Change in streamflow, $m^3/d$&#39;)
 </div>
 </section>
 <section id="Change-in-streamflow-between-two-sites">
-<h2>Change in streamflow between two sites<a class="headerlink" href="#Change-in-streamflow-between-two-sites" title="Permalink to this headline">¶</a></h2>
+<h2>Change in streamflow between two sites<a class="headerlink" href="#Change-in-streamflow-between-two-sites" title="Permalink to this heading">¶</a></h2>
 <p>Similar to heads, the <code class="docutils literal notranslate"><span class="pre">get_spatial_differences</span></code> function can be used to difference stream flows between sites to create observations of stream flow gain or loss.</p>
 <ul class="simple">
 <li><p>Differences are computed by subtracting the values site(s) from the key site, so for example, to represent a gain in streamflow as positive, the downstream site should be key site.</p></li>
@@ -3346,7 +3341,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Mar 02, 2022.
+      <span class="lastupdated">Last updated on Aug 19, 2022.
       </span></p>
   </div>
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.modflow &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
@@ -32,7 +33,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post55.dev0+g98d0718
+                0.post59.dev0+g43e05e8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -116,7 +117,7 @@
                <span class="mi">5</span><span class="p">:</span> <span class="s2">&quot;years&quot;</span>
                  <span class="p">}</span>
 
-<div class="viewcode-block" id="get_gwf_obs_input"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_gwf_obs_input">[docs]</a><span class="k">def</span> <span class="nf">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">):</span>
+<div class="viewcode-block" id="get_gwf_obs_input"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_gwf_obs_input">[docs]</a><span class="k">def</span> <span class="nf">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">,</span> <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read the first BEGIN continuous  FILEOUT block of an input</span>
 <span class="sd">    file to the MODFLOW-6 GWF observation utility.</span>
 
@@ -124,25 +125,51 @@
 <span class="sd">    ----------</span>
 <span class="sd">    gwf_obs_input_file : str</span>
 <span class="sd">        Input file to MODFLOW-6 observation utility (contains layer information).</span>
+<span class="sd">    gwf_obs_block : None or int</span>
+<span class="sd">        Optional argument to read a specific observation block or all blocks </span>
+<span class="sd">        from GWF observation utility file. Value of None returns observations </span>
+<span class="sd">        from all blocks. Integer value returns obs from a specifc block, in </span>
+<span class="sd">        (zero-based) order from top to bottom. For example, a value of 0 would </span>
+<span class="sd">        return the first obs block, value of 1 would return the second obs </span>
+<span class="sd">        block, and so on.</span>
 
 <span class="sd">    Note</span>
 <span class="sd">    ----</span>
-<span class="sd">    As-is, this only reads the first block. Modflow-setup writes all of the</span>
-<span class="sd">    observation input to a single block, but observation input can</span>
-<span class="sd">    be broken out into multiple blocks (one per file).</span>
+<span class="sd">    Modflow-setup writes all of the observation input to a single block, but </span>
+<span class="sd">    observation input can be broken out into multiple blocks (one per file).</span>
 
 <span class="sd">    This also doesn&#39;t work with open/close statements.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;BEGIN continuous&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
-                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                 <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">gwf_obs_block</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;BEGIN continuous&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gwf_obs_block</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>    
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+            <span class="n">begin_idxs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">end_idxs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">src</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s1">&#39;BEGIN continuous&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">begin_idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s1">&#39;END continuous&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="n">end_idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">,</span> 
+                         <span class="n">skiprows</span><span class="o">=</span><span class="n">begin_idxs</span><span class="p">[</span><span class="n">gwf_obs_block</span><span class="p">],</span>
+                         <span class="n">skipfooter</span><span class="o">=</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="n">end_idxs</span><span class="p">[</span><span class="n">gwf_obs_block</span><span class="p">]),</span>
+                         <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+                         <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">,</span>
+                         <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;gwf_obs_block must be &#39;None&#39; or an integer&quot;</span><span class="p">)</span>
+
     <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obsname&#39;</span><span class="p">,</span> <span class="s1">&#39;obstype&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">]</span>
-    <span class="c1"># cast columns as ints and convert to zero-based</span>
     <span class="k">for</span> <span class="n">index_col</span> <span class="ow">in</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;i&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">:</span>
         <span class="n">df</span><span class="p">[</span><span class="n">index_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">index_col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
     <span class="k">return</span> <span class="n">df</span></div>
 
 
@@ -232,7 +259,8 @@
                                 <span class="n">model_output_file</span><span class="p">,</span>
                                 <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                 <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                                <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
 <span class="sd">    (stack) results to be n times x n sites rows, with a single observation value</span>
@@ -272,6 +300,15 @@
 <span class="sd">        downstream-flow observations, which by convention are reported as </span>
 <span class="sd">        negative by MODFLOW 6, but will be compared to positive observed values.</span>
 <span class="sd">        By default, True.</span>
+<span class="sd">    gwf_obs_block : None or int</span>
+<span class="sd">        Argument to read a specific observation block or all blocks from GWF </span>
+<span class="sd">        observation utility file. Value of None returns observations from all </span>
+<span class="sd">        blocks. Integer value returns obs from a specifc block, in (zero-based)</span>
+<span class="sd">        order, from top to bottom. For example, a value of 0 would return the </span>
+<span class="sd">        first obs block, value of 1 would return the second obs block, and so </span>
+<span class="sd">        on. Modflow-setup writes all of the observation input to a single block, </span>
+<span class="sd">        but observation input can be broken out into multiple blocks (one per </span>
+<span class="sd">        file). By default, None (All blocks)</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -356,7 +393,8 @@
 
     <span class="c1"># parse the layers from the column positions (prior to stacking)</span>
     <span class="k">if</span> <span class="n">gwf_obs_input_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">gwf_obs_input</span> <span class="o">=</span> <span class="n">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span>
+        <span class="n">gwf_obs_input</span> <span class="o">=</span> <span class="n">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">,</span> 
+                                          <span class="n">gwf_obs_block</span><span class="o">=</span><span class="n">gwf_obs_block</span><span class="p">)</span>
         <span class="c1"># Assign layer to each observation,</span>
         <span class="c1"># assuming that numbering in gwf_obs_input is repeated nper times</span>
         <span class="n">ntimes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
@@ -1166,7 +1204,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Mar 02, 2022.
+      <span class="lastupdated">Last updated on Aug 19, 2022.
       </span></p>
   </div>
 

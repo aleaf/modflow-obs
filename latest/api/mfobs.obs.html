@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -35,7 +36,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post55.dev0+g98d0718
+                0.post59.dev0+g43e05e8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -126,7 +127,7 @@
 }
 </style>
 <section id="module-mfobs.obs">
-<span id="the-general-observation-processing-module"></span><h1>The general observation processing module<a class="headerlink" href="#module-mfobs.obs" title="Permalink to this headline">¶</a></h1>
+<span id="the-general-observation-processing-module"></span><h1>The general observation processing module<a class="headerlink" href="#module-mfobs.obs" title="Permalink to this heading">¶</a></h1>
 <p>General functions that apply to multiple types of observations</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.aggregrate_to_period">
@@ -239,7 +240,7 @@ which now contain the aggregated values):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_base_obs">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_base_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_metadata_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_site_id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsprefix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_obsval_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_group_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obgnme'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_unc_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uncertainty'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_base_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_base_obs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_base_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_metadata_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_site_id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsprefix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_obsval_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_group_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obgnme'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_unc_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uncertainty'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecasts_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_base_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_base_obs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a set of base observations from a tables of model output, observed 
 values, and model time discretizaton.</p>
 <dl class="field-list">
@@ -366,6 +367,30 @@ which would yield <code class="docutils literal notranslate"><span class="pre">'
 (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
 should be a decimal format in the “new-style” string format
 (e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
+</dd>
+<dt><strong>forecast_sites</strong><span class="classifier">str or sequence, optional</span></dt><dd><p>At these sites, observations will be created for each simulated value,
+regardless is there is an observed equivalent. Can be supplied
+as a sequence of site numbers (<cite>site_id`s) or `</cite>’all’`` to
+include all sites. By default, None (no forecast sites).</p>
+</dd>
+<dt><strong>forecast_start_date</strong><span class="classifier">str, optional</span></dt><dd><p>Start date for forecast period. When forecast_sites is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, forecast observations will be generated for each
+time between <cite>forecast_start_date</cite> and <cite>forecast_end_date</cite>.
+By default, None (generate forecasts for any time with missing values).</p>
+</dd>
+<dt><strong>forecast_end_date</strong><span class="classifier">str, optional</span></dt><dd><p>End date for forecast period. When forecast_sites is not
+<code class="docutils literal notranslate"><span class="pre">None</span></code>, forecast observations will be generated for each
+time between <cite>forecast_start_date</cite> and <cite>forecast_end_date</cite>.
+By default, None (generate forecasts for any time with missing values).</p>
+</dd>
+<dt><strong>forecasts_only</strong><span class="classifier">bool, optional</span></dt><dd><p>Use this option to only output forecast observations 
+(those without an observed equivalent), subject to the parameters of
+<cite>forecast_sites</cite>, <cite>forecast_start_date</cite>, and <cite>forecast_end_date</cite>.</p>
+</dd>
+<dt><strong>forecast_sites_only</strong><span class="classifier">bool, optional</span></dt><dd><p>Option to only output observations at sites specified
+with <cite>forecast_sites</cite> (has no effect if <code class="docutils literal notranslate"><span class="pre">forecast_sites='all'</span></code>). If
+<code class="docutils literal notranslate"><span class="pre">forecasts_only=False</span></code>, the output will include forecast and non-forecast
+observations (for a continuous time-series).</p>
 </dd>
 <dt><strong>outfile</strong><span class="classifier">str, optional</span></dt><dd><p>[description], by default ‘processed_flux_obs.dat’</p>
 </dd>
@@ -1108,7 +1133,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Mar 02, 2022.
+      <span class="lastupdated">Last updated on Aug 19, 2022.
       </span></p>
   </div>
 

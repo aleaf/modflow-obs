@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MODFLOW-related functions &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
+  <title>MODFLOW-related functions &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -16,6 +16,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
@@ -35,7 +36,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post55.dev0+g98d0718
+                0.post59.dev0+g43e05e8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -126,7 +127,7 @@
 }
 </style>
 <section id="module-mfobs.modflow">
-<span id="modflow-related-functions"></span><h1>MODFLOW-related functions<a class="headerlink" href="#module-mfobs.modflow" title="Permalink to this headline">¶</a></h1>
+<span id="modflow-related-functions"></span><h1>MODFLOW-related functions<a class="headerlink" href="#module-mfobs.modflow" title="Permalink to this heading">¶</a></h1>
 <p>Functions specific to MODFLOW and flopy</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.modflow.add_timesteps_to_perioddata">
@@ -135,13 +136,20 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.modflow.get_gwf_obs_input">
-<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_gwf_obs_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_gwf_obs_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_gwf_obs_input" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_gwf_obs_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_gwf_obs_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_gwf_obs_input" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the first BEGIN continuous  FILEOUT block of an input
 file to the MODFLOW-6 GWF observation utility.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>gwf_obs_input_file</strong><span class="classifier">str</span></dt><dd><p>Input file to MODFLOW-6 observation utility (contains layer information).</p>
+</dd>
+<dt><strong>gwf_obs_block</strong><span class="classifier">None or int</span></dt><dd><p>Optional argument to read a specific observation block or all blocks 
+from GWF observation utility file. Value of None returns observations 
+from all blocks. Integer value returns obs from a specifc block, in 
+(zero-based) order from top to bottom. For example, a value of 0 would 
+return the first obs block, value of 1 would return the second obs 
+block, and so on.</p>
 </dd>
 </dl>
 </dd>
@@ -161,7 +169,7 @@ in real-world coordinates. Uses the affine package. Basically,</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl>
 <dt><strong>transform</strong><span class="classifier">affine.Affine instance</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
-of the model grid. Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post284+g1c36696)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+of the model grid. Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post357+g6471806)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
 via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
@@ -217,7 +225,7 @@ being in layers 0, 1, 3, which would be misinterpreted as 0, 1, 2.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.modflow.get_mf6_single_variable_obs">
-<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_mf6_single_variable_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_mf6_single_variable_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_mf6_single_variable_obs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_mf6_single_variable_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_mf6_single_variable_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_mf6_single_variable_obs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read raw MODFLOW-6 observation output from csv table with
 times along the row axis and observations along the column axis. Reshape
 (stack) results to be n times x n sites rows, with a single observation value
@@ -267,6 +275,15 @@ as the site numbers.</p>
 downstream-flow observations, which by convention are reported as 
 negative by MODFLOW 6, but will be compared to positive observed values.
 By default, True.</p>
+</dd>
+<dt><strong>gwf_obs_block</strong><span class="classifier">None or int</span></dt><dd><p>Argument to read a specific observation block or all blocks from GWF 
+observation utility file. Value of None returns observations from all 
+blocks. Integer value returns obs from a specifc block, in (zero-based)
+order, from top to bottom. For example, a value of 0 would return the 
+first obs block, value of 1 would return the second obs block, and so 
+on. Modflow-setup writes all of the observation input to a single block, 
+but observation input can be broken out into multiple blocks (one per 
+file). By default, None (All blocks)</p>
 </dd>
 </dl>
 </dd>
@@ -486,7 +503,7 @@ from the TDIS or DIS package file.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.modflow.get_transmissivities">
-<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_transmissivities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">botm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelgrid_transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_botm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_transmissivities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_transmissivities" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.modflow.</span></span><span class="sig-name descname"><span class="pre">get_transmissivities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hk</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">botm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelgrid_transform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_top</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_botm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/modflow.html#get_transmissivities"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.modflow.get_transmissivities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes transmissivity in each model layer at specified locations and
 open intervals. A saturated thickness is determined for each row, column
 or x, y location supplied, based on the open interval (sctop, screen_botm),
@@ -516,7 +533,7 @@ If x and y are specified, a modelgrid_transform must also be provided.</p>
 </dd>
 <dt><strong>modelgrid_transform</strong><span class="classifier">affine.Affine instance, optional</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
 of the model grid. Only required for getting i, j if x and y are specified.
-Modflow-setup <a class="reference external" href="https://aleaf.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post284+g1c36696)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post357+g6471806)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
 via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
@@ -599,7 +616,7 @@ and variables or sites along the column axis.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Mar 02, 2022.
+      <span class="lastupdated">Last updated on Aug 19, 2022.
       </span></p>
   </div>
 

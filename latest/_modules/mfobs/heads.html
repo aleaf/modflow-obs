@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post55.dev0+g98d0718 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -15,6 +15,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/clipboard.min.js"></script>
         <script src="../../_static/copybutton.js"></script>
@@ -32,7 +33,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post55.dev0+g98d0718
+                0.post59.dev0+g43e05e8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -122,6 +123,7 @@
                  <span class="n">observed_values_group_column</span><span class="o">=</span><span class="s1">&#39;obgnme&#39;</span><span class="p">,</span>
                  <span class="n">observed_values_unc_column</span><span class="o">=</span><span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span>
                  <span class="n">aggregrate_observed_values_by</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
+                 <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">drop_groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">hk_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">top_array</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">botm_arrays</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">label_period_as_steady_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steady_state_period_start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -278,6 +280,15 @@
 <span class="sd">        of the method calls on the pandas</span>
 <span class="sd">        `Resampler &lt;https://pandas.pydata.org/pandas-docs/stable/reference/resampling.html&gt;`_</span>
 <span class="sd">        object. By default, &#39;mean&#39;</span>
+<span class="sd">    gwf_obs_block : None or int</span>
+<span class="sd">        Argument to read a specific observation block or all blocks from GWF </span>
+<span class="sd">        observation utility file. Value of None returns observations from all </span>
+<span class="sd">        blocks. Integer value returns obs from a specifc block, in (zero-based)</span>
+<span class="sd">        order, from top to bottom. For example, a value of 0 would return the </span>
+<span class="sd">        first obs block, value of 1 would return the second obs block, and so </span>
+<span class="sd">        on. Modflow-setup writes all of the observation input to a single block, </span>
+<span class="sd">        but observation input can be broken out into multiple blocks (one per </span>
+<span class="sd">        file). by default, None (All blocks)</span>
 <span class="sd">    drop_groups : sequence, optional</span>
 <span class="sd">        Observation groups to exclude from output, by default None</span>
 <span class="sd">    hk_arrays : list-like of pathlikes or ndarray, optional</span>
@@ -390,7 +401,8 @@
                                           <span class="c1">#variable_name=variable_name,</span>
                                           <span class="c1">#obsnme_date_suffix=obsnme_date_suffix,</span>
                                           <span class="c1">#obsnme_suffix_format=obsnme_suffix_format,</span>
-                                          <span class="c1">#label_period_as_steady_state=label_period_as_steady_state</span>
+                                          <span class="c1">#label_period_as_steady_state=label_period_as_steady_state,</span>
+                                          <span class="n">gwf_obs_block</span><span class="o">=</span><span class="n">gwf_obs_block</span>
                                           <span class="p">)</span>
 
     <span class="c1"># rename columns to their defaults</span>
@@ -806,7 +818,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Mar 02, 2022.
+      <span class="lastupdated">Last updated on Aug 19, 2022.
       </span></p>
   </div>
 
