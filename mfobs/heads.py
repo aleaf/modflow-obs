@@ -357,8 +357,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     temp = observed.copy()
     temp.index = temp['obsprefix'].str.lower()
     site_info_dict = temp.to_dict()
-    if 'datetime' in site_info_dict:
-        del site_info_dict['datetime']
+    # delete some columns from the observed values file
+    # which result in values assigned by the function 
+    # later being overwritten with nans
+    del_cols = ['datetime', 'per']
+    for col in del_cols:
+        if col in site_info_dict:
+            del site_info_dict[col]
     del temp
 
     # cast datetimes to pandas datetimes
