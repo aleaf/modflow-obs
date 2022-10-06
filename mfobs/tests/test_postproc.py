@@ -66,6 +66,9 @@ def test_plot_one_to_one(test_data_path, test_output_folder):
     
     
 def test_export_residuals_shapefile(test_data_path, test_output_folder):
+    
+    pytest.importorskip('geopandas')
+    
     resfile = test_data_path / 'pest/tcaap.1.base.rei'
     res = read_res_file(resfile)
     res['obsprefix'] = ['_'.join(s.split('_')[:-1]) for s in res['name']]
