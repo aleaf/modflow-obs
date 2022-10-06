@@ -1,10 +1,14 @@
 """General functions for postprocessing and visualizing observation 
 results from PEST.
 """
+from operator import ge
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import geopandas as gpd
+try:
+    import geopandas as gpd
+except:
+    geopandas = False
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 import pyemu
@@ -349,7 +353,9 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
                                meta_obsprefix_col='obsprefix',
                                meta_x_col='x', meta_y_col='y', meta_crs=None,
                                outfile_name_base=None):
-
+    if not geopandas:
+        print('This function requires geopandas')
+        return
     # make the output folder if it doesn't exist
     if outfile_name_base is not None:
         Path(outfile_name_base).parent.mkdir(parents=True, exist_ok=True)
@@ -424,7 +430,7 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
     # https://en.wikipedia.org/wiki/Nash%E2%80%93Sutcliffe_model_efficiency_coefficient
     df_agg['nse_norm'] = 1/(2 - df_agg['nse'])
     
-    cols = [obs_values_col, sim_values_col, 'group', 'mae', 'rmse', 'nse', 'nse_abs', 'nse_norm']
+    cols = [obs_values_col, sim_values_col, 'group', 'weight', 'mae', 'rmse', 'nse', 'nse_abs', 'nse_norm']
     joined_df = meta.join(df_agg[cols], how='inner')
     joined_df['residual'] = joined_df[obs_values_col] - joined_df[sim_values_col]
     joined_df['abs_res'] = joined_df['residual'].abs()
