@@ -9,7 +9,11 @@ try:
     import geopandas as gpd
 except:
     geopandas = False
-from shapely.geometry import Point
+try:
+    from shapely.geometry import Point
+    shapely = True
+except:
+    shapely = False
 import matplotlib.pyplot as plt
 import pyemu
 
@@ -353,8 +357,8 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
                                meta_obsprefix_col='obsprefix',
                                meta_x_col='x', meta_y_col='y', meta_crs=None,
                                outfile_name_base=None):
-    if not geopandas:
-        print('This function requires geopandas')
+    if not geopandas or not shapely:
+        print('This function requires shapely and geopandas')
         return
     # make the output folder if it doesn't exist
     if outfile_name_base is not None:
