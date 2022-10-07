@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post59.dev0+g43e05e8 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post64.dev0+g2209206 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -18,6 +18,7 @@
         <script src="../_static/underscore.js"></script>
         <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
         <script src="../_static/clipboard.min.js"></script>
         <script src="../_static/copybutton.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -36,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post59.dev0+g43e05e8
+                0.post64.dev0+g2209206
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -63,7 +64,18 @@
 <li class="toctree-l2"><a class="reference internal" href="mfobs.sep.html">Hydrograph separation functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.modflow.html">MODFLOW-related functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.prms.html">PRMS-related functions</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">General observation processing</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">General observation processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.aggregrate_to_period"><code class="docutils literal notranslate"><span class="pre">aggregrate_to_period()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_annual_means"><code class="docutils literal notranslate"><span class="pre">get_annual_means()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_base_obs"><code class="docutils literal notranslate"><span class="pre">get_base_obs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_baseflow_observations"><code class="docutils literal notranslate"><span class="pre">get_baseflow_observations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_log10_observations"><code class="docutils literal notranslate"><span class="pre">get_log10_observations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_mean_monthly"><code class="docutils literal notranslate"><span class="pre">get_mean_monthly()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_monthly_means"><code class="docutils literal notranslate"><span class="pre">get_monthly_means()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_spatial_differences"><code class="docutils literal notranslate"><span class="pre">get_spatial_differences()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mfobs.obs.get_temporal_differences"><code class="docutils literal notranslate"><span class="pre">get_temporal_differences()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="mfobs.utils.html">Utility functions</a></li>
 </ul>
 </li>
@@ -128,7 +140,9 @@
 </style>
 <section id="module-mfobs.obs">
 <span id="the-general-observation-processing-module"></span><h1>The general observation processing module<a class="headerlink" href="#module-mfobs.obs" title="Permalink to this heading">¶</a></h1>
-<p>General functions that apply to multiple types of observations</p>
+<p>General functions for creating observation input for PEST, 
+including base observations representing field measurements and simulated equivalents, 
+and derivative observations that are created from the base observations.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.aggregrate_to_period">
 <span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">aggregrate_to_period</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#aggregrate_to_period"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.aggregrate_to_period" title="Permalink to this definition">¶</a></dt>
@@ -1133,7 +1147,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Aug 19, 2022.
+      <span class="lastupdated">Last updated on Oct 07, 2022.
       </span></p>
   </div>
 
