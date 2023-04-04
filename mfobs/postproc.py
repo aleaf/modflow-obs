@@ -5,15 +5,6 @@ from operator import ge
 from pathlib import Path
 import numpy as np
 import pandas as pd
-try:
-    import geopandas as gpd
-except:
-    geopandas = False
-try:
-    from shapely.geometry import Point
-    shapely = True
-except:
-    shapely = False
 import matplotlib.pyplot as plt
 import pyemu
 
@@ -357,7 +348,16 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
                                meta_obsprefix_col='obsprefix',
                                meta_x_col='x', meta_y_col='y', meta_crs=None,
                                outfile_name_base=None):
-    if not geopandas or not shapely:
+    try:
+        import geopandas as gpd
+    except:
+        gpd = False
+    try:
+        from shapely.geometry import Point
+        shapely = True
+    except:
+        shapely = False
+    if not gpd or not shapely:
         print('This function requires shapely and geopandas')
         return
     # make the output folder if it doesn't exist

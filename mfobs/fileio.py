@@ -60,7 +60,7 @@ def read_csv(csvfile, col_limit=1e4, **kwargs):
     csvfile : str or pathlike
     col_limit : int
         Column threshold at which to use pure python 
-        instead of pandas.read_csv, by default 10e4
+        instead of pandas.read_csv, by default 1e4
     **kwargs : keyword arguments to pandas.read_csv or 
         pandas.DataFrame (in the case of a wide file)
     """
