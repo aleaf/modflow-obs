@@ -126,6 +126,28 @@ def get_base_obs(perioddata,
         (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
         should be a decimal format in the "new-style" string format
         (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
+    label_period_as_steady_state : int, optional
+        Zero-based model stress period where observations will be
+        assigned the suffix 'ss' instead of a date suffix.
+        By default, None, in which case all model output is assigned
+        a date suffix based on the start date of the stress period.
+        Passed to :func:`~mfobs.modflow.get_mf6_single_variable_obs`.
+    steady_state_period_start : str, optional
+        Start date for the period representing steady-state conditions.
+        Observations between ``steady_state_period_start`` and ``steady_state_period_end``
+        will be averaged to create additional observations with the suffix 'ss'.
+        The steady-state averages will be matched to model output from the
+        stress period specified by ``label_period_as_steady_state``.
+        By default None, in which case all observations are used 
+        (if ``observed_values_datetime_col is None``) 
+        or no steady-state observations 
+        are created (``observed_values_datetime_col`` exists).
+    steady_state_period_end : str, optional
+        End date for the period representing steady-state conditions.
+        By default None, in which case all observations are used 
+        (if ``observed_values_datetime_col is None``) 
+        or no steady-state observations 
+        are created (``observed_values_datetime_col`` exists).
     forecast_sites : str or sequence, optional
         At these sites, observations will be created for each simulated value,
         regardless is there is an observed equivalent. Can be supplied
@@ -255,10 +277,24 @@ def get_base_obs(perioddata,
     if 'datetime' in site_info_dict:
         del site_info_dict['datetime']
     del temp
-    
+
     # cast datetimes to pandas datetimes
-    observed['datetime'] = pd.to_datetime(observed['datetime'])
-    observed['steady'] = False  # flag for steady-state observations
+    # (observed data may not have a datetime col. if model is steady-state)
+    if 'datetime' in observed.columns:
+        observed['datetime'] = pd.to_datetime(observed['datetime'])
+        # not necessarily True
+        observed['steady'] = False  # flag for steady-state observations
+    elif label_period_as_steady_state is not None:
+        observed['datetime'] = pd.to_datetime(
+            perioddata['start_datetime'][label_period_as_steady_state])
+        observed['steady'] = True
+    else:
+        if len(perioddata) == 1:
+            observed['datetime'] = pd.to_datetime(perioddata['start_datetime'][0])
+            observed['steady'] = True
+        else:
+            raise ValueError("Model has more than one stress period "
+                             "but observed data have no 'datetime' column.")
 
     # drop model results that aren't in the obs information file
     # these are probably observations that aren't in the model time period
@@ -305,6 +341,14 @@ def get_base_obs(perioddata,
         per_column = 'per'
         
     observed_simulated_combined = []
+
+    # if no datetime column is supplied with observations,
+    # only make steady state obs
+    if observed_values_datetime_col is None and \
+        label_period_as_steady_state is not None:
+            idx = label_period_as_steady_state
+            perioddata = perioddata[idx:idx+1]
+            
     for i, r in perioddata.iterrows():
 
         # get the equivalent observed values

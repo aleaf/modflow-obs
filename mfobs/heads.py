@@ -222,10 +222,16 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         will be averaged to create additional observations with the suffix 'ss'.
         The steady-state averages will be matched to model output from the
         stress period specified by ``label_period_as_steady_state``.
-        By default None, in which case no steady-state observatons are created.
+        By default None, in which case all observations are used 
+        (if ``observed_values_datetime_col is None``) 
+        or no steady-state observations 
+        are created (``observed_values_datetime_col`` exists).
     steady_state_period_end : str, optional
         End date for the period representing steady-state conditions.
-        By default None, in which case no steady-state observatons are created.
+        By default None, in which case all observations are used 
+        (if ``observed_values_datetime_col is None``) 
+        or no steady-state observations 
+        are created (``observed_values_datetime_col`` exists).
     forecast_sites : str or sequence, optional
         At these sites, observations will be created for each simulated value,
         regardless is there is an observed equivalent. Can be supplied
@@ -329,6 +335,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                                dtype={observed_values_site_id_col: object})
     else:
         observed = observed_values_file
+    if len(observed) == 0:
+        raise ValueError("No observed values to process!")
     observed.rename(columns=renames, inplace=True)
     observed['obsprefix'] = observed[observed_values_site_id_col]
 
@@ -372,6 +380,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         observed['datetime'] = pd.to_datetime(observed['datetime'])
         # not necessarily True
         observed['steady'] = False  # flag for steady-state observations
+    elif label_period_as_steady_state is not None:
+        observed['datetime'] = pd.to_datetime(
+            perioddata['start_datetime'][label_period_as_steady_state])
+        observed['steady'] = True
     else:
         if len(perioddata) == 1:
             observed['datetime'] = pd.to_datetime(perioddata['start_datetime'][0])
@@ -465,6 +477,14 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         per_column = 'per'
         
     observed_simulated_combined = []
+    
+    # if no datetime column is supplied with observations,
+    # only make steady state obs
+    if observed_values_datetime_col is None and \
+        label_period_as_steady_state is not None:
+            idx = label_period_as_steady_state
+            perioddata = perioddata[idx:idx+1]
+    
     for i, r in perioddata.iterrows():
 
         # get the equivalent observed values
