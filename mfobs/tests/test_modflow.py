@@ -8,6 +8,7 @@ import pytest
 from mfobs.modflow import (
     get_ij, 
     get_perioddata, 
+    get_site_no,
     add_timesteps_to_perioddata,
     get_mf6_single_variable_obs,
     read_mf_gage_package_output_files,
@@ -201,3 +202,15 @@ def test_get_gwf_obs(test_data_path, gwf_obs_block):
     else:
         gwf_obs_input.shape[0] == 109
         
+
+@pytest.mark.parametrize('obspefix,arg,expected', (
+    ('15266500', True, '15266500'),
+    ('15266500-flow', True, '15266500'),
+    ('bc-east-fork-s12-flow', True, 'bc-east-fork-s12'),
+    ('bc-east-fork-s12', False, 'bc-east-fork-s12'),
+    ('15266500.1', False, '15266500'),
+    ('15266500-flow.1', True, '15266500')
+                         ))
+def test_get_site_no(obspefix, arg, expected):
+    output = get_site_no(obspefix, obsprefix_includes_variable=arg)
+    assert output == expected

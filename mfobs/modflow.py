@@ -162,10 +162,38 @@ def get_layer(column_name):
     return int(column_name.split('.')[-1])
 
 
+def get_site_no(obsprefix, obsprefix_includes_variable=True):
+    """Parse observation site number from an observation prefix string, 
+    which may include a variable at the end, delimited by a hyphen.
+    Also split off any part of the string after a period ('.'),
+    for example index instance numbers appended by pandas.
+    
+    
+    Examples
+    ---------
+    >>> get_site_no('15266500')
+    '15266500'
+    >>> get_site_no('15266500-flow')
+    '15266500'
+    >>> get_site_no('bc-east-fork-s12-flow')
+    'bc-east-fork-s12'
+    >>> get_site_no('bc-east-fork-s12', obsprefix_includes_variable=False)
+    'bc-east-fork-s12'
+    >>> get_site_no('15266500.1')
+    '15266500'
+    """
+    parts = obsprefix.split('-')
+    if len(parts) == 1 or not obsprefix_includes_variable:
+        return obsprefix.split('.')[0]
+    else:
+        return '-'.join(parts[:-1])
+        
+        
 def get_mf6_single_variable_obs(perioddata,
                                 model_output_file,
                                 gwf_obs_input_file=None,
                                 variable=None,
+                                names_include_variable=False,
                                 abs=True,
                                 gwf_obs_block=None):
     """Read raw MODFLOW-6 observation output from csv table with
@@ -199,9 +227,19 @@ def get_mf6_single_variable_obs(perioddata,
         Variable name for observations. If supplied, observation prefixes will
         be named following the format <site number>-<variable>. 
         If observations are already set up in MODFLOW
-        with the format <site number>-<variable>, then this is not needed.
+        with the format <site number>-<variable> *and* `names_include_variable=True`, 
+        then this is not needed.
         By default, None, in which case observation prefixes are the same 
         as the site numbers.
+    names_include_variable : bool
+        Option to indicate that the names in the MODFLOW observation input
+        have the format <site number>-<variable> (which allows for multiple
+        observations of different variables at a site). In this case,
+        observation prefixes will be named from the MODFLOW observation names,
+        and any `variable` argument will be ignored.
+        By default, False, in which case the MODFLOW observation names are assumed
+        to be the site numbers. Observation prefixes will be formulated from the
+        MODFLOW names and variable.
     abs : bool, optional
         Option to convert simulated values to absolute values. For example,
         downstream-flow observations, which by convention are reported as 
@@ -271,9 +309,22 @@ def get_mf6_single_variable_obs(perioddata,
     stacked = model_output.drop(['time', 'perioddata_time', 'per'], axis=1).stack(level=0).reset_index()
     simval_col = 'sim_obsval'
     stacked.columns = ['time', 'obsprefix', simval_col]
-    stacked['site_no'] = [s.split('-')[0].split('.')[0] 
+    
+    stacked['site_no'] = [get_site_no(
+        s, obsprefix_includes_variable=names_include_variable) 
                           for s in stacked.obsprefix]
-    stacked['variable'] = [s[1] if len(s) > 1 else variable for s in stacked.obsprefix.str.split('-')]
+    if names_include_variable:
+        variables = []
+        for s in stacked['obsprefix'].str.split('-'):
+            if len(s) == 1:
+                raise ValueError('names_include_variable=True, '
+                                 f'but observation prefix: {s} only has one component.'
+                                 'When names_include_variable=True, observation prefixes '
+                                 'are expected to be in the format <site number>-<variable>.')
+            variables.append(s[-1])
+        stacked['variable'] = variables
+    else:
+        stacked['variable'] = variable
     stacked['per'] = [periods[time] for time in stacked['time']]
     stacked.index = stacked['time']
 
