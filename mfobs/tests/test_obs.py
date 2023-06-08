@@ -270,7 +270,11 @@ def test_get_annual_means(flux_obs):
     results = get_annual_means(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.year]).mean()
+    groupby = ['site_no', flux_obs.datetime.dt.year]
+    grouped = flux_obs.groupby(groupby).first()
+    for col in ['obsval', 'sim_obsval']:
+        grouped[col] = flux_obs.groupby(groupby)[col].mean()
+    #grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.year]).mean()
     grouped.index.set_names(['site_no', 'year'], inplace=True)
     expected = grouped.sort_values(by=['site_no', 'year'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
@@ -290,7 +294,10 @@ def test_mean_monthly(flux_obs):
     results = get_mean_monthly(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.month]).mean()
+    groupby = ['site_no', flux_obs.datetime.dt.month]
+    grouped = flux_obs.groupby(groupby).first()
+    for col in ['obsval', 'sim_obsval']:
+        grouped[col] = flux_obs.groupby(groupby)[col].mean()
     grouped.index.set_names(['site_no', 'month'], inplace=True)
     expected = grouped.sort_values(by=['site_no', 'month'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
@@ -309,8 +316,10 @@ def test_get_monthly_means(flux_obs):
     results = get_monthly_means(flux_obs)
     
     # check the actual values
-    grouped = flux_obs.groupby(['site_no', flux_obs.datetime.dt.year,
-                                flux_obs.datetime.dt.month]).mean()
+    groupby = ['site_no', flux_obs.datetime.dt.year, flux_obs.datetime.dt.month]
+    grouped = flux_obs.groupby(groupby).first()
+    for col in ['obsval', 'sim_obsval']:
+        grouped[col] = flux_obs.groupby(groupby)[col].mean()
     grouped.index.set_names(['site_no', 'year', 'month'], inplace=True)
     expected = grouped.sort_values(by=['site_no', 'year', 'month'])[['obsval', 'sim_obsval']]
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
@@ -461,7 +470,7 @@ def test_fill_missing_obs(gage_package_obs, test_data_path,
     assert not any(set(results3['obsnme']).symmetric_difference(insfile_obs))
     # filled obs should be identified by filled-bf group
     # and be filled with zeros
-    data_cols = [c for c, dtype in results3.dtypes.iteritems() 
+    data_cols = [c for c, dtype in results3.dtypes.items() 
                  if 'float' in dtype.name]
     filled = results3['obgnme'] == 'filled-bf'
     assert np.all(results3.loc[filled, data_cols] == 0)

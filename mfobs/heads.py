@@ -554,9 +554,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             if 'n' not in observed_in_period.columns:
                 observed_in_period['n'] = 1
             by_site = observed_in_period.groupby('obsprefix')
-            observed_in_period_rs = getattr(by_site, aggregrate_observed_values_by)()
+            observed_in_period_rs = by_site.first()
+            data_cols = [c for c, dtype in observed_in_period.dtypes.items() 
+                         if 'float' in dtype.name]
+            for c in data_cols:
+                observed_in_period_rs[c] = getattr(by_site[c], aggregrate_observed_values_by)()
             observed_in_period_rs['n'] = by_site.n.sum()
             observed_in_period_rs['datetime'] = pd.Timestamp(end)
+            if observed_in_period_rs[observed_values_obsval_col].isna().any():
+                raise ValueError(f'Nan {observed_values_obsval_col} values in observation data')
             observed_in_period_rs.reset_index(inplace=True)  # put obsprefix back
 
             missing_cols = set(observed_in_period.columns).difference(observed_in_period_rs.columns)

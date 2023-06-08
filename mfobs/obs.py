@@ -526,9 +526,13 @@ def aggregrate_to_period(data, start, end, obsnme_suffix,
         return data_in_period_rs
     data_in_period.sort_values(by=['obsprefix', 'datetime'], inplace=True)
     if 'n' not in data_in_period.columns:
-        data_in_period['n'] = 1
+        data_in_period['n'] = 1    
     by_site = data_in_period.groupby('obsprefix')
-    data_in_period_rs = getattr(by_site, aggregrate_observed_values_method)()
+    data_in_period_rs = by_site.first()
+    data_cols = [c for c, dtype in data_in_period.dtypes.items() 
+                    if 'float' in dtype.name]
+    for c in data_cols:
+        data_in_period_rs[c] = getattr(by_site[c], aggregrate_observed_values_method)()
     data_in_period_rs['n'] = by_site.n.sum()
     data_in_period_rs['datetime'] = pd.Timestamp(end)
     data_in_period_rs.reset_index(inplace=True)  # put obsprefix back
@@ -1192,7 +1196,7 @@ def get_annual_means(base_data,
     
     grouped = base_data.groupby([base_data['site_no'], base_data['datetime'].dt.year])
     aggregated = grouped.first()
-    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
     aggregated['n'] = grouped.count().iloc[:, 0]
@@ -1309,7 +1313,7 @@ def get_monthly_means(base_data,
                                  base_data['datetime'].dt.year, 
                                  base_data['datetime'].dt.month])
     aggregated = grouped.first()
-    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
     aggregated['n'] = grouped.count().iloc[:, 0]
@@ -1425,7 +1429,7 @@ def get_mean_monthly(base_data,
     grouped = base_data.groupby([base_data['site_no'],
                                  base_data['datetime'].dt.month])
     aggregated = grouped.first()
-    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
     for c in data_cols:
         aggregated[c] = grouped[c].mean()
     aggregated['n'] = grouped.count().iloc[:, 0]
@@ -1538,7 +1542,7 @@ def get_log10_observations(base_data,
     base_data = base_data.loc[keep].copy()
     
     log_base_data = base_data.copy()
-    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
     for c in data_cols:
         log_base_data[c] = np.log10(base_data[c])
         log_base_data.loc[base_data[c] == 0, c] = fill_zeros_with # handle zero values
@@ -1656,7 +1660,7 @@ def get_baseflow_observations(base_data,
     base_data = base_data.loc[keep].copy()
     
     bf_base_data = base_data.copy()
-    data_cols = [c for c, dtype in base_data.dtypes.iteritems() if 'float' in dtype.name]
+    data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
     bf_base_data.index = pd.to_datetime(bf_base_data['datetime'])
     
     dfs = []

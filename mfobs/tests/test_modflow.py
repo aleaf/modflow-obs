@@ -61,8 +61,8 @@ def test_get_perioddata(tdis_file, sto_file, start_date, end_date,
     if not include_timesteps:
         elapsed_time = np.cumsum(results['perlen'].values) -1
         elapsed_time[0] = 1
-        assert results['start_datetime'].dtype == np.object
-        assert results['end_datetime'].dtype == np.object
+        assert results['start_datetime'].dtype == object
+        assert results['end_datetime'].dtype == object
         expected_end_datetimes = pd.Timestamp(results['start_datetime'][0]) + \
             pd.to_timedelta(elapsed_time -1, unit='d')
         assert all(results['end_datetime'] == expected_end_datetimes.strftime('%Y-%m-%d'))

@@ -218,7 +218,8 @@ def get_summary_statistics(res_data, include_zero_weighted=False,
             }
         else:
             all_heads = {'all_heads': all_head_groups}
-            
+        
+        all_head_stats_subsets = []
         for col, subset in all_heads.items():
             group = df.loc[df.group.isin(subset)].copy()
             if df.group.isin(subset).any():
@@ -240,8 +241,9 @@ def get_summary_statistics(res_data, include_zero_weighted=False,
                     'avg_weight': group['weight'].mean(),
                         })
                 all_head_stats.name = col
-                summary = summary.append(all_head_stats)
-            summary['rmse_frac_range'] = summary['RMSE'] / summary['meas_range']
+                all_head_stats_subsets.append(pd.DataFrame(all_head_stats).T)
+        summary = pd.concat([summary] + all_head_stats_subsets)
+        summary['rmse_frac_range'] = summary['RMSE'] / summary['meas_range']
         processed_dfs.append(summary)
     df = pd.concat(processed_dfs)
     df['weighting'] = ['zero-weighted' if avg_weight == 0 else 'weighted' 
@@ -366,7 +368,7 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
         
     if not isinstance(obs_output, pd.DataFrame):
         df = pd.read_csv(obs_output, delim_whitespace=True, 
-                             dtype={'obsprefix': np.object})
+                             dtype={'obsprefix': object})
     else:
         df = obs_output
     
@@ -394,7 +396,7 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
     outfile.parent.mkdir(parents=True, exist_ok=True)
     
     if not isinstance(obs_info, pd.DataFrame):
-        meta = pd.read_csv(obs_info, dtype={meta_obsprefix_col: np.object})
+        meta = pd.read_csv(obs_info, dtype={meta_obsprefix_col: object})
     else:
         meta = obs_info.copy()
     meta['geometry'] = [Point(x, y) for x, y in zip(meta[meta_x_col], meta[meta_y_col])]

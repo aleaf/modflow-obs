@@ -51,8 +51,20 @@ def get_gwf_obs_input(gwf_obs_input_file, gwf_obs_block=None):
         with open(gwf_obs_input_file) as src:
             for line in src:
                 if 'BEGIN continuous' in line:
+                    # read whole file with pandas.read_csv
+                    # skipping over any lines that can't be read
+                    # (MODFLOW 6 block headers and footers)
                     df = pd.read_csv(src, delim_whitespace=True, header=None,
-                                     error_bad_lines=False)
+                                     on_bad_lines='skip')
+                    # remove the MODFLOW 6 block headers and footers
+                    # if they were included in the dataframe
+                    bad_lines = pd.to_numeric(df[2], errors='coerce').isna()
+                    df = df.loc[~bad_lines].copy()
+                    # enfore ints for index values
+                    # (pandas will cast to float if there are nans)
+                    df[[2, 3, 4]] = df[[2, 3, 4]].astype(int)
+        if df.isna().any().any():
+            raise ValueError(f"Nan values in {gwf_obs_input_file}; check input.")
     elif isinstance(gwf_obs_block, int):    
         with open(gwf_obs_input_file) as src:
             begin_idxs = []
