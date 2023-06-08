@@ -1,7 +1,6 @@
 name: mfobs_ci
 channels:
 - conda-forge
-- defaults
 dependencies:
 - python
 - ipython
@@ -23,4 +22,4 @@ dependencies:
 - pip
 - pip:
   - affine
-  - pyemu
+  - git+https://github.com/pypest/pyemu@develop
