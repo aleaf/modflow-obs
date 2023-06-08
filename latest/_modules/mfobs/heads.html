@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post64.dev0+g2209206 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post70.dev0+g9ddfc54 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post64.dev0+g2209206
+                0.post70.dev0+g9ddfc54
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -80,9 +80,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>mfobs.heads</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfobs.heads</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -316,10 +316,16 @@
 <span class="sd">        will be averaged to create additional observations with the suffix &#39;ss&#39;.</span>
 <span class="sd">        The steady-state averages will be matched to model output from the</span>
 <span class="sd">        stress period specified by ``label_period_as_steady_state``.</span>
-<span class="sd">        By default None, in which case no steady-state observatons are created.</span>
+<span class="sd">        By default None, in which case all observations are used </span>
+<span class="sd">        (if ``observed_values_datetime_col is None``) </span>
+<span class="sd">        or no steady-state observations </span>
+<span class="sd">        are created (``observed_values_datetime_col`` exists).</span>
 <span class="sd">    steady_state_period_end : str, optional</span>
 <span class="sd">        End date for the period representing steady-state conditions.</span>
-<span class="sd">        By default None, in which case no steady-state observatons are created.</span>
+<span class="sd">        By default None, in which case all observations are used </span>
+<span class="sd">        (if ``observed_values_datetime_col is None``) </span>
+<span class="sd">        or no steady-state observations </span>
+<span class="sd">        are created (``observed_values_datetime_col`` exists).</span>
 <span class="sd">    forecast_sites : str or sequence, optional</span>
 <span class="sd">        At these sites, observations will be created for each simulated value,</span>
 <span class="sd">        regardless is there is an observed equivalent. Can be supplied</span>
@@ -423,6 +429,8 @@
                                <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="n">observed_values_site_id_col</span><span class="p">:</span> <span class="nb">object</span><span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">observed</span> <span class="o">=</span> <span class="n">observed_values_file</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No observed values to process!&quot;</span><span class="p">)</span>
     <span class="n">observed</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">renames</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed</span><span class="p">[</span><span class="n">observed_values_site_id_col</span><span class="p">]</span>
 
@@ -466,6 +474,10 @@
         <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span>
         <span class="c1"># not necessarily True</span>
         <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;steady&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># flag for steady-state observations</span>
+    <span class="k">elif</span> <span class="n">label_period_as_steady_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+            <span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">][</span><span class="n">label_period_as_steady_state</span><span class="p">])</span>
+        <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;steady&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">perioddata</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">perioddata</span><span class="p">[</span><span class="s1">&#39;start_datetime&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
@@ -559,6 +571,14 @@
         <span class="n">per_column</span> <span class="o">=</span> <span class="s1">&#39;per&#39;</span>
         
     <span class="n">observed_simulated_combined</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># if no datetime column is supplied with observations,</span>
+    <span class="c1"># only make steady state obs</span>
+    <span class="k">if</span> <span class="n">observed_values_datetime_col</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> \
+        <span class="n">label_period_as_steady_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">label_period_as_steady_state</span>
+            <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
 
         <span class="c1"># get the equivalent observed values</span>
@@ -628,9 +648,15 @@
             <span class="k">if</span> <span class="s1">&#39;n&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
                 <span class="n">observed_in_period</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="n">by_site</span> <span class="o">=</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">)</span>
-            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">by_site</span><span class="p">,</span> <span class="n">aggregrate_observed_values_by</span><span class="p">)()</span>
+            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">by_site</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+            <span class="n">data_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">observed_in_period</span><span class="o">.</span><span class="n">dtypes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> 
+                         <span class="k">if</span> <span class="s1">&#39;float&#39;</span> <span class="ow">in</span> <span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_cols</span><span class="p">:</span>
+                <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">by_site</span><span class="p">[</span><span class="n">c</span><span class="p">],</span> <span class="n">aggregrate_observed_values_by</span><span class="p">)()</span>
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">by_site</span><span class="o">.</span><span class="n">n</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">observed_values_obsval_col</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Nan </span><span class="si">{</span><span class="n">observed_values_obsval_col</span><span class="si">}</span><span class="s1"> values in observation data&#39;</span><span class="p">)</span>
             <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># put obsprefix back</span>
 
             <span class="n">missing_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">observed_in_period</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
@@ -824,7 +850,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 07, 2022.
+      <span class="lastupdated">Last updated on Jun 08, 2023.
       </span></p>
   </div>
 

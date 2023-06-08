@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post64.dev0+g2209206 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post70.dev0+g9ddfc54 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post64.dev0+g2209206
+                0.post70.dev0+g9ddfc54
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -102,9 +102,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Modules</a> &raquo;</li>
-      <li>The general observation processing module</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Modules</a></li>
+      <li class="breadcrumb-item active">The general observation processing module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/api/mfobs.obs.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -381,6 +381,28 @@ which would yield <code class="docutils literal notranslate"><span class="pre">'
 (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
 should be a decimal format in the “new-style” string format
 (e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
+</dd>
+<dt><strong>label_period_as_steady_state</strong><span class="classifier">int, optional</span></dt><dd><p>Zero-based model stress period where observations will be
+assigned the suffix ‘ss’ instead of a date suffix.
+By default, None, in which case all model output is assigned
+a date suffix based on the start date of the stress period.
+Passed to <a class="reference internal" href="mfobs.modflow.html#mfobs.modflow.get_mf6_single_variable_obs" title="mfobs.modflow.get_mf6_single_variable_obs"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_mf6_single_variable_obs()</span></code></a>.</p>
+</dd>
+<dt><strong>steady_state_period_start</strong><span class="classifier">str, optional</span></dt><dd><p>Start date for the period representing steady-state conditions.
+Observations between <code class="docutils literal notranslate"><span class="pre">steady_state_period_start</span></code> and <code class="docutils literal notranslate"><span class="pre">steady_state_period_end</span></code>
+will be averaged to create additional observations with the suffix ‘ss’.
+The steady-state averages will be matched to model output from the
+stress period specified by <code class="docutils literal notranslate"><span class="pre">label_period_as_steady_state</span></code>.
+By default None, in which case all observations are used 
+(if <code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span> <span class="pre">is</span> <span class="pre">None</span></code>) 
+or no steady-state observations 
+are created (<code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span></code> exists).</p>
+</dd>
+<dt><strong>steady_state_period_end</strong><span class="classifier">str, optional</span></dt><dd><p>End date for the period representing steady-state conditions.
+By default None, in which case all observations are used 
+(if <code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span> <span class="pre">is</span> <span class="pre">None</span></code>) 
+or no steady-state observations 
+are created (<code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span></code> exists).</p>
 </dd>
 <dt><strong>forecast_sites</strong><span class="classifier">str or sequence, optional</span></dt><dd><p>At these sites, observations will be created for each simulated value,
 regardless is there is an observed equivalent. Can be supplied
@@ -1147,7 +1169,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 07, 2022.
+      <span class="lastupdated">Last updated on Jun 08, 2023.
       </span></p>
   </div>
 

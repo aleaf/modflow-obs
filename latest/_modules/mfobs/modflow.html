@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.modflow &mdash; modflow-obs 0.post64.dev0+g2209206 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post70.dev0+g9ddfc54 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -34,7 +34,7 @@
             <a href="../../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post64.dev0+g2209206
+                0.post70.dev0+g9ddfc54
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -80,9 +80,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-      <li>mfobs.modflow</li>
+      <li><a href="../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mfobs.modflow</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -145,8 +145,20 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s1">&#39;BEGIN continuous&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="c1"># read whole file with pandas.read_csv</span>
+                    <span class="c1"># skipping over any lines that can&#39;t be read</span>
+                    <span class="c1"># (MODFLOW 6 block headers and footers)</span>
                     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">delim_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                     <span class="n">error_bad_lines</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                                     <span class="n">on_bad_lines</span><span class="o">=</span><span class="s1">&#39;skip&#39;</span><span class="p">)</span>
+                    <span class="c1"># remove the MODFLOW 6 block headers and footers</span>
+                    <span class="c1"># if they were included in the dataframe</span>
+                    <span class="n">bad_lines</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+                    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="o">~</span><span class="n">bad_lines</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="c1"># enfore ints for index values</span>
+                    <span class="c1"># (pandas will cast to float if there are nans)</span>
+                    <span class="n">df</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nan values in </span><span class="si">{</span><span class="n">gwf_obs_input_file</span><span class="si">}</span><span class="s2">; check input.&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gwf_obs_block</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>    
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
             <span class="n">begin_idxs</span> <span class="o">=</span> <span class="p">[]</span>
@@ -256,10 +268,38 @@
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">column_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
 
 
+<div class="viewcode-block" id="get_site_no"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_site_no">[docs]</a><span class="k">def</span> <span class="nf">get_site_no</span><span class="p">(</span><span class="n">obsprefix</span><span class="p">,</span> <span class="n">obsprefix_includes_variable</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Parse observation site number from an observation prefix string, </span>
+<span class="sd">    which may include a variable at the end, delimited by a hyphen.</span>
+<span class="sd">    Also split off any part of the string after a period (&#39;.&#39;),</span>
+<span class="sd">    for example index instance numbers appended by pandas.</span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    Examples</span>
+<span class="sd">    ---------</span>
+<span class="sd">    &gt;&gt;&gt; get_site_no(&#39;15266500&#39;)</span>
+<span class="sd">    &#39;15266500&#39;</span>
+<span class="sd">    &gt;&gt;&gt; get_site_no(&#39;15266500-flow&#39;)</span>
+<span class="sd">    &#39;15266500&#39;</span>
+<span class="sd">    &gt;&gt;&gt; get_site_no(&#39;bc-east-fork-s12-flow&#39;)</span>
+<span class="sd">    &#39;bc-east-fork-s12&#39;</span>
+<span class="sd">    &gt;&gt;&gt; get_site_no(&#39;bc-east-fork-s12&#39;, obsprefix_includes_variable=False)</span>
+<span class="sd">    &#39;bc-east-fork-s12&#39;</span>
+<span class="sd">    &gt;&gt;&gt; get_site_no(&#39;15266500.1&#39;)</span>
+<span class="sd">    &#39;15266500&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">obsprefix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">obsprefix_includes_variable</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">obsprefix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+        
+        
 <div class="viewcode-block" id="get_mf6_single_variable_obs"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_mf6_single_variable_obs">[docs]</a><span class="k">def</span> <span class="nf">get_mf6_single_variable_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
                                 <span class="n">model_output_file</span><span class="p">,</span>
                                 <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                 <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                <span class="n">names_include_variable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                 <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                 <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
@@ -293,9 +333,19 @@
 <span class="sd">        Variable name for observations. If supplied, observation prefixes will</span>
 <span class="sd">        be named following the format &lt;site number&gt;-&lt;variable&gt;. </span>
 <span class="sd">        If observations are already set up in MODFLOW</span>
-<span class="sd">        with the format &lt;site number&gt;-&lt;variable&gt;, then this is not needed.</span>
+<span class="sd">        with the format &lt;site number&gt;-&lt;variable&gt; *and* `names_include_variable=True`, </span>
+<span class="sd">        then this is not needed.</span>
 <span class="sd">        By default, None, in which case observation prefixes are the same </span>
 <span class="sd">        as the site numbers.</span>
+<span class="sd">    names_include_variable : bool</span>
+<span class="sd">        Option to indicate that the names in the MODFLOW observation input</span>
+<span class="sd">        have the format &lt;site number&gt;-&lt;variable&gt; (which allows for multiple</span>
+<span class="sd">        observations of different variables at a site). In this case,</span>
+<span class="sd">        observation prefixes will be named from the MODFLOW observation names,</span>
+<span class="sd">        and any `variable` argument will be ignored.</span>
+<span class="sd">        By default, False, in which case the MODFLOW observation names are assumed</span>
+<span class="sd">        to be the site numbers. Observation prefixes will be formulated from the</span>
+<span class="sd">        MODFLOW names and variable.</span>
 <span class="sd">    abs : bool, optional</span>
 <span class="sd">        Option to convert simulated values to absolute values. For example,</span>
 <span class="sd">        downstream-flow observations, which by convention are reported as </span>
@@ -365,9 +415,22 @@
     <span class="n">stacked</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;perioddata_time&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
     <span class="n">simval_col</span> <span class="o">=</span> <span class="s1">&#39;sim_obsval&#39;</span>
     <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="n">simval_col</span><span class="p">]</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> 
+    
+    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_site_no</span><span class="p">(</span>
+        <span class="n">s</span><span class="p">,</span> <span class="n">obsprefix_includes_variable</span><span class="o">=</span><span class="n">names_include_variable</span><span class="p">)</span> 
                           <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="p">]</span>
-    <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">variable</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stacked</span><span class="o">.</span><span class="n">obsprefix</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">names_include_variable</span><span class="p">:</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;names_include_variable=True, &#39;</span>
+                                 <span class="sa">f</span><span class="s1">&#39;but observation prefix: </span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1"> only has one component.&#39;</span>
+                                 <span class="s1">&#39;When names_include_variable=True, observation prefixes &#39;</span>
+                                 <span class="s1">&#39;are expected to be in the format &lt;site number&gt;-&lt;variable&gt;.&#39;</span><span class="p">)</span>
+            <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variables</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">variable</span>
     <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">periods</span><span class="p">[</span><span class="n">time</span><span class="p">]</span> <span class="k">for</span> <span class="n">time</span> <span class="ow">in</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>
     <span class="n">stacked</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
 
@@ -1205,7 +1268,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 07, 2022.
+      <span class="lastupdated">Last updated on Jun 08, 2023.
       </span></p>
   </div>
 

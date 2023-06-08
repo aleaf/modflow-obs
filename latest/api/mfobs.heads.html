@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The head observations module &mdash; modflow-obs 0.post64.dev0+g2209206 documentation</title>
+  <title>The head observations module &mdash; modflow-obs 0.post70.dev0+g9ddfc54 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
@@ -37,7 +37,7 @@
             <a href="../index.html" class="icon icon-home"> modflow-obs
           </a>
               <div class="version">
-                0.post64.dev0+g2209206
+                0.post70.dev0+g9ddfc54
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -94,9 +94,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="index.html">Modules</a> &raquo;</li>
-      <li>The head observations module</li>
+      <li><a href="../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Modules</a></li>
+      <li class="breadcrumb-item active">The head observations module</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/api/mfobs.heads.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -162,7 +162,7 @@ matched to average values for the steady-state time period.</p>
 and ‘end_datetime’ (end date for the stress period).</p>
 </dd>
 <dt><strong>modelgrid_transform</strong><span class="classifier">str</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
-of the model grid. Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.post357+g6471806)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+of the model grid. Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.2.0.post13+g88e3569)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
 via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
@@ -357,10 +357,16 @@ Observations between <code class="docutils literal notranslate"><span class="pre
 will be averaged to create additional observations with the suffix ‘ss’.
 The steady-state averages will be matched to model output from the
 stress period specified by <code class="docutils literal notranslate"><span class="pre">label_period_as_steady_state</span></code>.
-By default None, in which case no steady-state observatons are created.</p>
+By default None, in which case all observations are used 
+(if <code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span> <span class="pre">is</span> <span class="pre">None</span></code>) 
+or no steady-state observations 
+are created (<code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span></code> exists).</p>
 </dd>
 <dt><strong>steady_state_period_end</strong><span class="classifier">str, optional</span></dt><dd><p>End date for the period representing steady-state conditions.
-By default None, in which case no steady-state observatons are created.</p>
+By default None, in which case all observations are used 
+(if <code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span> <span class="pre">is</span> <span class="pre">None</span></code>) 
+or no steady-state observations 
+are created (<code class="docutils literal notranslate"><span class="pre">observed_values_datetime_col</span></code> exists).</p>
 </dd>
 <dt><strong>forecast_sites</strong><span class="classifier">str or sequence, optional</span></dt><dd><p>At these sites, observations will be created for each simulated value,
 regardless is there is an observed equivalent. Can be supplied
@@ -457,7 +463,7 @@ to avoid potential case issues.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 07, 2022.
+      <span class="lastupdated">Last updated on Jun 08, 2023.
       </span></p>
   </div>
 
