@@ -338,7 +338,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     if len(observed) == 0:
         raise ValueError("No observed values to process!")
     observed.rename(columns=renames, inplace=True)
-    observed['obsprefix'] = observed[observed_values_site_id_col]
+    observed['obsprefix'] = observed[observed_values_site_id_col].str.lower()
 
     # read in the observed values metadata
     if observed_values_metadata_file is not None:
@@ -348,7 +348,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         else:
             metadata = observed_values_metadata_file
         metadata.rename(columns=renames, inplace=True)
-        metadata['obsprefix'] = metadata[observed_values_site_id_col]
+        metadata['obsprefix'] = metadata[observed_values_site_id_col].str.lower()
 
         # join the metadata to the observed data
         metadata.index = metadata['obsprefix'].values
@@ -357,14 +357,21 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                      if c in metadata.columns]
         observed = observed.join(metadata[join_cols], rsuffix='_m')
         assert not observed[['x', 'y']].isna().any().any()
+        
+        # make a dictionary of site metadata for possible use later
+        temp = metadata.copy()
+        temp.index = temp['obsprefix']
+        site_info_dict = temp.to_dict()
+    else:
+        observed.index = observed['obsprefix'].values
+        # make a dictionary of site metadata for possible use later
+        temp = observed.copy()
+        temp.index = temp['obsprefix']
+        site_info_dict = temp.to_dict()
 
     # convert obs names and prefixes to lower case
-    observed['obsprefix'] = observed['obsprefix'].str.lower()
+    #observed['obsprefix'] = observed['obsprefix'].str.lower()
     
-    # make a dictionary of site metadata for possible use later
-    temp = observed.copy()
-    temp.index = temp['obsprefix'].str.lower()
-    site_info_dict = temp.to_dict()
     # delete some columns from the observed values file
     # which result in values assigned by the function 
     # later being overwritten with nans
@@ -401,11 +408,15 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     
     # no forecast observations;
     # drop sites that don't have an observed/sim equivalent pair
-    no_info_sites = set(results.obsprefix).symmetric_difference(observed.obsprefix)
+    if observed_values_metadata_file is not None:
+        observed_obsprefixes = set(metadata.obsprefix)
+    else:
+        observed_obsprefixes = set(observed.obsprefix)
+    no_info_sites = set(results.obsprefix).symmetric_difference(observed_obsprefixes)
     if forecast_sites == 'all':
         # forecast observations at all simulated sites
         # (only drop sites that aren't simulated)
-        no_info_sites = set(observed.obsprefix).difference(results.obsprefix)
+        no_info_sites = observed_obsprefixes.difference(results.obsprefix)
     elif forecast_sites is not None:
         # remove selected forecast sites from 'no_info' sites to drop
         forecast_sites = {s.lower() for s in forecast_sites}
@@ -438,21 +449,31 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             botm = botm_arrays
 
     # get the x and y location and open interval corresponding to each head observation
-    x = dict(zip(observed['obsprefix'], observed['x']))
-    y = dict(zip(observed['obsprefix'], observed['y']))
+    if observed_values_metadata_file is not None:
+        x = dict(zip(metadata['obsprefix'], metadata['x']))
+        y = dict(zip(metadata['obsprefix'], metadata['y']))
+    else:
+        x = dict(zip(observed['obsprefix'], observed['x']))
+        y = dict(zip(observed['obsprefix'], observed['y']))
     results['x'] = [x[obsprefix] for obsprefix in results.obsprefix]
     results['y'] = [y[obsprefix] for obsprefix in results.obsprefix]
 
     # get head values based on T-weighted average of open interval
     if observed_values_layer_col is None:
         if 'screen_top' in observed.columns:
-            screen_top = dict(zip(observed['obsprefix'], observed['screen_top']))
+            if observed_values_metadata_file is not None:
+                screen_top = dict(zip(metadata['obsprefix'], metadata['screen_top']))
+            else:
+                screen_top = dict(zip(observed['obsprefix'], observed['screen_top']))
             if 'screen_botm' not in observed.columns:
                 screen_botm = screen_top
         elif 'screen_botm' not in observed.columns:
             raise ValueError('Observed values need at least a screen top or screen bottom column')
         if 'screen_botm' in observed.columns:
-            screen_botm = dict(zip(observed['obsprefix'], observed['screen_botm']))
+            if observed_values_metadata_file is not None:
+                screen_botm = dict(zip(metadata['obsprefix'], metadata['screen_botm']))
+            else:
+                screen_botm = dict(zip(observed['obsprefix'], observed['screen_botm']))
             if 'screen_top' not in observed.columns:
                 screen_top = screen_botm
         elif 'screen_top' not in observed.columns:

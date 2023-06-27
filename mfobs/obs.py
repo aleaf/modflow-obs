@@ -940,6 +940,7 @@ def get_temporal_differences(base_data, perioddata,
     so a positive value indicates an increase.
     """
     base_data = base_data.copy()
+    base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
@@ -1086,7 +1087,7 @@ def get_temporal_differences(base_data, perioddata,
     period_diffs = period_diffs[cols].copy()
 
     # drop observations with no difference (first observations at each site)
-    period_diffs.dropna(axis=0, subset=['obsval', 'sim_obsval'], inplace=True)
+    period_diffs.dropna(axis=0, subset=['sim_obsval'], inplace=True)
     
     # drop any excluded obs
     if exclude_obs is not None:
