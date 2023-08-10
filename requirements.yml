@@ -1,7 +1,6 @@
 name: modflow-obs
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - python
   - ipython

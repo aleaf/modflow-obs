@@ -32,3 +32,17 @@ def test_set_period_start_end_dates(test_data_path):
     pd.testing.assert_series_equal(pd.to_datetime(perioddata['start_datetime']), 
                                    pd.to_datetime(perioddata['end_datetime']), 
                                    check_names=False)
+    
+    # test without time column
+    perioddata = pd.DataFrame({
+        'start_datetime': pd.date_range('2020-01-01', '2020-12-31', freq='MS'),
+        'end_datetime': pd.date_range('2020-01-01', '2020-12-31', freq='M')
+    })
+    set_period_start_end_dates(perioddata)
+    assert 'time' in perioddata.columns
+    td = pd.to_datetime(perioddata['end_datetime'].values[-1]) - \
+            pd.to_datetime(perioddata['start_datetime'][0])
+    # need to add the +1, because above time delta 
+    # is from the end of the first day to the end of the last day;
+    # time should be elapsed from the start of the first day
+    assert td.days == perioddata['time'].values[-1] + 1

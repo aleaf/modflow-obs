@@ -18,6 +18,7 @@ def get_base_obs(perioddata,
             model_output,
             observed_values_file,
             variable_name=None,
+            simulated_values_column='sim_obsval',
             observed_values_metadata_file=None,
             observed_values_site_id_col='obsprefix',
             observed_values_datetime_col='datetime',
@@ -41,27 +42,29 @@ def get_base_obs(perioddata,
     ----------
     perioddata : str, pathlike or DataFrame
         Path to csv file or pandas DataFrame with start/end dates for stress periods or timesteps. 
-        Must have the following columns:
+        Must have a `start_datetime` and either a `time` column 
+        (of elapsed times at the end of each period, in days), 
+        or an `end_datetime` column of period end dates.
         
-        =================== =============================================================
-        time                modflow simulation time, in days
+        =================== ======================================================
         start_datetime      start date for each stress period or timestep
-        end_datetime        end date for each stress period or timestep
-        =================== =============================================================
+        end_datetime        (optional) end date for each stress period or timestep
+        time                (optional) elapsed simulation time at the end of each 
+                            period, in days
+        =================== =======================================================
 
     model_output : DataFrame
         DataFrame with one head observation per row, with the following columns:
 
-        =================== =============================================================
-        site_no             unique identifier for each site
-        variable            variable name for the simulated values
-        obsprefix           prefix of observation name (<site_no>-<variable>)
-        sim_<variable_name> column with simulated values
-        datetime            pandas datetimes, based on stress period end date
-        layer               zero-based model layer
-        obsnme              observation name based on format of <obsprefix>_'%Y%m'
-
-        =================== =============================================================
+        ======================= =============================================================
+        site_no                 unique identifier for each site
+        variable                variable name for the simulated values
+        obsprefix               prefix of observation name (<site_no>-<variable>)
+        simulated_values_column column with simulated values
+        datetime                pandas datetimes, based on stress period end date
+        layer                   zero-based model layer
+        obsnme                  observation name based on format of <obsprefix>_'%Y%m'
+        ======================= =============================================================
         
         Usually, a helper function such as :func:`mfobs.modflow.get_mf6_single_variable_obs`
         or other custom code will be used to produce model_output from the 
@@ -94,7 +97,8 @@ def get_base_obs(perioddata,
         By default, None, in which case the `obsprefix` values in the `model_output`
         table are assumed to be the site numbers; prefixes for observations
         in `observed_values_file` will also then be site numbers.
-        
+    simulated_values_column : str, optional
+        Column in model output with simulated values
     observed_values_metadata_file : str, pathlike or DataFrame, optional
         Table with site information for the observed values.
 
@@ -204,13 +208,14 @@ def get_base_obs(perioddata,
         outpath = Path(outfile).parent
 
     #obs_values_column = 'obsval'
-    sim_values_column = 'sim_obsval'
-    if variable_name is None:
-        obs_values_column = 'obsval'  #'obs_value'
-        #sim_values_column = 'sim_value'
-    else:
-        obs_values_column = 'obs_' + variable_name  # output column with observed values
-        #sim_values_column = 'sim_' + variable_name  # output column with simulated equivalents to observed values
+    output_sim_values_column = 'sim_obsval'
+    output_obs_values_column = 'obsval'
+    #if variable_name is None:
+    #    obs_values_column = 'obsval'  #'obs_value'
+    #    #sim_values_column = 'sim_value'
+    #else:
+    #    obs_values_column = 'obs_' + variable_name  # output column with observed values
+    #    #sim_values_column = 'sim_' + variable_name  # output column with simulated equivalents to observed values
 
     # read in/set up the perioddata table
     if not isinstance(perioddata, pd.DataFrame):
@@ -274,8 +279,10 @@ def get_base_obs(perioddata,
     temp = observed.copy()
     temp.index = temp['obsprefix'].str.lower()
     site_info_dict = temp.to_dict()
-    if 'datetime' in site_info_dict:
-        del site_info_dict['datetime']
+    for col in 'datetime', 'obsval', observed_values_obsval_col:
+        if col in site_info_dict:
+            del site_info_dict[col]
+        
     del temp
 
     # cast datetimes to pandas datetimes
@@ -409,14 +416,14 @@ def get_base_obs(perioddata,
                             'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
                 
-        observed_in_period_rs[sim_values_column] = sim_in_period_rs.reindex(observed_in_period_rs.index)[sim_values_column]
+        observed_in_period_rs[output_sim_values_column] = sim_in_period_rs.reindex(observed_in_period_rs.index)[simulated_values_column]
 
         # add stress period and observed values
         observed_in_period_rs['per'] = r['per']
         if per_column == 'unique_timestep':
             observed_in_period_rs['timestep'] = r['timestep']
             observed_in_period_rs['unique_timestep'] = r['unique_timestep']
-        observed_in_period_rs[obs_values_column] = observed_in_period_rs[observed_values_obsval_col]
+        observed_in_period_rs[output_obs_values_column] = observed_in_period_rs[observed_values_obsval_col]
         observed_simulated_combined.append(observed_in_period_rs)
 
     # Combined DataFrame of observed heads and simulated equivalents
@@ -454,11 +461,11 @@ def get_base_obs(perioddata,
     else:  
         # nans are where sites don't have observation values for that period
         # or sites that are in other model (inset or parent)
-        obsdata.dropna(subset=[obs_values_column], axis=0, inplace=True)
+        obsdata.dropna(subset=[output_obs_values_column], axis=0, inplace=True)
 
     # label forecasts in own group
     if forecast_sites is not None:
-        is_forecast = obsdata[obs_values_column].isna()
+        is_forecast = obsdata[output_obs_values_column].isna()
         obsdata.loc[is_forecast, 'obgnme'] += '-forecast'
     
         # cull forecasts to specified date window
@@ -470,7 +477,7 @@ def get_base_obs(perioddata,
             keep_forecasts &= (obsdata['datetime'] <= forecast_end_date)
         #drop = drop & is_forecast
         #head_obs = head_obs.loc[~drop].copy()
-        #is_forecast = head_obs[obs_values_column].isna()
+        #is_forecast = head_obs[output_obs_values_column].isna()
         if forecast_sites != 'all':
             keep_forecasts &= obsdata['obsprefix'].isin(forecast_sites)
         # option to only include forecast obs
@@ -485,10 +492,11 @@ def get_base_obs(perioddata,
         obsdata = obsdata.loc[keep].copy()
         
     # add standard obsval and obgmne columns
-    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', obs_values_column, sim_values_column,
+    columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
+               output_obs_values_column, output_sim_values_column,
                'uncertainty', 'obgnme']
-    if obs_values_column != 'obsval':
-        obsdata['obsval'] = obsdata[obs_values_column]
+    if output_obs_values_column != 'obsval':
+        obsdata['obsval'] = obsdata[output_obs_values_column]
         columns.insert(-1, 'obsval')
 
 
@@ -509,7 +517,7 @@ def get_base_obs(perioddata,
         # write the instruction file
         if write_ins:
             write_insfile(base_obs, str(outfile) + '.ins', obsnme_column='obsnme',
-                          simulated_obsval_column=sim_values_column, index=False)
+                          simulated_obsval_column=output_sim_values_column, index=False)
     return base_obs
 
 
@@ -565,7 +573,7 @@ def get_spatial_differences(base_data, perioddata,
         Table of preprocessed observations, such as that produced by
         :func:`mfobs.obs.get_base_obs`. Must have the following columns:
         
-        =================== =============================================================
+        =================== ========================================================================
         datetime            pandas datetimes, based on stress period end date
         per                 MODFLOW stress period
         site_no             unique site identifier
@@ -574,8 +582,9 @@ def get_spatial_differences(base_data, perioddata,
         obsval              observed values
         sim_obsval          simulated equivalents to observed values
         obgnme              observation group name
-
-        =================== =============================================================
+        screen_top          (optional) well open interval top; required if ``use_gradients=True``
+        screen_botm         (optional) well open interval bottom; required if ``use_gradients=True``
+        =================== ========================================================================
         
         1) where obsprefix is assumed to be formatted as <site_no>-<variable> or simply <site_no>
         
@@ -749,6 +758,9 @@ def get_spatial_differences(base_data, perioddata,
                     site_obs[f"{sim_values_col}1"] = key_values[sim_values_col]
                     if 'screen_top' in key_values.columns:
                         site_obs['screen_top1'] = key_values['screen_top']
+                        if use_gradients and 'screen_botm' not in key_values.columns:
+                            raise ValueError("use_gradients=True requires both screen_top "
+                                             "and screen_botm columns in base_data")
                     if 'screen_botm' in key_values.columns:
                         site_obs['screen_botm1'] = key_values['screen_botm']
                     if 'layer2' in site_obs.columns:
@@ -760,9 +772,9 @@ def get_spatial_differences(base_data, perioddata,
 
                     # get a screen midpoint and add gradient
                     screen_midpoint1 = None
-                    if {'screen_top1', 'screen_botm1'}.intersection(site_obs.columns):
+                    if use_gradients and {'screen_top1', 'screen_botm1'}.intersection(site_obs.columns):
                         screen_midpoint1 = site_obs[['screen_top1', 'screen_botm1']].mean(axis=1)
-                    if {'screen_top2', 'screen_botm2'}.intersection(site_obs.columns):
+                    if use_gradients and {'screen_top2', 'screen_botm2'}.intersection(site_obs.columns):
                         screen_midpoint2 = site_obs[['screen_top2', 'screen_botm2']].mean(axis=1)
                         if screen_midpoint1 is not None:
                             site_obs['dz'] = (screen_midpoint1 - screen_midpoint2)

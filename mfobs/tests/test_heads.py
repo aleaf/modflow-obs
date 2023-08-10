@@ -247,7 +247,7 @@ def test_get_spatial_head_difference_obs(head_obs, head_obs_input, write_ins):
                   ['datetime', 'per', 'obsprefix',
                    'obsnme1', 'base_obsval1', 'base_sim_obsval1', 'screen_top1', 'screen_botm1', 'layer1',
                    'obsnme2', 'base_obsval2', 'base_sim_obsval2', 'screen_top2', 'screen_botm2', 'layer2',
-                   'obs_diff', 'sim_diff', 'dz', 'obs_grad', 'sim_grad', 'obsnme',
+                   'obs_diff', 'sim_diff', 'obsnme',
                    'obsval', 'sim_obsval', 'obgnme', 'type'])
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
