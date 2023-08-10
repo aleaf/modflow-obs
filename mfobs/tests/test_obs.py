@@ -132,10 +132,10 @@ def test_get_flux_obs(flux_obs):
 
     results = flux_obs
     expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
-                        'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
+                        'obsval', 'sim_obsval', 'obgnme']
     assert np.all(results.columns == expected_columns)
     assert len(set(results.obsnme)) == len(results)
-    assert not results.obs_flux.isna().any()
+    assert not results['obsval'].isna().any()
     assert not results.obsnme.str.isupper().any()
 
     # check sorting
@@ -146,10 +146,10 @@ def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
 
     results = flux_obs_per_based_suffixes
     expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
-                        'obs_flux', 'sim_obsval', 'obsval', 'obgnme']
+                        'obsval', 'sim_obsval', 'obgnme']
     assert np.all(results.columns == expected_columns)
     assert len(set(results.obsnme)) == len(results)
-    assert not results.obs_flux.isna().any()
+    assert not results['obsval'].isna().any()
     assert not results.obsnme.str.isupper().any()
 
     # check sorting
@@ -280,8 +280,8 @@ def test_get_annual_means(flux_obs):
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
-                ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
-                 'sim_obsval', 'obsval', 'obgnme', 'n']
+                ['datetime', 'year', 'site_no', 'obsprefix', 'obsnme', 
+                 'obsval', 'sim_obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -304,7 +304,7 @@ def test_mean_monthly(flux_obs):
     
     assert np.all(results.columns ==
                 ['datetime', 'month', 'site_no', 'obsprefix', 'obsnme', 
-                 'obs_flux', 'sim_obsval', 'obsval', 'obgnme', 'n']
+                 'obsval', 'sim_obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -325,8 +325,8 @@ def test_get_monthly_means(flux_obs):
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
-                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
-                 'sim_obsval', 'obsval', 'obgnme', 'n']
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 
+                 'obsval', 'sim_obsval', 'obgnme', 'n']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -343,8 +343,8 @@ def test_log_obs(flux_obs):
     assert np.allclose(results[['obsval', 'sim_obsval']].values, expected.values)
     
     assert np.all(results.columns ==
-                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flux',
-                 'sim_obsval', 'obsval', 'obgnme']
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 
+                 'obsval', 'sim_obsval', 'obgnme']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -381,8 +381,8 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
     results = get_baseflow_observations(base_obs)
     
     assert np.all(results.columns ==
-                ['datetime', 'site_no', 'obsprefix', 'obsnme', 'obs_flow',
-                 'sim_obsval', 'obsval', 'obgnme']
+                ['datetime', 'site_no', 'obsprefix', 'obsnme', 
+                 'obsval', 'sim_obsval', 'obgnme']
                 )
     assert len(set(results.obsnme)) == len(results)
     assert not results.obsval.isna().any()
@@ -494,7 +494,7 @@ def test_get_forecast_obs(flux_obs_input, forecast_sites,
     observed_values = pd.read_csv(flux_obs_input.observed_values_file,
                                   dtype={'site_no': object})
     observed_values.index = pd.to_datetime(observed_values['datetime'])
-    observed_values = observed_values.loc[:'2009']
+    observed_values = observed_values.loc[observed_values.index < '2010']
     
     results = get_base_obs(flux_obs_input.perioddata,
                             model_output=sfr_results,
@@ -526,7 +526,7 @@ def test_get_forecast_obs(flux_obs_input, forecast_sites,
     # the resulting dataframe should be entirely filled
     # except for site 07288580, which isn't in the observed data
     assert not results.loc[results.obsprefix.isin(observed_values['obsprefix'])]\
-        .drop(['obsval', 'obs_flux'], axis=1).isna().any().any()
+        .drop(['obsval'], axis=1).isna().any().any()
     
     # if forecast_sites != 'all':
     # check that only forecasts for specified sites were generated

@@ -42,7 +42,9 @@ def set_period_start_end_dates(perioddata):
     ----------
     perioddata : DataFrame
         Perioddata table produced by modflow-setup. Must have
-        'per', 'start_datetime', and 'perlen' columns.
+        'start_datetime' and either a 'time' column 
+        (of elapsed times at the end of each period, in days), 
+        or an 'end_datetime' column of period end dates.
 
     Returns
     -------
@@ -52,13 +54,33 @@ def set_period_start_end_dates(perioddata):
     -----
     Assumes time units of days.
     """
+    orig_perioddata = perioddata.copy()
+    if 'time' not in perioddata.columns and perioddata.index.name != 'time':
+        timedeltas = perioddata['end_datetime'] - perioddata['start_datetime'].min()
+        perioddata['time'] = timedeltas.dt.days + 1
     if perioddata.index.name == 'time':
         perioddata.sort_index(inplace=True)
     else:
         perioddata.sort_values(by='time', inplace=True)
-    start_datetimes = pd.to_datetime(perioddata.start_datetime.values)
+    start_datetimes = pd.to_datetime(perioddata['start_datetime'].values)
     perlen = np.array(perioddata['time'].tolist()[:1] + perioddata['time'].diff().tolist()[1:])
     new_end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
+    # fix any invalid end_datetimes resulting from the assumption above
+    # (that perlen is between successive start dates)
+    # there may be gaps between the periods, 
+    # for example in a successive steady-state simulation
+    invalid_end_datetimes = new_end_datetimes[:-1] > perioddata['start_datetime'][1:]
+    if np.any(invalid_end_datetimes):
+        next_start_datetimes = perioddata['start_datetime'][1:][invalid_end_datetimes]
+        corr_end_datetimes = pd.to_datetime(next_start_datetimes) - pd.Timedelta(1, 'D')
+        # make boolean vector of full length
+        # (including last end datetime, which can't be invalid)
+        invalid_end_datetimes = invalid_end_datetimes.tolist() + [False]
+        # cast new_end_datetimes to a Series so that we can assign values via a slice
+        new_end_datetimes = pd.Series(new_end_datetimes)
+        new_end_datetimes[invalid_end_datetimes] = corr_end_datetimes.tolist()
+        # recast to DateTimeIndex for consistnecy with no invalid_end_datetimes case
+        new_end_datetimes = pd.DatetimeIndex(new_end_datetimes)
     perioddata['start_datetime'] = start_datetimes.strftime('%Y-%m-%d')
     perioddata['end_datetime'] = new_end_datetimes.strftime('%Y-%m-%d')
 
