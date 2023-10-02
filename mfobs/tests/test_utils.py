@@ -43,6 +43,7 @@ def test_set_period_start_end_dates(test_data_path):
     td = pd.to_datetime(perioddata['end_datetime'].values[-1]) - \
             pd.to_datetime(perioddata['start_datetime'][0])
     # need to add the +1, because above time delta 
-    # is from the end of the first day to the end of the last day;
+    # is from the beginning of the first day to the beginning of the last day;
     # time should be elapsed from the start of the first day
-    assert td.days == perioddata['time'].values[-1] + 1
+    # through the end of the last day
+    assert td.days + 1 == perioddata['time'].values[-1]
