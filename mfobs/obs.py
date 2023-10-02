@@ -46,7 +46,7 @@ def get_base_obs(perioddata,
         (of elapsed times at the end of each period, in days), 
         or an `end_datetime` column of period end dates.
         
-        =================== ======================================================
+        =================== =======================================================
         start_datetime      start date for each stress period or timestep
         end_datetime        (optional) end date for each stress period or timestep
         time                (optional) elapsed simulation time at the end of each 
