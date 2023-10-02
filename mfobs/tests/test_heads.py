@@ -9,11 +9,13 @@ import pandas as pd
 import pytest
 import affine
 from mfobs.heads import get_head_obs
-from mfobs.modflow import get_modelgrid_transform
+from mfobs.modflow import (
+    get_modelgrid_transform, 
+    get_ij, 
+    get_mf6_single_variable_obs)
 from mfobs.obs import (get_spatial_differences, 
                        get_temporal_differences, 
                        )
-
 
 @pytest.fixture
 def shellmound_grid_transform(shellmound_data_path):
@@ -325,3 +327,88 @@ def test_get_forecast_head_obs(head_obs_input, forecast_sites,
         assert not np.any(head_obs.loc[head_obs['obsval'].isna(), 'datetime'] >\
             forecast_end_date)
     
+
+def read_arrays(sorted_list):
+    arrays = []
+    for f in sorted_list:
+        arrays.append(np.loadtxt(f))
+    return np.array(arrays)
+
+
+def test_t_weighted_head_averaging(test_data_path, head_obs_input, head_obs,
+                      shellmound_output_path):
+
+    obs_info = head_obs_input.head_obs_info_file
+    head_obs.dropna(subset='screen_botm', axis=0, inplace=True)
+    head_obs = head_obs.groupby('obsprefix').first()
+    
+    # check that open intervals are correct
+    np.allclose(obs_info.loc[head_obs.index, 'screen_top'].values, 
+                head_obs['screen_top'].values, atol=0.01, equal_nan=True)
+    np.allclose(obs_info.loc[head_obs.index, 'screen_botm'].values, 
+                head_obs['screen_botm'].values, atol=0.01, equal_nan=True)
+
+    i, j = get_ij(head_obs_input.modelgrid_transform, 
+                  obs_info.loc[head_obs.index, 'x'], 
+                  obs_info.loc[head_obs.index, 'y'])
+    head_obs['i'], head_obs['j'] = i, j
+    botm = read_arrays(head_obs_input.botm_arrays)
+    top = np.loadtxt(head_obs_input.top_array)
+    hk = read_arrays(head_obs_input.hk_arrays)
+    
+    hk2d = hk[:, i, j]
+    botm2d = botm[:, i, j]
+    screen_top = top[i, j]
+    
+    mf_output = get_mf6_single_variable_obs(
+        head_obs_input.perioddata, 
+        model_output_file=head_obs_input.headobs_output_file,
+        gwf_obs_input_file=head_obs_input.headobs_input_file
+    )
+    
+    # check min/max layer
+    head_obs['layer_botm'] = botm[head_obs['max_layer'], head_obs['i'], head_obs['j']]
+    head_obs['layer_top'] = botm[head_obs['min_layer'] -1, head_obs['i'], head_obs['j']]
+    assert np.all(head_obs['layer_top'] > head_obs['screen_top'])
+    assert np.all(head_obs['screen_botm'] >= head_obs['layer_botm'])
+    
+    # check single layer obs
+    in_single_layer = head_obs['min_layer'] == head_obs['max_layer']
+    head_obs_sl = head_obs.loc[in_single_layer].copy()
+    grouped = mf_output.groupby(['obsprefix', 'per', 'layer'])
+    sim_heads = []
+    for obsprefix, r in head_obs_sl.iterrows():
+        sim_head = grouped.get_group((obsprefix, r['per'], r['min_layer']))['sim_obsval'].values[0]
+        sim_heads.append(sim_head)
+    assert np.allclose(head_obs_sl['sim_obsval'], sim_heads)
+    
+    # check multiplayer (T-weighted) obs
+    head_obs_ml = head_obs.loc[~in_single_layer].copy()
+    head_obs_ml['interval_top'] = head_obs_ml['screen_top']
+    head_below_sctop = head_obs_ml['sim_obsval'] < head_obs_ml['screen_top']
+    head_obs_ml.loc[head_below_sctop, 'interval_top'] = head_obs_ml.loc[head_below_sctop, 'sim_obsval']
+    grouped = mf_output.groupby(['obsprefix', 'per'])
+    sim_heads_list = []
+    for obsprefix, r in head_obs_ml.iterrows():
+        sim_heads = grouped.get_group((obsprefix, r['per'])).copy()
+        sim_heads.index = sim_heads['layer']
+        sim_heads = sim_heads['sim_obsval']
+        # account for water table position in first thickness
+        # (minimum of screen top or water table)
+        b = [r['interval_top'] - botm[r['min_layer'], r['i'], r['j']]]
+        # subsequent thicknesses are the cell thicknesses
+        thicknesses = np.abs(np.diff(botm[:, r['i'], r['j']])).tolist()
+        thicknesses = [top[r['i'], r['j']] - botm[0, r['i'], r['j']]] +\
+            thicknesses
+        b += thicknesses[r['min_layer'] + 1: r['max_layer']]
+        # account for screen bottom being above the last layer bottom
+        b += [botm[r['max_layer'] - 1, r['i'], r['j']] - r['screen_botm']]
+        hk_interval = hk[r['min_layer']: r['max_layer'] + 1, r['i'], r['j']]
+        T = hk_interval * np.array(b)
+        Tfrac = T/T.sum()
+        # min and max layer are zero-based
+        layers = np.arange(r['min_layer'], r['max_layer']+1)
+        T_weighted_head = np.sum(sim_heads.loc[layers].values * Tfrac)
+        sim_heads_list.append(T_weighted_head)
+    # consideration of sat. thickness should be required to pass this
+    assert np.allclose(head_obs_ml['sim_obsval'].values, sim_heads_list, rtol=1e-8, atol=1e-8)

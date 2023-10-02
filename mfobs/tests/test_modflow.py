@@ -13,7 +13,8 @@ from mfobs.modflow import (
     get_mf6_single_variable_obs,
     read_mf_gage_package_output_files,
     get_mf_gage_package_obs,
-    get_gwf_obs_input
+    get_gwf_obs_input,
+    get_transmissivities
 )
 
 
@@ -214,3 +215,62 @@ def test_get_gwf_obs(test_data_path, gwf_obs_block):
 def test_get_site_no(obspefix, arg, expected):
     output = get_site_no(obspefix, obsprefix_includes_variable=arg)
     assert output == expected
+    
+
+def test_get_transmissivities():
+    sctop = [-0.25, 0.5, 1.7, 1.5, 3.0, 2.5, 3.0, -10.0]
+    scbot = [-1.0, -0.5, 1.2, 0.5, 1.5, -0.2, 2.5, -11.0]
+    heads = np.array(
+        [
+            [1.0, 2.0, 2.05, 3.0, 4.0, 2.5, 2.5, 2.5],
+            [1.1, 2.1, 2.2, 2.0, 3.5, 3.0, 3.0, 3.0],
+            [1.2, 2.3, 2.4, 0.6, 3.4, 3.2, 3.2, 3.2],
+        ]
+    )
+    nl, nr = heads.shape
+    nc = nr
+    botm = np.ones((nl, nr, nc), dtype=float)
+    top = np.ones((nr, nc), dtype=float) * 2.1
+    hk = np.ones((nl, nr, nc), dtype=float) * 2.0
+    for i in range(nl):
+        botm[nl - i - 1, :, :] = i
+
+    #m = Modflow("junk", version="mfnwt", model_ws=function_tmpdir)
+    #dis = ModflowDis(m, nlay=nl, nrow=nr, ncol=nc, botm=botm, top=top)
+    #upw = ModflowUpw(m, hk=hk)
+
+    #get_transmissivities(heads, hk, top, botm,
+    #                        r=None, c=None, x=None, y=None, modelgrid_transform=None,
+    #                        screen_top=None, screen_botm=None, 
+    #                        include_zero_open_intervals=True,
+    #                        nodata=-999)
+
+    # test with open intervals
+    r, c = np.arange(nr), np.arange(nc)
+    T = get_transmissivities(heads, hk=hk, top=top, botm=botm, 
+                             r=r, c=c, 
+                             screen_top=sctop, screen_botm=scbot)
+    assert (
+        T
+        - np.array(
+            [
+                [0.0, 0, 0.0, 0.0, 0.2, 0.2, 2.0, 0.0],
+                [0.0, 0.0, 1.0, 1.0, 1.0, 2.0, 0.0, 0.0],
+                [2.0, 1.0, 0.0, 0.2, 0.0, 2.0, 0.0, 2.0],
+            ]
+        )
+    ).sum() < 1e-3
+
+    # test without specifying open intervals
+    T = get_transmissivities(heads, hk=hk, top=top, botm=botm, 
+                             r=r, c=c)
+    assert (
+        T
+        - np.array(
+            [
+                [0.0, 0.0, 0.1, 0.2, 0.2, 0.2, 0.2, 0.2],
+                [0.2, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
+                [2.0, 2.0, 2.0, 1.2, 2.0, 2.0, 2.0, 2.0],
+            ]
+        )
+    ).sum() < 1e-3
