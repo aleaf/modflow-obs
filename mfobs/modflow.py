@@ -780,7 +780,9 @@ def read_mf6_lake_obs(f, perioddata, start_date='2012-01-01',
 
 def get_transmissivities(heads, hk, top, botm,
                          r=None, c=None, x=None, y=None, modelgrid_transform=None,
-                         screen_top=None, screen_botm=None, nodata=-999):
+                         screen_top=None, screen_botm=None, 
+                         include_zero_open_intervals=True,
+                         nodata=-999):
     """
     Computes transmissivity in each model layer at specified locations and
     open intervals. A saturated thickness is determined for each row, column
@@ -832,6 +834,10 @@ def get_transmissivities(heads, hk, top, botm,
         open interval tops (optional; default is model top)
     screen_botm : 1D array-like of floats, of length n locations
         open interval bottoms (optional; default is model bottom)
+    include_zero_open_intervals : bool
+        In cases where the screen top and screen bottom elevations are equal,
+        assign the model layer transmissivity for the cell containing
+        the screen top/bottom.
     nodata : numeric
         optional; locations where heads=nodata will be assigned T=0
 
@@ -908,6 +914,15 @@ def get_transmissivities(heads, hk, top, botm,
     thick[heads == nodata] = 0  # exclude nodata cells
     thick[np.isnan(heads)] = 0  # exclude cells with no head value (inactive cells)
 
+    # assign thickness of 1 to wells with no open interval
+    # (screen top == screen bottom)
+    if screen_top is not None and screen_botm is not None\
+        and include_zero_open_intervals:
+        # locations of open intervals that are within a single layer
+        in_single_layer = (screen_top < tops) & (screen_botm > botm2d)
+        zero_thickness = thick == 0
+        thick[in_single_layer & zero_thickness] = 1.
+    
     # compute transmissivities
     T = thick * hk2d
     return T

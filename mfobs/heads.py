@@ -636,6 +636,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             Tr_frac_df['obsnme'] = obsnme
             Tr_frac_df.to_csv(outpath / 'obs_layer_transmissivities.csv', float_format='%.2f')
             mean_t_weighted_heads = np.nansum((heads_2d * Tr_frac), axis=0)
+            # top layer of open interval
+            kmin = np.argmax(Tr_frac > 0, axis=0)
+            # bottom layer of open interval
+            kmax = Tr_frac.shape[0] - np.argmax(np.flipud(Tr_frac) > 0, axis=0) - 1
 
             # in some cases, the open interval might be mis-matched with the layering
             # for example, an open interval might be primarily in layer 4,
@@ -651,7 +655,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             assert not np.any(np.isnan(mean_t_weighted_heads))
 
             # add the simulated heads onto the list for all periods
-            mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads}, 
+            mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads, 
+                                                     'min_layer': kmin,
+                                                     'max_layer': kmax
+                                                     },
                                                     index=obsnme)
             if forecast_sites is not None:
                 observed_in_period_rs = observed_in_period_rs.reindex(obsnme)
@@ -659,7 +666,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 observed_in_period_rs['obsprefix'] = obsprefix
                 observed_in_period_rs['datetime'] = data['datetime'].values[0]
 
-            observed_in_period_rs[sim_values_column] = mean_t_weighted_heads_df[sim_values_column]
+            for col in sim_values_column, 'min_layer', 'max_layer':
+                observed_in_period_rs[col] = mean_t_weighted_heads_df[col]
+            
 
         # Alternative option to get head values for specified layers
         # (or closest layer if the specified layer doesn't have obs output)
@@ -748,7 +757,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     # reorder the columns
     columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
                obs_values_column, sim_values_column,
-               'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 'obgnme']
+               'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 
+               'min_layer', 'max_layer', 'obgnme']
     columns = [c for c in columns if c in head_obs.columns]
     head_obs = head_obs[columns].copy()
     if 'layer' in columns:

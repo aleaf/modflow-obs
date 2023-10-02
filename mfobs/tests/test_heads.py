@@ -89,13 +89,19 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
                       shellmound_output_path, observed_values_layer_col, steady,
                       obsnme_date_suffix, obsnme_suffix_format):
 
+    # test min/max layers where screen top == screen bottom
+    loc = head_obs['obsprefix'] == 'usgs:333145090261901'
+    assert np.allclose(head_obs.loc[loc, ['screen_top']], 
+                       head_obs.loc[loc, ['screen_botm']])
+    assert (head_obs.loc[loc, ['min_layer', 'max_layer']] == 4).all().all()
+
     # fixture generates base_data without writing ins
     assert Path(shellmound_output_path, 'processed_head_obs.dat').exists()
     assert not Path(shellmound_output_path, 'processed_head_obs.dat.ins').exists()
     Path(shellmound_output_path, 'processed_head_obs.dat').unlink()  # delete it
     expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
                         'obsval', 'sim_obsval', 'n', 'screen_top', 'screen_botm', 'layer',
-                        'obgnme'
+                        'min_layer', 'max_layer', 'obgnme'
                         ]
     assert np.all(head_obs.columns == expected_columns)
     assert len(set(head_obs.obsnme)) == len(head_obs)
