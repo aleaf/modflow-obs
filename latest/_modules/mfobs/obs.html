@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post71.dev0+gcdd0b40 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post76.dev0+gd436d5a documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> modflow-obs
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            modflow-obs
           </a>
               <div class="version">
-                0.post71.dev0+gcdd0b40
+                0.post76.dev0+gd436d5a
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -80,7 +84,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">mfobs.obs</li>
       <li class="wy-breadcrumbs-aside">
@@ -112,6 +116,7 @@
             <span class="n">model_output</span><span class="p">,</span>
             <span class="n">observed_values_file</span><span class="p">,</span>
             <span class="n">variable_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">simulated_values_column</span><span class="o">=</span><span class="s1">&#39;sim_obsval&#39;</span><span class="p">,</span>
             <span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">observed_values_site_id_col</span><span class="o">=</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span>
             <span class="n">observed_values_datetime_col</span><span class="o">=</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span>
@@ -128,34 +133,36 @@
             <span class="n">forecasts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forecast_sites_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get a set of base observations from a tables of model output, observed </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a set of base observations from a tables of model output, observed </span>
 <span class="sd">    values, and model time discretizaton.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    perioddata : str, pathlike or DataFrame</span>
 <span class="sd">        Path to csv file or pandas DataFrame with start/end dates for stress periods or timesteps. </span>
-<span class="sd">        Must have the following columns:</span>
+<span class="sd">        Must have a `start_datetime` and either a `time` column </span>
+<span class="sd">        (of elapsed times at the end of each period, in days), </span>
+<span class="sd">        or an `end_datetime` column of period end dates.</span>
 <span class="sd">        </span>
-<span class="sd">        =================== =============================================================</span>
-<span class="sd">        time                modflow simulation time, in days</span>
+<span class="sd">        =================== =======================================================</span>
 <span class="sd">        start_datetime      start date for each stress period or timestep</span>
-<span class="sd">        end_datetime        end date for each stress period or timestep</span>
-<span class="sd">        =================== =============================================================</span>
+<span class="sd">        end_datetime        (optional) end date for each stress period or timestep</span>
+<span class="sd">        time                (optional) elapsed simulation time at the end of each </span>
+<span class="sd">                            period, in days</span>
+<span class="sd">        =================== =======================================================</span>
 
 <span class="sd">    model_output : DataFrame</span>
 <span class="sd">        DataFrame with one head observation per row, with the following columns:</span>
 
-<span class="sd">        =================== =============================================================</span>
-<span class="sd">        site_no             unique identifier for each site</span>
-<span class="sd">        variable            variable name for the simulated values</span>
-<span class="sd">        obsprefix           prefix of observation name (&lt;site_no&gt;-&lt;variable&gt;)</span>
-<span class="sd">        sim_&lt;variable_name&gt; column with simulated values</span>
-<span class="sd">        datetime            pandas datetimes, based on stress period end date</span>
-<span class="sd">        layer               zero-based model layer</span>
-<span class="sd">        obsnme              observation name based on format of &lt;obsprefix&gt;_&#39;%Y%m&#39;</span>
-
-<span class="sd">        =================== =============================================================</span>
+<span class="sd">        ======================= =============================================================</span>
+<span class="sd">        site_no                 unique identifier for each site</span>
+<span class="sd">        variable                variable name for the simulated values</span>
+<span class="sd">        obsprefix               prefix of observation name (&lt;site_no&gt;-&lt;variable&gt;)</span>
+<span class="sd">        simulated_values_column column with simulated values</span>
+<span class="sd">        datetime                pandas datetimes, based on stress period end date</span>
+<span class="sd">        layer                   zero-based model layer</span>
+<span class="sd">        obsnme                  observation name based on format of &lt;obsprefix&gt;_&#39;%Y%m&#39;</span>
+<span class="sd">        ======================= =============================================================</span>
 <span class="sd">        </span>
 <span class="sd">        Usually, a helper function such as :func:`mfobs.modflow.get_mf6_single_variable_obs`</span>
 <span class="sd">        or other custom code will be used to produce model_output from the </span>
@@ -188,7 +195,8 @@
 <span class="sd">        By default, None, in which case the `obsprefix` values in the `model_output`</span>
 <span class="sd">        table are assumed to be the site numbers; prefixes for observations</span>
 <span class="sd">        in `observed_values_file` will also then be site numbers.</span>
-<span class="sd">        </span>
+<span class="sd">    simulated_values_column : str, optional</span>
+<span class="sd">        Column in model output with simulated values</span>
 <span class="sd">    observed_values_metadata_file : str, pathlike or DataFrame, optional</span>
 <span class="sd">        Table with site information for the observed values.</span>
 
@@ -298,13 +306,14 @@
         <span class="n">outpath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
 
     <span class="c1">#obs_values_column = &#39;obsval&#39;</span>
-    <span class="n">sim_values_column</span> <span class="o">=</span> <span class="s1">&#39;sim_obsval&#39;</span>
-    <span class="k">if</span> <span class="n">variable_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">obs_values_column</span> <span class="o">=</span> <span class="s1">&#39;obsval&#39;</span>  <span class="c1">#&#39;obs_value&#39;</span>
-        <span class="c1">#sim_values_column = &#39;sim_value&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">obs_values_column</span> <span class="o">=</span> <span class="s1">&#39;obs_&#39;</span> <span class="o">+</span> <span class="n">variable_name</span>  <span class="c1"># output column with observed values</span>
-        <span class="c1">#sim_values_column = &#39;sim_&#39; + variable_name  # output column with simulated equivalents to observed values</span>
+    <span class="n">output_sim_values_column</span> <span class="o">=</span> <span class="s1">&#39;sim_obsval&#39;</span>
+    <span class="n">output_obs_values_column</span> <span class="o">=</span> <span class="s1">&#39;obsval&#39;</span>
+    <span class="c1">#if variable_name is None:</span>
+    <span class="c1">#    obs_values_column = &#39;obsval&#39;  #&#39;obs_value&#39;</span>
+    <span class="c1">#    #sim_values_column = &#39;sim_value&#39;</span>
+    <span class="c1">#else:</span>
+    <span class="c1">#    obs_values_column = &#39;obs_&#39; + variable_name  # output column with observed values</span>
+    <span class="c1">#    #sim_values_column = &#39;sim_&#39; + variable_name  # output column with simulated equivalents to observed values</span>
 
     <span class="c1"># read in/set up the perioddata table</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -368,8 +377,10 @@
     <span class="n">temp</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">temp</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">temp</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">site_info_dict</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s1">&#39;datetime&#39;</span> <span class="ow">in</span> <span class="n">site_info_dict</span><span class="p">:</span>
-        <span class="k">del</span> <span class="n">site_info_dict</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="n">observed_values_obsval_col</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">site_info_dict</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">site_info_dict</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+        
     <span class="k">del</span> <span class="n">temp</span>
 
     <span class="c1"># cast datetimes to pandas datetimes</span>
@@ -503,14 +514,14 @@
                             <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
             <span class="k">continue</span>
                 
-        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">sim_values_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_in_period_rs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span><span class="p">)[</span><span class="n">sim_values_column</span><span class="p">]</span>
+        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">output_sim_values_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_in_period_rs</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span><span class="p">)[</span><span class="n">simulated_values_column</span><span class="p">]</span>
 
         <span class="c1"># add stress period and observed values</span>
         <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">per_column</span> <span class="o">==</span> <span class="s1">&#39;unique_timestep&#39;</span><span class="p">:</span>
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;timestep&#39;</span><span class="p">]</span>
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;unique_timestep&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="s1">&#39;unique_timestep&#39;</span><span class="p">]</span>
-        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">observed_values_obsval_col</span><span class="p">]</span>
+        <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">output_obs_values_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="n">observed_values_obsval_col</span><span class="p">]</span>
         <span class="n">observed_simulated_combined</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="p">)</span>
 
     <span class="c1"># Combined DataFrame of observed heads and simulated equivalents</span>
@@ -548,11 +559,11 @@
     <span class="k">else</span><span class="p">:</span>  
         <span class="c1"># nans are where sites don&#39;t have observation values for that period</span>
         <span class="c1"># or sites that are in other model (inset or parent)</span>
-        <span class="n">obsdata</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">obsdata</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">output_obs_values_column</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># label forecasts in own group</span>
     <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">is_forecast</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
+        <span class="n">is_forecast</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">output_obs_values_column</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span>
         <span class="n">obsdata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">is_forecast</span><span class="p">,</span> <span class="s1">&#39;obgnme&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;-forecast&#39;</span>
     
         <span class="c1"># cull forecasts to specified date window</span>
@@ -564,7 +575,7 @@
             <span class="n">keep_forecasts</span> <span class="o">&amp;=</span> <span class="p">(</span><span class="n">obsdata</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">forecast_end_date</span><span class="p">)</span>
         <span class="c1">#drop = drop &amp; is_forecast</span>
         <span class="c1">#head_obs = head_obs.loc[~drop].copy()</span>
-        <span class="c1">#is_forecast = head_obs[obs_values_column].isna()</span>
+        <span class="c1">#is_forecast = head_obs[output_obs_values_column].isna()</span>
         <span class="k">if</span> <span class="n">forecast_sites</span> <span class="o">!=</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
             <span class="n">keep_forecasts</span> <span class="o">&amp;=</span> <span class="n">obsdata</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">forecast_sites</span><span class="p">)</span>
         <span class="c1"># option to only include forecast obs</span>
@@ -579,10 +590,11 @@
         <span class="n">obsdata</span> <span class="o">=</span> <span class="n">obsdata</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         
     <span class="c1"># add standard obsval and obgmne columns</span>
-    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">,</span> <span class="n">obs_values_column</span><span class="p">,</span> <span class="n">sim_values_column</span><span class="p">,</span>
+    <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">,</span> 
+               <span class="n">output_obs_values_column</span><span class="p">,</span> <span class="n">output_sim_values_column</span><span class="p">,</span>
                <span class="s1">&#39;uncertainty&#39;</span><span class="p">,</span> <span class="s1">&#39;obgnme&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">obs_values_column</span> <span class="o">!=</span> <span class="s1">&#39;obsval&#39;</span><span class="p">:</span>
-        <span class="n">obsdata</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">obs_values_column</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">output_obs_values_column</span> <span class="o">!=</span> <span class="s1">&#39;obsval&#39;</span><span class="p">:</span>
+        <span class="n">obsdata</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">output_obs_values_column</span><span class="p">]</span>
         <span class="n">columns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">)</span>
 
 
@@ -603,7 +615,7 @@
         <span class="c1"># write the instruction file</span>
         <span class="k">if</span> <span class="n">write_ins</span><span class="p">:</span>
             <span class="n">write_insfile</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">outfile</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.ins&#39;</span><span class="p">,</span> <span class="n">obsnme_column</span><span class="o">=</span><span class="s1">&#39;obsnme&#39;</span><span class="p">,</span>
-                          <span class="n">simulated_obsval_column</span><span class="o">=</span><span class="n">sim_values_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                          <span class="n">simulated_obsval_column</span><span class="o">=</span><span class="n">output_sim_values_column</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">base_obs</span></div>
 
 
@@ -649,7 +661,7 @@
                             <span class="n">use_gradients</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                             <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;-d-&#39;</span><span class="p">,</span>
                             <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates</span>
 <span class="sd">    spatial difference observations. Optionally writes an output csvfile</span>
 <span class="sd">    and a PEST instruction file.</span>
 
@@ -659,7 +671,7 @@
 <span class="sd">        Table of preprocessed observations, such as that produced by</span>
 <span class="sd">        :func:`mfobs.obs.get_base_obs`. Must have the following columns:</span>
 <span class="sd">        </span>
-<span class="sd">        =================== =============================================================</span>
+<span class="sd">        =================== ========================================================================</span>
 <span class="sd">        datetime            pandas datetimes, based on stress period end date</span>
 <span class="sd">        per                 MODFLOW stress period</span>
 <span class="sd">        site_no             unique site identifier</span>
@@ -668,8 +680,9 @@
 <span class="sd">        obsval              observed values</span>
 <span class="sd">        sim_obsval          simulated equivalents to observed values</span>
 <span class="sd">        obgnme              observation group name</span>
-
-<span class="sd">        =================== =============================================================</span>
+<span class="sd">        screen_top          (optional) well open interval top; required if ``use_gradients=True``</span>
+<span class="sd">        screen_botm         (optional) well open interval bottom; required if ``use_gradients=True``</span>
+<span class="sd">        =================== ========================================================================</span>
 <span class="sd">        </span>
 <span class="sd">        1) where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</span>
 <span class="sd">        </span>
@@ -843,6 +856,9 @@
                     <span class="n">site_obs</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sim_values_col</span><span class="si">}</span><span class="s2">1&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="n">sim_values_col</span><span class="p">]</span>
                     <span class="k">if</span> <span class="s1">&#39;screen_top&#39;</span> <span class="ow">in</span> <span class="n">key_values</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
                         <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">use_gradients</span> <span class="ow">and</span> <span class="s1">&#39;screen_botm&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key_values</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;use_gradients=True requires both screen_top &quot;</span>
+                                             <span class="s2">&quot;and screen_botm columns in base_data&quot;</span><span class="p">)</span>
                     <span class="k">if</span> <span class="s1">&#39;screen_botm&#39;</span> <span class="ow">in</span> <span class="n">key_values</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
                         <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;screen_botm1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_values</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">]</span>
                     <span class="k">if</span> <span class="s1">&#39;layer2&#39;</span> <span class="ow">in</span> <span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -854,9 +870,9 @@
 
                     <span class="c1"># get a screen midpoint and add gradient</span>
                     <span class="n">screen_midpoint1</span> <span class="o">=</span> <span class="kc">None</span>
-                    <span class="k">if</span> <span class="p">{</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm1&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">use_gradients</span> <span class="ow">and</span> <span class="p">{</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm1&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
                         <span class="n">screen_midpoint1</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[[</span><span class="s1">&#39;screen_top1&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm1&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="p">{</span><span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">use_gradients</span> <span class="ow">and</span> <span class="p">{</span><span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">site_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
                         <span class="n">screen_midpoint2</span> <span class="o">=</span> <span class="n">site_obs</span><span class="p">[[</span><span class="s1">&#39;screen_top2&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">screen_midpoint1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                             <span class="n">site_obs</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen_midpoint1</span> <span class="o">-</span> <span class="n">screen_midpoint2</span><span class="p">)</span>
@@ -963,7 +979,7 @@
                              <span class="n">exclude_obs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs`,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs`,</span>
 <span class="sd">    creates temporal difference observations. Optionally writes an output csvfile</span>
 <span class="sd">    and a PEST instruction file.</span>
 
@@ -1210,7 +1226,7 @@
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;annual-mean&#39;</span><span class="p">,</span>
                      <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create observations of annual mean values for a set of </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of annual mean values for a set of </span>
 <span class="sd">    base observations. Means are computed for all columns with </span>
 <span class="sd">    floating point data.</span>
 
@@ -1325,7 +1341,7 @@
                       <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;monthly-mean&#39;</span><span class="p">,</span>
                       <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create observations of monthly mean values for a set of </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of monthly mean values for a set of </span>
 <span class="sd">    base observations. Means are computed for all columns with </span>
 <span class="sd">    floating point data.</span>
 
@@ -1442,7 +1458,7 @@
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;mean-monthly&#39;</span><span class="p">,</span>
                      <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create observations of mean monthly, or means for months of the year</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of mean monthly, or means for months of the year</span>
 <span class="sd">    (for example, the mean for Jan. across all years). Means are computed for </span>
 <span class="sd">    all columns with floating point data.</span>
 
@@ -1561,7 +1577,7 @@
                            <span class="n">fill_zeros_with</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create observations of log values. Log values are computed for </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of log values. Log values are computed for </span>
 <span class="sd">    all columns with floating point data.</span>
 
 <span class="sd">    Parameters</span>
@@ -1669,7 +1685,7 @@
                               <span class="n">missing_obs_fill_value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
                               <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create observations of base flow using the </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of base flow using the </span>
 <span class="sd">    BFI/Institute of Hydrology hydrograph separation method (:func:`mfobs.sep.ih_method`).</span>
 <span class="sd">    </span>
 <span class="sd">    </span>
@@ -1832,7 +1848,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Jun 27, 2023.
+      <span class="lastupdated">Last updated on Oct 02, 2023.
       </span></p>
   </div>
 

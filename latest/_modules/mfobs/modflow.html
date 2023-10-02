@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.modflow &mdash; modflow-obs 0.post71.dev0+gcdd0b40 documentation</title>
+  <title>mfobs.modflow &mdash; modflow-obs 0.post76.dev0+gd436d5a documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -31,14 +31,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> modflow-obs
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            modflow-obs
           </a>
               <div class="version">
-                0.post71.dev0+gcdd0b40
+                0.post76.dev0+gd436d5a
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -80,7 +84,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a></li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
       <li class="breadcrumb-item active">mfobs.modflow</li>
       <li class="wy-breadcrumbs-aside">
@@ -119,7 +123,7 @@
                  <span class="p">}</span>
 
 <div class="viewcode-block" id="get_gwf_obs_input"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_gwf_obs_input">[docs]</a><span class="k">def</span> <span class="nf">get_gwf_obs_input</span><span class="p">(</span><span class="n">gwf_obs_input_file</span><span class="p">,</span> <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read the first BEGIN continuous  FILEOUT block of an input</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read the first BEGIN continuous  FILEOUT block of an input</span>
 <span class="sd">    file to the MODFLOW-6 GWF observation utility.</span>
 
 <span class="sd">    Parameters</span>
@@ -187,7 +191,7 @@
 
 
 <div class="viewcode-block" id="get_ij"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_ij">[docs]</a><span class="k">def</span> <span class="nf">get_ij</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the row and column of a point or sequence of points</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the row and column of a point or sequence of points</span>
 <span class="sd">    in real-world coordinates. Uses the affine package. Basically,</span>
 
 <span class="sd">    * to get an x, y: transform * (col, row)</span>
@@ -233,7 +237,7 @@
 
 
 <div class="viewcode-block" id="get_kstp_kper"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_kstp_kper">[docs]</a><span class="k">def</span> <span class="nf">get_kstp_kper</span><span class="p">(</span><span class="n">nstp</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Given a sequence of the number of timesteps in each stress period,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given a sequence of the number of timesteps in each stress period,</span>
 <span class="sd">    return a sequence of timestep, period tuples (kstp, kper) used</span>
 <span class="sd">    by various flopy methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -247,7 +251,7 @@
 
 
 <div class="viewcode-block" id="get_layer"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_layer">[docs]</a><span class="k">def</span> <span class="nf">get_layer</span><span class="p">(</span><span class="n">column_name</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pandas appends duplicate column names with a .*,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pandas appends duplicate column names with a .*,</span>
 <span class="sd">    where * is the number of duplicate names from left to right</span>
 <span class="sd">    (e.g. obs, obs.1, obs.2, ...). Modflow-setup writes observation input</span>
 <span class="sd">    for each model layer, at each site location, with the same observation prefix (site identifier).</span>
@@ -269,7 +273,7 @@
 
 
 <div class="viewcode-block" id="get_site_no"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_site_no">[docs]</a><span class="k">def</span> <span class="nf">get_site_no</span><span class="p">(</span><span class="n">obsprefix</span><span class="p">,</span> <span class="n">obsprefix_includes_variable</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse observation site number from an observation prefix string, </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse observation site number from an observation prefix string, </span>
 <span class="sd">    which may include a variable at the end, delimited by a hyphen.</span>
 <span class="sd">    Also split off any part of the string after a period (&#39;.&#39;),</span>
 <span class="sd">    for example index instance numbers appended by pandas.</span>
@@ -302,7 +306,7 @@
                                 <span class="n">names_include_variable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                 <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                                 <span class="n">gwf_obs_block</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read raw MODFLOW-6 observation output from csv table with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
 <span class="sd">    (stack) results to be n times x n sites rows, with a single observation value</span>
 <span class="sd">    in each row. If there is more than one time in a stress period, retain only</span>
@@ -532,7 +536,7 @@
 
 
 <div class="viewcode-block" id="read_mf_gage_package_output_files"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.read_mf_gage_package_output_files">[docs]</a><span class="k">def</span> <span class="nf">read_mf_gage_package_output_files</span><span class="p">(</span><span class="n">gage_package_output_files</span><span class="p">,</span> <span class="n">variable</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read one of more gage package output files into a single table. If multiple</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read one of more gage package output files into a single table. If multiple</span>
 <span class="sd">    files are specified, a single variable to return must be specified.</span>
 
 <span class="sd">    Parameters</span>
@@ -584,7 +588,7 @@
                             <span class="n">gwf_obs_input_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;flow&#39;</span><span class="p">,</span>
                             <span class="nb">abs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read raw MODFLOW gage package text file output with</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read raw MODFLOW gage package text file output with</span>
 <span class="sd">    times along the row axis and observations along the column axis. Reshape</span>
 <span class="sd">    (stack) results to be n times x n sites rows, with a single observation value</span>
 <span class="sd">    in each row. </span>
@@ -779,7 +783,7 @@
 
 
 <div class="viewcode-block" id="get_modflow_mass_balance"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_modflow_mass_balance">[docs]</a><span class="k">def</span> <span class="nf">get_modflow_mass_balance</span><span class="p">(</span><span class="n">modroot</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_ins</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    read in the percent discrepancy for inset and parent models</span>
 
 <span class="sd">    Parameters</span>
@@ -815,7 +819,7 @@
 
 
 <div class="viewcode-block" id="get_modelgrid_transform"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_modelgrid_transform">[docs]</a><span class="k">def</span> <span class="nf">get_modelgrid_transform</span><span class="p">(</span><span class="n">grid_json_file</span><span class="p">,</span> <span class="n">shift_to_cell_centers</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Create an affine.Affine that describes the model grid</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create an affine.Affine that describes the model grid</span>
 <span class="sd">    from a json file. The affine package comes with rasterio</span>
 <span class="sd">    as a dependency or can be installed separately.</span>
 
@@ -874,8 +878,10 @@
 
 <div class="viewcode-block" id="get_transmissivities"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_transmissivities">[docs]</a><span class="k">def</span> <span class="nf">get_transmissivities</span><span class="p">(</span><span class="n">heads</span><span class="p">,</span> <span class="n">hk</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">botm</span><span class="p">,</span>
                          <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modelgrid_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                         <span class="n">screen_top</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen_botm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nodata</span><span class="o">=-</span><span class="mi">999</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+                         <span class="n">screen_top</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">screen_botm</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                         <span class="n">include_zero_open_intervals</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                         <span class="n">nodata</span><span class="o">=-</span><span class="mi">999</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes transmissivity in each model layer at specified locations and</span>
 <span class="sd">    open intervals. A saturated thickness is determined for each row, column</span>
 <span class="sd">    or x, y location supplied, based on the open interval (sctop, screen_botm),</span>
@@ -926,6 +932,10 @@
 <span class="sd">        open interval tops (optional; default is model top)</span>
 <span class="sd">    screen_botm : 1D array-like of floats, of length n locations</span>
 <span class="sd">        open interval bottoms (optional; default is model bottom)</span>
+<span class="sd">    include_zero_open_intervals : bool</span>
+<span class="sd">        In cases where the screen top and screen bottom elevations are equal,</span>
+<span class="sd">        assign the model layer transmissivity for the cell containing</span>
+<span class="sd">        the screen top/bottom.</span>
 <span class="sd">    nodata : numeric</span>
 <span class="sd">        optional; locations where heads=nodata will be assigned T=0</span>
 
@@ -1002,6 +1012,15 @@
     <span class="n">thick</span><span class="p">[</span><span class="n">heads</span> <span class="o">==</span> <span class="n">nodata</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># exclude nodata cells</span>
     <span class="n">thick</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">heads</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># exclude cells with no head value (inactive cells)</span>
 
+    <span class="c1"># assign thickness of 1 to wells with no open interval</span>
+    <span class="c1"># (screen top == screen bottom)</span>
+    <span class="k">if</span> <span class="n">screen_top</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">screen_botm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>\
+        <span class="ow">and</span> <span class="n">include_zero_open_intervals</span><span class="p">:</span>
+        <span class="c1"># locations of open intervals that are within a single layer</span>
+        <span class="n">in_single_layer</span> <span class="o">=</span> <span class="p">(</span><span class="n">screen_top</span> <span class="o">&lt;</span> <span class="n">tops</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">screen_botm</span> <span class="o">&gt;</span> <span class="n">botm2d</span><span class="p">)</span>
+        <span class="n">zero_thickness</span> <span class="o">=</span> <span class="n">thick</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">thick</span><span class="p">[</span><span class="n">in_single_layer</span> <span class="o">&amp;</span> <span class="n">zero_thickness</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    
     <span class="c1"># compute transmissivities</span>
     <span class="n">T</span> <span class="o">=</span> <span class="n">thick</span> <span class="o">*</span> <span class="n">hk2d</span>
     <span class="k">return</span> <span class="n">T</span></div>
@@ -1052,7 +1071,7 @@
 
 <div class="viewcode-block" id="get_perioddata"><a class="viewcode-back" href="../../api/mfobs.modflow.html#mfobs.modflow.get_perioddata">[docs]</a><span class="k">def</span> <span class="nf">get_perioddata</span><span class="p">(</span><span class="n">tdis_file</span><span class="p">,</span> <span class="n">sto_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
                    <span class="n">end_datetime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_timesteps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">model_time_units</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make the perioddata table required by other modflow-obs</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make the perioddata table required by other modflow-obs</span>
 <span class="sd">    functions from a MODFLOW-6 Temporal Discretization (TDIS) file.</span>
 
 <span class="sd">    Parameters</span>
@@ -1268,7 +1287,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Jun 27, 2023.
+      <span class="lastupdated">Last updated on Oct 02, 2023.
       </span></p>
   </div>
 

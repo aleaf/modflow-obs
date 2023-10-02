@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; modflow-obs 0.post71.dev0+gcdd0b40 documentation</title>
+  <title>Installation &mdash; modflow-obs 0.post76.dev0+gd436d5a documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="_static/plot_directive.css" type="text/css" />
@@ -34,14 +34,18 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> modflow-obs
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            modflow-obs
           </a>
               <div class="version">
-                0.post71.dev0+gcdd0b40
+                0.post76.dev0+gd436d5a
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -88,7 +92,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active">Installation</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
@@ -99,59 +103,35 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
-<style>
-/* CSS overrides for sphinx_rtd_theme */
-
-/* 24px margin */
-.nbinput.nblast.container,
-.nboutput.nblast.container {
-    margin-bottom: 19px;  /* padding has already 5px */
-}
-
-/* ... except between code cells! */
-.nblast.container + .nbinput.container {
-    margin-top: -19px;
-}
-
-.admonition > p:before {
-    margin-right: 4px;  /* make room for the exclamation icon */
-}
-
-/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
-.math {
-    text-align: unset;
-}
-</style>
-<section id="installation">
+  <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">¶</a></h1>
 <section id="python-dependencies">
 <h2>Python dependencies<a class="headerlink" href="#python-dependencies" title="Permalink to this heading">¶</a></h2>
 <p>Modflow-obs requires <a class="reference external" href="https://numpy.org/">numpy</a>, <a class="reference external" href="http://pandas.pydata.org">pandas</a> and the <a class="reference external" href="https://github.com/sgillies/affine">affine</a> library. The easiest way to
 install these is using conda and pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install -c conda-forge numpy pandas
-pip install affine
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>numpy<span class="w"> </span>pandas
+pip<span class="w"> </span>install<span class="w"> </span>affine
 </pre></div>
 </div>
 </section>
 <section id="installing-modflow-obs-using-pip">
 <h2>Installing Modflow-obs using pip<a class="headerlink" href="#installing-modflow-obs-using-pip" title="Permalink to this heading">¶</a></h2>
 <p>Pip can be used to fetch Modflow-obs directly from GitHub:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install git+git://github.com/aleaf/modflow-obs@master
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+git://github.com/aleaf/modflow-obs@master
 </pre></div>
 </div>
 <p>Subsequent updates can then be made with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip uninstall modflow-obs
-pip install git+git://github.com/aleaf/modflow-obs@master
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>uninstall<span class="w"> </span>modflow-obs
+pip<span class="w"> </span>install<span class="w"> </span>git+git://github.com/aleaf/modflow-obs@master
 </pre></div>
 </div>
 </section>
 <section id="installing-the-modflow-obs-source-code-in-place">
 <h2>Installing the Modflow-obs source code in-place<a class="headerlink" href="#installing-the-modflow-obs-source-code-in-place" title="Permalink to this heading">¶</a></h2>
 <p>Alternatively, if you intend to contribute to Modflow-obs (please do!) or update your install frequently, the best route is probably to clone the source code from git and install it in place.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/aleaf/modflow-obs.git
-<span class="nb">cd</span> modflow-obs
-pip install -e .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/aleaf/modflow-obs.git
+<span class="nb">cd</span><span class="w"> </span>modflow-obs
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
 <div class="admonition note">
@@ -159,7 +139,7 @@ pip install -e .
 <p>Don’t forget the <code class="docutils literal notranslate"><span class="pre">.</span></code> after <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span></code>!</p>
 </div>
 <p>Your local copy of the Modflow-obs repository can then be subsequently updated with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git pull origin master
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>master
 </pre></div>
 </div>
 <div class="admonition note">
@@ -181,7 +161,7 @@ pip install -e .
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Jun 27, 2023.
+      <span class="lastupdated">Last updated on Oct 02, 2023.
       </span></p>
   </div>
 
