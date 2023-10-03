@@ -127,6 +127,10 @@ def get_ij(transform, x, y):
     i : row or sequence of rows (zero-based)
     j : column or sequence of columns (zero-based)
     """
+    if not np.isscalar(x) and not isinstance(x, np.ndarray):
+        x = np.array(x)
+    if not np.isscalar(y) and not isinstance(y, np.ndarray):
+        y = np.array(y)
 
     j, i = ~transform * (x, y)
     # decrement so that points within a cell (pixel)
