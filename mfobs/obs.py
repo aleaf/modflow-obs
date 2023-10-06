@@ -75,6 +75,9 @@ def get_base_obs(perioddata,
         contained in `observed_values_file` and `variable` matches the `variable_name` argument
         to this function (and is the variable name for the observed values in `observed_values_file`).
         
+        All observation prefixes are assumed to be case-insensitive (obsprefixes in the model_output 
+        and obseved_values_files tables are all converted to lower case prior to matching).
+        
     observed_values_file : str, pathlike or DataFrame
         Path to csv file or pandas DataFrame with observed values.
         Must have the following columns (column names in brackets <> are supplied
@@ -227,6 +230,7 @@ def get_base_obs(perioddata,
 
     # model results
     results = model_output.copy()
+    results['obsprefix'] = results['obsprefix'].str.lower()
 
     # rename columns to their defaults
     renames = {observed_values_site_id_col: 'site_no',
