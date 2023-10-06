@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post78.dev0+g3f42e97 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post79.dev0+g4178562 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -38,7 +38,7 @@
             modflow-obs
           </a>
               <div class="version">
-                0.post78.dev0+g3f42e97
+                0.post79.dev0+g4178562
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -172,6 +172,9 @@
 <span class="sd">        **&lt;site_no&gt;-&lt;variable&gt;**, where `site_no` is a unique identifier for a site</span>
 <span class="sd">        contained in `observed_values_file` and `variable` matches the `variable_name` argument</span>
 <span class="sd">        to this function (and is the variable name for the observed values in `observed_values_file`).</span>
+<span class="sd">        </span>
+<span class="sd">        All observation prefixes are assumed to be case-insensitive (obsprefixes in the model_output </span>
+<span class="sd">        and obseved_values_files tables are all converted to lower case prior to matching).</span>
 <span class="sd">        </span>
 <span class="sd">    observed_values_file : str, pathlike or DataFrame</span>
 <span class="sd">        Path to csv file or pandas DataFrame with observed values.</span>
@@ -325,6 +328,7 @@
 
     <span class="c1"># model results</span>
     <span class="n">results</span> <span class="o">=</span> <span class="n">model_output</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">results</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
     <span class="c1"># rename columns to their defaults</span>
     <span class="n">renames</span> <span class="o">=</span> <span class="p">{</span><span class="n">observed_values_site_id_col</span><span class="p">:</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span>
@@ -1848,7 +1852,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 03, 2023.
+      <span class="lastupdated">Last updated on Oct 06, 2023.
       </span></p>
   </div>
 
