@@ -272,7 +272,7 @@ def get_base_obs(perioddata,
         # join the metadata to the observed data
         metadata.index = metadata['obsprefix'].values
         observed.index = observed['obsprefix'].values
-        join_cols = [c for c in ['screen_top', 'screen_botm', 'x', 'y', 'layer']
+        join_cols = [c for c in ['site_no', 'screen_top', 'screen_botm', 'x', 'y', 'layer']
                      if c in metadata.columns]
         observed = observed.join(metadata[join_cols])
 
@@ -1211,6 +1211,9 @@ def get_annual_means(base_data,
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
+    # only include times where there are both an observation and sim. equivalent
+    base_data.dropna(subset=['obsval', 'sim_obsval'], inplace=True)
+    
     grouped = base_data.groupby([base_data['site_no'], base_data['datetime'].dt.year])
     aggregated = grouped.first()
     data_cols = [c for c, dtype in base_data.dtypes.items() if 'float' in dtype.name]
@@ -1325,6 +1328,9 @@ def get_monthly_means(base_data,
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
+    
+    # only include times where there are both an observation and sim. equivalent
+    base_data.dropna(subset=['obsval', 'sim_obsval'], inplace=True)
     
     grouped = base_data.groupby([base_data['site_no'],
                                  base_data['datetime'].dt.year, 
@@ -1442,6 +1448,9 @@ def get_mean_monthly(base_data,
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
     keep = ~np.in1d(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
+    
+    # only include times where there are both an observation and sim. equivalent
+    base_data.dropna(subset=['obsval', 'sim_obsval'], inplace=True)
     
     grouped = base_data.groupby([base_data['site_no'],
                                  base_data['datetime'].dt.month])
