@@ -666,7 +666,9 @@ def get_spatial_differences(base_data, perioddata,
         * Negative difference or gradient values indicate a gradient towards the key site.
 
     """
-
+    # copy the base data to prevent unintended side-effects
+    base_data = base_data.copy()
+    
     # model stress period data:
     perioddata = perioddata.copy()
     # make sure start and end dates don't overlap
