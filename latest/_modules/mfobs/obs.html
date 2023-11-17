@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post79.dev0+g4178562 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post82.dev0+gf4e0f0f documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/plot_directive.css" type="text/css" />
@@ -38,7 +38,7 @@
             modflow-obs
           </a>
               <div class="version">
-                0.post79.dev0+g4178562
+                0.post82.dev0+gf4e0f0f
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -370,7 +370,7 @@
         <span class="c1"># join the metadata to the observed data</span>
         <span class="n">metadata</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
         <span class="n">observed</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
-        <span class="n">join_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;layer&#39;</span><span class="p">]</span>
+        <span class="n">join_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_top&#39;</span><span class="p">,</span> <span class="s1">&#39;screen_botm&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;layer&#39;</span><span class="p">]</span>
                      <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">metadata</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
         <span class="n">observed</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="n">join_cols</span><span class="p">])</span>
 
@@ -764,7 +764,9 @@
 <span class="sd">        * Negative difference or gradient values indicate a gradient towards the key site.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
+    <span class="c1"># copy the base data to prevent unintended side-effects</span>
+    <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
     <span class="c1"># model stress period data:</span>
     <span class="n">perioddata</span> <span class="o">=</span> <span class="n">perioddata</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="c1"># make sure start and end dates don&#39;t overlap</span>
@@ -1309,6 +1311,9 @@
     <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
+    <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
+    <span class="n">base_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
     <span class="n">grouped</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">],</span> <span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">])</span>
     <span class="n">aggregated</span> <span class="o">=</span> <span class="n">grouped</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
     <span class="n">data_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">dtypes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;float&#39;</span> <span class="ow">in</span> <span class="n">dtype</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
@@ -1423,6 +1428,9 @@
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
     <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
+    <span class="n">base_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="n">grouped</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">],</span>
                                  <span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">year</span><span class="p">,</span> 
@@ -1540,6 +1548,9 @@
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
     <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
+    <span class="n">base_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="n">grouped</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">],</span>
                                  <span class="n">base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">month</span><span class="p">])</span>
@@ -1852,7 +1863,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Oct 06, 2023.
+      <span class="lastupdated">Last updated on Nov 17, 2023.
       </span></p>
   </div>
 
