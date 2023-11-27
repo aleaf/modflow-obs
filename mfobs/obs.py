@@ -402,7 +402,7 @@ def get_base_obs(perioddata,
             aggregrate_observed_values_method=aggregrate_observed_values_method,
             obsnme_suffix=suffix)
         
-        if sim_in_period_rs is None:
+        if sim_in_period_rs is None or len(sim_in_period_rs) == 0:
             if per_column == 'per':
                 warnings.warn(('Stress period {}: No simulated equivalents between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
