@@ -7,8 +7,7 @@ import numpy as np
 import pandas as pd
 from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import load_array, write_insfile
-from mfobs.modflow import get_mf6_single_variable_obs, get_transmissivities
-from mfobs.obs import aggregrate_to_period
+from mfobs.modflow import get_mf6_single_variable_obs, get_ij, get_transmissivities
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
 
@@ -625,6 +624,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 # (values should be the same across columns, which represent layers)
                 kwargs[arg] = pivoted.mean(axis=1).values
 
+            # get the row, column indices of the observations here
+            # so that we can include them in the output
+            i, j = get_ij(modelgrid_transform, kwargs.pop('x'), kwargs.pop('y'))
+            kwargs['i'] = i
+            kwargs['j'] = j
+
             # get the transmissivity associated with each head obs
             T = get_transmissivities(heads_2d, hk, top, botm,
                                      modelgrid_transform=modelgrid_transform, **kwargs
@@ -656,6 +661,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
             # add the simulated heads onto the list for all periods
             mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads, 
+                                                     'i': i,
+                                                     'j': j,
                                                      'min_layer': kmin,
                                                      'max_layer': kmax
                                                      },
@@ -666,7 +673,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 observed_in_period_rs['obsprefix'] = obsprefix
                 observed_in_period_rs['datetime'] = data['datetime'].values[0]
 
-            for col in sim_values_column, 'min_layer', 'max_layer':
+            for col in sim_values_column, 'min_layer', 'max_layer', 'i', 'j':
                 observed_in_period_rs[col] = mean_t_weighted_heads_df[col]
             
 
@@ -688,6 +695,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 else:
                     sim_value = obsnme_results[sim_values_column]
                 sim_values.append(sim_value)
+            
+            # add in row, column locations
+            i, j = get_ij(modelgrid_transform, observed_in_period_rs['x'], 
+                          observed_in_period_rs['y'])
+            observed_in_period_rs['i'] = i
+            observed_in_period_rs['i'] = j
             observed_in_period_rs[sim_values_column] = sim_values
 
         # add stress period and observed values
@@ -758,7 +771,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
     columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
                obs_values_column, sim_values_column,
                'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 
-               'min_layer', 'max_layer', 'obgnme']
+               'min_layer', 'max_layer', 'i', 'j', 'obgnme']
     columns = [c for c in columns if c in head_obs.columns]
     head_obs = head_obs[columns].copy()
     if 'layer' in columns:

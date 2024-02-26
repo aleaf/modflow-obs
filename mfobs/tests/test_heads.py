@@ -103,7 +103,7 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
     Path(shellmound_output_path, 'processed_head_obs.dat').unlink()  # delete it
     expected_columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme',
                         'obsval', 'sim_obsval', 'n', 'screen_top', 'screen_botm', 'layer',
-                        'min_layer', 'max_layer', 'obgnme'
+                        'min_layer', 'max_layer', 'i', 'j', 'obgnme'
                         ]
     assert np.all(head_obs.columns == expected_columns)
     assert len(set(head_obs.obsnme)) == len(head_obs)

@@ -246,9 +246,9 @@ def test_get_transmissivities():
     #                        nodata=-999)
 
     # test with open intervals
-    r, c = np.arange(nr), np.arange(nc)
+    i, j = np.arange(nr), np.arange(nc)
     T = get_transmissivities(heads, hk=hk, top=top, botm=botm, 
-                             r=r, c=c, 
+                             i=i, j=j,
                              screen_top=sctop, screen_botm=scbot)
     assert (
         T
@@ -263,7 +263,7 @@ def test_get_transmissivities():
 
     # test without specifying open intervals
     T = get_transmissivities(heads, hk=hk, top=top, botm=botm, 
-                             r=r, c=c)
+                             i=i, j=j)
     assert (
         T
         - np.array(

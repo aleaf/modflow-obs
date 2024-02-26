@@ -783,7 +783,7 @@ def read_mf6_lake_obs(f, perioddata, start_date='2012-01-01',
 
 
 def get_transmissivities(heads, hk, top, botm,
-                         r=None, c=None, x=None, y=None, modelgrid_transform=None,
+                         i=None, j=None, x=None, y=None, modelgrid_transform=None,
                          screen_top=None, screen_botm=None, 
                          include_zero_open_intervals=True,
                          nodata=-999):
@@ -805,10 +805,10 @@ def get_transmissivities(heads, hk, top, botm,
         model top elevations.
     botm : 3D numpy array
         layer botm elevations.
-    r : 1D array-like of ints, of length n locations
-        row indices (optional; alternately specify x, y)
-    c : 1D array-like of ints, of length n locations
-        column indices (optional; alternately specify x, y)
+    i : 1D array-like of ints, of length n locations
+        zero-based row indices (optional; alternately specify x, y)
+    j : 1D array-like of ints, of length n locations
+        zero-based column indices (optional; alternately specify x, y)
     x : 1D array-like of floats, of length n locations
         x locations in real world coordinates (optional).
         If x and y are specified, a modelgrid_transform must also be provided.
@@ -851,35 +851,35 @@ def get_transmissivities(heads, hk, top, botm,
         Transmissivities in each layer at each location
 
     """
-    if r is not None and c is not None:
+    if i is not None and j is not None:
         pass
     elif x is not None and y is not None:
         # get row, col for observation locations
-        r, c = get_ij(modelgrid_transform, x, y)
+        i, j = get_ij(modelgrid_transform, x, y)
     else:
         raise ValueError('Must specify row, column or x, y locations.')
 
     # get k-values and botms at those locations
     # (make nlayer x n sites arrays)
-    hk2d = hk[:, r, c]
-    botm2d = botm[:, r, c]
+    hk2d = hk[:, i, j]
+    botm2d = botm[:, i, j]
     assert hk2d.shape == botm2d.shape, 'hk and bottom arrays must have consistent dimensions'
 
     if len(heads.shape) == 3:
-        heads = heads[:, r, c]
+        heads = heads[:, i, j]
 
     msg = 'Shape of heads array must be nlay x nhyd'
     assert heads.shape == botm2d.shape, msg
 
     # set open interval tops/bottoms to model top/bottom if None
     if screen_top is None:
-        screen_top = top[r, c]
+        screen_top = top[i, j]
     if screen_botm is None:
-        screen_botm = botm[-1, r, c]
+        screen_botm = botm[-1, i, j]
 
     # make an nlayers x n sites array of layer tops
     tops = np.empty_like(botm2d, dtype=float)
-    tops[0, :] = top[r, c]
+    tops[0, :] = top[i, j]
     tops[1:, :] = botm2d[:-1]
 
     # expand top and bottom arrays to be same shape as botm, thickness, etc.
