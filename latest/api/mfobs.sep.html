@@ -1,26 +1,25 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hydrograph separation-related functions &mdash; modflow-obs 0.post83.dev0+gffa4d85 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <title>Hydrograph separation-related functions &mdash; modflow-obs 0.post84.dev0+g9513fe0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script src="../_static/clipboard.min.js"></script>
-        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/documentation_options.js?v=d86651ee"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -41,7 +40,7 @@
             modflow-obs
           </a>
               <div class="version">
-                0.post83.dev0+gffa4d85
+                0.post84.dev0+g9513fe0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,15 +110,15 @@
            <div itemprop="articleBody">
              
   <section id="module-mfobs.sep">
-<span id="hydrograph-separation-related-functions"></span><h1>Hydrograph separation-related functions<a class="headerlink" href="#module-mfobs.sep" title="Permalink to this heading">¶</a></h1>
+<span id="hydrograph-separation-related-functions"></span><h1>Hydrograph separation-related functions<a class="headerlink" href="#module-mfobs.sep" title="Link to this heading">¶</a></h1>
 <p>Functions related to hydrograph separation</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.sep.ih_method">
-<span class="sig-prename descclassname"><span class="pre">mfobs.sep.</span></span><span class="sig-name descname"><span class="pre">ih_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Qseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_semilog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/sep.html#ih_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.sep.ih_method" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.sep.</span></span><span class="sig-name descname"><span class="pre">ih_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Qseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_semilog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/sep.html#ih_method"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.sep.ih_method" title="Link to this definition">¶</a></dt>
 <dd><p>Baseflow separation using the Institute of Hydrology method, as documented in
 Institute of Hydrology (1980) and Wahl and Wahl (1988).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl class="simple">
 <dt><strong>Qseries</strong><span class="classifier">pandas Series</span></dt><dd><p>Pandas time series (with datetime index) containing measured streamflow values.</p>
 </dd>
@@ -150,7 +149,7 @@ ordinances. Must be greater than zero.</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl class="simple">
 <dt><strong>Q</strong><span class="classifier">pandas DataFrame</span></dt><dd><p>DataFrame containing the following columns:
 minima : N-day minima
@@ -189,7 +188,7 @@ Water-Use Data for Water Resources Management, American Water Resources Associat
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Nov 27, 2023.
+      <span class="lastupdated">Last updated on Feb 28, 2024.
       </span></p>
   </div>
 

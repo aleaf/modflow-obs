@@ -1,26 +1,25 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The head observations module &mdash; modflow-obs 0.post83.dev0+gffa4d85 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/plot_directive.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <title>The head observations module &mdash; modflow-obs 0.post84.dev0+g9513fe0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
-        <script src="../_static/clipboard.min.js"></script>
-        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/documentation_options.js?v=d86651ee"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+        <script src="../_static/copybutton.js?v=f281be69"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -41,7 +40,7 @@
             modflow-obs
           </a>
               <div class="version">
-                0.post83.dev0+gffa4d85
+                0.post84.dev0+g9513fe0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,11 +110,11 @@
            <div itemprop="articleBody">
              
   <section id="module-mfobs.heads">
-<span id="the-head-observations-module"></span><h1>The head observations module<a class="headerlink" href="#module-mfobs.heads" title="Permalink to this heading">¶</a></h1>
+<span id="the-head-observations-module"></span><h1>The head observations module<a class="headerlink" href="#module-mfobs.heads" title="Link to this heading">¶</a></h1>
 <p>Functions for processing head observations</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.heads.get_head_obs">
-<span class="sig-prename descclassname"><span class="pre">mfobs.heads.</span></span><span class="sig-name descname"><span class="pre">get_head_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelgrid_transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_metadata_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_site_id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsprefix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_obsval_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_x_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_screen_top_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'screen_top'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_screen_botm_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'screen_botm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_layer_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_group_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obgnme'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_unc_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uncertainty'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hk_arrays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">botm_arrays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecasts_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_head_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.heads.get_head_obs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.heads.</span></span><span class="sig-name descname"><span class="pre">get_head_obs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">perioddata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelgrid_transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_input_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_metadata_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'head'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_site_id_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsprefix'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_datetime_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'datetime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_date_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_obsval_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obsval'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_x_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'x'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_y_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'y'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_screen_top_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'screen_top'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_screen_botm_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'screen_botm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_layer_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_group_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'obgnme'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observed_values_unc_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uncertainty'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggregrate_observed_values_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gwf_obs_block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_groups</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hk_arrays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">botm_arrays</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_period_as_steady_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steady_state_period_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_start_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_end_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecasts_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forecast_sites_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/heads.html#get_head_obs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.heads.get_head_obs" title="Link to this definition">¶</a></dt>
 <dd><p>Post-processes model output to be read by PEST, and optionally,
 writes a corresponding PEST instruction file. Reads model output
 using get_mf6_single_variable_obs(). General paradigm is to include all model
@@ -135,14 +134,14 @@ representing average conditions over a time period bracked by a <code class="doc
 <code class="docutils literal notranslate"><span class="pre">steady_state_period_end</span></code>. In this case, the simulated values for the labeled stress period are
 matched to average values for the steady-state time period.</p>
 <dl class="field-list">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><dl>
 <dt><strong>perioddata</strong><span class="classifier">str</span></dt><dd><p>Path to csv file with start/end dates for stress periods. Must have columns
 ‘time’ (modflow time, in days), ‘start_datetime’ (start date for the stress period)
 and ‘end_datetime’ (end date for the stress period).</p>
 </dd>
 <dt><strong>modelgrid_transform</strong><span class="classifier">str</span></dt><dd><p>An <a class="reference external" href="https://github.com/sgillies/affine">affine.Affine</a> object describing the orientation
-of the model grid. Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.3.0.post24+g585fe20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
+of the model grid. Modflow-setup <a class="reference external" href="https://doi-usgs.github.io/modflow-setup/latest/api/mfsetup.grid.html#mfsetup.grid.MFsetupGrid" title="(in modflow-setup v0.4.0.post3+gd2d459e)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MFsetupGrid</span></code></a> have this attached
 via the <code class="xref py py-meth docutils literal notranslate"><span class="pre">transform()</span></code> property. Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">affine</span><span class="o">.</span><span class="n">Affine</span><span class="p">(</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">500955</span><span class="p">,</span>
                                   <span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1000.0</span><span class="p">,</span> <span class="mi">1205285</span><span class="p">)</span>
@@ -165,10 +164,6 @@ Read by <a class="reference internal" href="mfobs.modflow.html#mfobs.modflow.get
 (default names are shown, other names can be specified with
 observed_values_**_col variables below):</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 35%" />
-<col style="width: 65%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>site_id</p></td>
 <td><p>site identifier</p></td>
@@ -184,10 +179,6 @@ observed_values_**_col variables below):</p>
 <p>can optionally include these columns, or this information can be supplied
 in an observed_values_metadata_file, which will be joined on site_id</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 35%" />
-<col style="width: 65%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>x</p></td>
 <td><p>x location</p></td>
@@ -206,10 +197,6 @@ in an observed_values_metadata_file, which will be joined on site_id</p>
 <p>If supplied, observation group and uncertainty information will be
 passed through to the output <code class="docutils literal notranslate"><span class="pre">base_data</span></code> DataFrame:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 28%" />
-<col style="width: 72%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>obgnme</p></td>
 <td><p>observation group</p></td>
@@ -226,10 +213,6 @@ CRS and length units as the model.</p>
 <cite>site_id</cite> column that is the same as observed_values_site_id_col, and any of
 the following columns that are not in the observed_values_file:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 35%" />
-<col style="width: 65%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>x</p></td>
 <td><p>x location</p></td>
@@ -379,14 +362,10 @@ By default, None (no output written)</p>
 </dd>
 </dl>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><dl>
 <dt><strong>base_data</strong><span class="classifier">DataFrame</span></dt><dd><p>With the following columns:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 28%" />
-<col style="width: 72%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p>datetime</p></td>
 <td><p>pandas datetimes for the start of each stress period</p></td>
@@ -443,7 +422,7 @@ to avoid potential case issues.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Nov 27, 2023.
+      <span class="lastupdated">Last updated on Feb 28, 2024.
       </span></p>
   </div>
 
