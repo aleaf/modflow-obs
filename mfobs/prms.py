@@ -33,7 +33,7 @@ def read_statvar_file(statvar_file):
             site_names.append(f"{segment}-{variable}")
         parse = lambda x: dt.datetime.strptime(x, '%Y %m %d %H %M %S')
         df = pd.read_csv(src, header=None,
-                  sep='\s+', 
+                  sep='\\s+', 
                   parse_dates={'datetime': list(range(1, 7))}, date_parser=parse,
                   index_col='datetime')
     df.columns = ['time'] + site_names
