@@ -54,7 +54,7 @@ def get_gwf_obs_input(gwf_obs_input_file, gwf_obs_block=None):
                     # read whole file with pandas.read_csv
                     # skipping over any lines that can't be read
                     # (MODFLOW 6 block headers and footers)
-                    df = pd.read_csv(src, delim_whitespace=True, header=None,
+                    df = pd.read_csv(src, sep='\s+', header=None,
                                      on_bad_lines='skip')
                     # remove the MODFLOW 6 block headers and footers
                     # if they were included in the dataframe
@@ -78,7 +78,7 @@ def get_gwf_obs_input(gwf_obs_input_file, gwf_obs_block=None):
         df = pd.read_csv(gwf_obs_input_file, 
                          skiprows=begin_idxs[gwf_obs_block],
                          skipfooter=(i-end_idxs[gwf_obs_block]),
-                         delim_whitespace=True, 
+                         sep='\s+', 
                          engine='python',
                          header=None)
     else:
@@ -476,7 +476,7 @@ def read_mf_gage_package_output_files(gage_package_output_files, variable=None):
             header = next(iter(src))
             names = next(iter(src)).strip().strip('"DATA:').strip()
             names = names.replace('.', '').lower().split()
-            df = pd.read_csv(src, delim_whitespace=True, header=None, names=names)
+            df = pd.read_csv(src, sep='\s+', header=None, names=names)
             df.index = df['time']
             if variable is not None:
                 variable = variable.replace('.', '').lower()
