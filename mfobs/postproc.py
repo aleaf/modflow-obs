@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import pyemu
 
 
 title_prefixes = {
@@ -46,7 +45,7 @@ def read_res_file(res_file):
             if ('measured' in line.lower()) and ('modelled' in line.lower()):
                 break
     # read the res file
-    res = pd.read_csv(res_file, sep='\s+', skiprows=skiprows)
+    res = pd.read_csv(res_file, sep='\\s+', skiprows=skiprows)
     res.columns = [c.lower() for c in res.columns]
     res.index = res['name']
     return res
@@ -137,7 +136,7 @@ def get_obs_info_from_files(obsfiles):
     req_columns = ['obsnme', 'obsprefix']
     dfs = []
     for f in obsfiles:
-        df = pd.read_csv(f, sep='\s+', dtype={'obsprefix': object})
+        df = pd.read_csv(f, sep='\\s+', dtype={'obsprefix': object})
         for c in req_columns:
             if c not in df.columns:
                 raise ValueError(f"Observation file {f} is missing an {c} column.")
@@ -367,7 +366,7 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
         Path(outfile_name_base).parent.mkdir(parents=True, exist_ok=True)
         
     if not isinstance(obs_output, pd.DataFrame):
-        df = pd.read_csv(obs_output, sep='\s+', 
+        df = pd.read_csv(obs_output, sep='\\s+', 
                              dtype={'obsprefix': object})
     else:
         df = obs_output
