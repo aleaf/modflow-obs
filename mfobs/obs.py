@@ -291,7 +291,7 @@ def get_base_obs(perioddata,
 
     # cast datetimes to pandas datetimes
     # (observed data may not have a datetime col. if model is steady-state)
-    if 'datetime' in observed.columns:
+    if observed_values_datetime_col is not None and 'datetime' in observed.columns:
         observed['datetime'] = pd.to_datetime(observed['datetime'])
         # not necessarily True
         observed['steady'] = False  # flag for steady-state observations
