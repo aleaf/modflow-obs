@@ -459,7 +459,7 @@ def test_fill_missing_obs(gage_package_obs, test_data_path,
     shutil.copy(test_data_path / 'br_missing_test_data2.dat.ins', 
                 test_output_folder)
     df = pd.read_csv(test_data_path / 'br_missing_test_data2.dat', 
-                     delim_whitespace=True)
+                     sep='\s+')
     outfile = test_data_path / 'br_missing_test_data2.dat'
     results3 = get_baseflow_observations(df, write_ins=False, 
                                          outfile=outfile)
