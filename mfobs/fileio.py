@@ -107,7 +107,7 @@ def read_csv(csvfile, col_limit=1e4, **kwargs):
         # del 'dtype' if it's in kwargs
         # pandas sniffer should apparently work for realization numbers to ints
         # and 'base' to str
-        if kwargs.get('dtype') == float:
+        if 'float' in str(kwargs.get('dtype', '')):
             del kwargs['dtype']
         df = pd.read_csv(csvfile, **kwargs)
     print("took {:.2f}s\n".format(time.time() - t0))
