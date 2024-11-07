@@ -36,6 +36,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  steady_state_period_end=None, forecast_sites=None,
                  forecast_start_date=None, forecast_end_date=None,
                  forecasts_only=False, forecast_sites_only=False,
+                 min_open_interval_frac_in_model=0.5,
                  write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
@@ -255,6 +256,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         with `forecast_sites` (has no effect if ``forecast_sites='all'``). If
         ``forecasts_only=False``, the output will include forecast and non-forecast
         observations (for a continuous time-series).
+    min_open_interval_frac_in_model : float ranging from 0 to 1, optional
+        Option to cull observations with less than min_open_interval_frac_in_model
+        fraction of their open interval within the model domain. Dropped head observation
+        locations will be reported in dropped_head_observations_above_or_below_model.csv.
+        by default, 0.5 (only retain observations with 50% 
+        or more of their open interval within the model domain)
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -629,6 +636,40 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             i, j = get_ij(modelgrid_transform, kwargs.pop('x'), kwargs.pop('y'))
             kwargs['i'] = i
             kwargs['j'] = j
+            
+            # cull observations to only those with >min_open_interval_pct_in_model 
+            # of their open interval within the model
+            model_top = top[i, j]
+            model_botm = botm[-1, i, j]
+            screen_len = kwargs['screen_top'] - kwargs['screen_botm']
+            in_model_top = np.min([kwargs['screen_top'], model_top], axis=0)
+            in_model_botm = np.max([kwargs['screen_botm'], model_botm], axis=0)
+            in_model_len = in_model_top - in_model_botm
+            in_model_frac = (in_model_len / screen_len)
+            # handle wells with no open interval length
+            # (screen top == screen bottom)
+            keep = (in_model_frac > min_open_interval_frac_in_model) |\
+                (kwargs['screen_top'] < model_top) & (kwargs['screen_botm'] > model_botm)
+            # make a table of the wells that are being discarded
+            drop_wells = pd.DataFrame({
+                'obsnme': np.array(obsnme)[~keep],
+                'screen_top': kwargs['screen_top'][~keep],
+                'screen_botm': kwargs['screen_botm'][~keep],
+                'model_top': model_top[~keep],
+                'model_botm': model_botm[~keep],
+            })
+            drop_wells['reason'] = f"<{min_open_interval_frac_in_model:.0%} of open interval in model"
+            drop_wells.to_csv(outpath / 'dropped_head_observations_above_or_below_model.csv', 
+                              float_format='%.2f')
+            obsnme = np.array(obsnme)[keep]
+            heads_2d = heads_2d[:, keep].copy()
+            for k, v in kwargs.items():
+                if isinstance(v, np.ndarray) and len(v) == len(keep):
+                    kwargs[k] = v[keep]
+            i = i[keep].copy()
+            j = j[keep].copy()
+            keep_observed_obsnmes = [n for n in obsnme if n in observed_in_period_rs.index]
+            observed_in_period_rs = observed_in_period_rs.loc[keep_observed_obsnmes].copy()
 
             # get the transmissivity associated with each head obs
             T = get_transmissivities(heads_2d, hk, top, botm,
