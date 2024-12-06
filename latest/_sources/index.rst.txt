@@ -12,7 +12,7 @@ modflow-obs |version|
    
    Philosophy <philosophy>
    Installation <installation>
-   Examples <examples>
+   10 minutes to PEST observations <10minutes>
 
 .. toctree::
   :maxdepth: 2
@@ -37,3 +37,9 @@ modflow-obs |version|
   :caption: Developer
 
   Contributing to modflow-obs <contributing>
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Bibliography
+
+   References cited <references>

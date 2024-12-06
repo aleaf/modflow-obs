@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post91.dev0+gabe1593 documentation</title>
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post92.dev0+ga6ecc46 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
@@ -16,7 +16,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=3d2362e9"></script>
+      <script src="../_static/documentation_options.js?v=f03adc21"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -28,7 +28,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Modules" href="../api/index.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="../examples.html" /> 
+    <link rel="prev" title="10 Minutes to PEST observations" href="../10minutes.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -51,42 +51,10 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../philosophy.html">Philosophy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Inputs">Inputs</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#model-grid-definition">model grid definition</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#model-time-discretization">model time discretization</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#alternatively,-get-the-stress-period-information-from-the-TDIS-and-STO-files">alternatively, get the stress period information from the TDIS and STO files</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="#model-property-information-for-T-weighted-averaging">model property information for T-weighted averaging</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#head-observation-data">head observation data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#streamflow-observations">streamflow observations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-input">MODFLOW-6 observation input</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#MODFLOW-6-observation-output">MODFLOW-6 observation output</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-head-observations">Create a base set of head observations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#PEST-instruction-files">PEST instruction files</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#plot-base-data-for-a-site">plot base data for a site</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Changes-in-head-through-time">Changes in head through time</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#plot-temporal-head-differences-for-a-site">plot temporal head differences for a site</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Displacement-in-head-through-time">Displacement in head through time</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Plot-the-displacement-observations">Plot the displacement observations</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#Head-differences-between-sites">Head differences between sites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Create-a-base-set-of-flux-observations">Create a base set of flux observations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Changes-in-streamflow-through-time">Changes in streamflow through time</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Change-in-streamflow-between-two-sites">Change in streamflow between two sites</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../10minutes.html">10 minutes to PEST observations</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
 <ul class="current">
@@ -136,6 +104,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to modflow-obs</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Bibliography</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References cited</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html#published-applications-of-modflow-obs">Published applications of Modflow-obs</a></li>
+</ul>
 
         </div>
       </div>
@@ -151,7 +124,6 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="../examples.html">&lt;no title&gt;</a></li>
       <li class="breadcrumb-item active">Demo of modflow-obs</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/notebooks/Example.ipynb.txt" rel="nofollow"> View page source</a>
@@ -3179,7 +3151,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../examples.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../10minutes.html" class="btn btn-neutral float-left" title="10 Minutes to PEST observations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="../api/index.html" class="btn btn-neutral float-right" title="Modules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
