@@ -3,7 +3,7 @@ name: Publish Docs
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, aleaf-develop ]
   release:
     types: [ created ]
 
