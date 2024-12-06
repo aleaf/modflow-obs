@@ -1,25 +1,25 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post87.dev0+g4b75a3e documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post91.dev0+gabe1593 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../_static/documentation_options.js?v=085f9b91"></script>
-        <script src="../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
-        <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
-        <script src="../../_static/copybutton.js?v=f281be69"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=3d2362e9"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -36,9 +36,6 @@
           <a href="../../index.html" class="icon icon-home">
             modflow-obs
           </a>
-              <div class="version">
-                0.post87.dev0+g4b75a3e
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -135,6 +132,7 @@
                  <span class="n">steady_state_period_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_sites</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">forecast_start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">forecasts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forecast_sites_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                 <span class="n">min_open_interval_frac_in_model</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                  <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Post-processes model output to be read by PEST, and optionally,</span>
 <span class="sd">    writes a corresponding PEST instruction file. Reads model output</span>
@@ -354,6 +352,12 @@
 <span class="sd">        with `forecast_sites` (has no effect if ``forecast_sites=&#39;all&#39;``). If</span>
 <span class="sd">        ``forecasts_only=False``, the output will include forecast and non-forecast</span>
 <span class="sd">        observations (for a continuous time-series).</span>
+<span class="sd">    min_open_interval_frac_in_model : float ranging from 0 to 1, optional</span>
+<span class="sd">        Option to cull observations with less than min_open_interval_frac_in_model</span>
+<span class="sd">        fraction of their open interval within the model domain. Dropped head observation</span>
+<span class="sd">        locations will be reported in dropped_head_observations_above_or_below_model.csv.</span>
+<span class="sd">        by default, 0.5 (only retain observations with 50% </span>
+<span class="sd">        or more of their open interval within the model domain)</span>
 <span class="sd">    outfile : str, optional</span>
 <span class="sd">        CSV file to write output to.</span>
 <span class="sd">        By default, None (no output written)</span>
@@ -728,6 +732,40 @@
             <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">get_ij</span><span class="p">(</span><span class="n">modelgrid_transform</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">),</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">))</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;i&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
             <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;j&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">j</span>
+            
+            <span class="c1"># cull observations to only those with &gt;min_open_interval_pct_in_model </span>
+            <span class="c1"># of their open interval within the model</span>
+            <span class="n">model_top</span> <span class="o">=</span> <span class="n">top</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+            <span class="n">model_botm</span> <span class="o">=</span> <span class="n">botm</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+            <span class="n">screen_len</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">]</span>
+            <span class="n">in_model_top</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">],</span> <span class="n">model_top</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">in_model_botm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">],</span> <span class="n">model_botm</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">in_model_len</span> <span class="o">=</span> <span class="n">in_model_top</span> <span class="o">-</span> <span class="n">in_model_botm</span>
+            <span class="n">in_model_frac</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_model_len</span> <span class="o">/</span> <span class="n">screen_len</span><span class="p">)</span>
+            <span class="c1"># handle wells with no open interval length</span>
+            <span class="c1"># (screen top == screen bottom)</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="p">(</span><span class="n">in_model_frac</span> <span class="o">&gt;</span> <span class="n">min_open_interval_frac_in_model</span><span class="p">)</span> <span class="o">|</span>\
+                <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">model_top</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">model_botm</span><span class="p">)</span>
+            <span class="c1"># make a table of the wells that are being discarded</span>
+            <span class="n">drop_wells</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+                <span class="s1">&#39;obsnme&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obsnme</span><span class="p">)[</span><span class="o">~</span><span class="n">keep</span><span class="p">],</span>
+                <span class="s1">&#39;screen_top&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_top&#39;</span><span class="p">][</span><span class="o">~</span><span class="n">keep</span><span class="p">],</span>
+                <span class="s1">&#39;screen_botm&#39;</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;screen_botm&#39;</span><span class="p">][</span><span class="o">~</span><span class="n">keep</span><span class="p">],</span>
+                <span class="s1">&#39;model_top&#39;</span><span class="p">:</span> <span class="n">model_top</span><span class="p">[</span><span class="o">~</span><span class="n">keep</span><span class="p">],</span>
+                <span class="s1">&#39;model_botm&#39;</span><span class="p">:</span> <span class="n">model_botm</span><span class="p">[</span><span class="o">~</span><span class="n">keep</span><span class="p">],</span>
+            <span class="p">})</span>
+            <span class="n">drop_wells</span><span class="p">[</span><span class="s1">&#39;reason&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">min_open_interval_frac_in_model</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2"> of open interval in model&quot;</span>
+            <span class="n">drop_wells</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outpath</span> <span class="o">/</span> <span class="s1">&#39;dropped_head_observations_above_or_below_model.csv&#39;</span><span class="p">,</span> 
+                              <span class="n">float_format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">obsnme</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">obsnme</span><span class="p">)[</span><span class="n">keep</span><span class="p">]</span>
+            <span class="n">heads_2d</span> <span class="o">=</span> <span class="n">heads_2d</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">keep</span><span class="p">):</span>
+                    <span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">j</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">keep_observed_obsnmes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">obsnme</span> <span class="k">if</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+            <span class="n">observed_in_period_rs</span> <span class="o">=</span> <span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep_observed_obsnmes</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
             <span class="c1"># get the transmissivity associated with each head obs</span>
             <span class="n">T</span> <span class="o">=</span> <span class="n">get_transmissivities</span><span class="p">(</span><span class="n">heads_2d</span><span class="p">,</span> <span class="n">hk</span><span class="p">,</span> <span class="n">top</span><span class="p">,</span> <span class="n">botm</span><span class="p">,</span>
@@ -900,7 +938,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Sep 16, 2024.
+      <span class="lastupdated">Last updated on Dec 06, 2024.
       </span></p>
   </div>
 
