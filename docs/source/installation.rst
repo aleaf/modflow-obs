@@ -4,15 +4,17 @@ Installation
 
 Python dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Modflow-obs requires `numpy`_, `pandas`_ and the `affine`_ library. The easiest way to
-install these is using conda and pip:
+Modflow-obs requires `numpy`_, `pandas`_ and the `affine`_ library. Additionally, running the demonstration example requires Jupyter Notebooks. The easiest way to install these is using conda.
+
+Instructions for installing `Miniforge <https://github.com/conda-forge/miniforge>`_, a minimal conda-based python distribution, can be found `here <https://github.com/DOI-USGS/python-for-hydrology/blob/main/installation/README.md#python-installation-instructions>`_.
+
+The `requirements.yml` file included at the top level of this repository includes the necessary packages.
 
 .. code-block:: bash
 
-    conda install -c conda-forge numpy pandas
-    pip install affine
+    conda env create -f requirements.yml
 
-.. _affine: https://github.com/sgillies/affine
+.. _affine: https://github.com/rasterio/affine
 .. _numpy: https://numpy.org/
 .. _pandas: http://pandas.pydata.org
 
@@ -28,8 +30,13 @@ Subsequent updates can then be made with
 
 .. code-block:: bash
 
+    pip install --upgrade git+git://github.com/aleaf/modflow-obs@master
+
+or by uninstalling and reinstalling. To uninstall:
+
+.. code-block:: bash
+
     pip uninstall modflow-obs
-    pip install git+git://github.com/aleaf/modflow-obs@master
 
 Installing the Modflow-obs source code in-place
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
