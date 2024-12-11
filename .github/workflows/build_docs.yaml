@@ -3,7 +3,7 @@ name: Publish Docs
 
 on:
   push:
-    branches: [ master, aleaf-develop ]
+    branches: [ master, aleaf-develop, docs ]
   release:
     types: [ created ]
 
@@ -68,10 +68,23 @@ jobs:
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@3.7.1
-      if: ${{ github.event_name == 'push' }}
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         BRANCH: gh-pages
         FOLDER: docs/build/html
         CLEAN: false
         TARGET_FOLDER: latest
+
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      if: |
+        ${{ github.event_name == 'push' && 
+        ( github.ref == 'refs/heads/docs' || github.ref == 'refs/heads/aleaf-develop' )
+        }}
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: docs/build/html
+        CLEAN: false
+        TARGET_FOLDER: draft

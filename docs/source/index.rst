@@ -10,7 +10,7 @@ modflow-obs |version|
    :maxdepth: 2
    :caption: Getting Started
    
-   Philosophy <philosophy>
+   Overview <overview>
    Installation <installation>
    10 minutes to PEST observations <10minutes>
 

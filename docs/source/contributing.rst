@@ -5,9 +5,6 @@ Contributing to Modflow-obs
 which has similar guidelines to `pandas <http://pandas.pydata.org/pandas-docs/stable/contributing.html>`_
 and `xarray <http://xarray.pydata.org/en/stable/>`_.)
 
-Overview
---------
-
 Contributions to modflow-obs are very welcome.  They are likely to
 be accepted more quickly if they follow these guidelines.
 
