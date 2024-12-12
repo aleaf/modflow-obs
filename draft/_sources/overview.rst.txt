@@ -53,3 +53,18 @@ Modflow-obs in a parameter estimation workflow
 .. figure:: _static/workflow.png
    :scale: 25 %
    :alt: 
+
+
+Previous work
+--------------------------------------------------------
+Modflow-obs is similar to TSPROC (Westenbroek and others, 2012) in that it  
+
+* Emphasizes observation processing to achieve a meaningful objective function
+* Processes field data and model outputs in tandem
+* Automates instruction file creation using contexts
+
+Modflow-obs substitutes the input file for TSPROC with a Python script where custom code can be added.
+
+Modflow-obs builds on the Python framework illustrated in the `GMDSI examples <https://github.com/gmdsi/GMDSI_notebooks>`_ by adding structure and reusable code.
+
+Like `MOD2OBS <https://help.pesthomepage.org/observations2.html>`_, Modflow-obs automates alignment of field data and model outputs, but does not interpolate horizontally, and uses transmissivity-based weighting for vertical interpolation. 

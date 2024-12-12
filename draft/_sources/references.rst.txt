@@ -8,6 +8,8 @@ Haitjema, H.M., 1995, Analytic element modeling of groundwater flow: San Diego, 
 
 Leaf, A.T., and Fienen, M.N., 2022, Modflow-setup—Robust automation of groundwater model construction: Frontiers in Earth Science, v. 10, art. 903965, 11 p. `<https://doi.org/10.3389/feart.2022.903965>`_
 
+Westenbroek, S.M., Doherty, J., Walker, J.F., Kelson, V.A., Hunt, R.J., and Cera, T.B., 2012, Approaches in highly parameterized inversion: TSPROC, a general time-series processor to assist in model calibration and result summarization: U.S. Geological Survey Techniques and Methods, book 7, chap. C7, 79 p., 3 apps. `<https://doi.org/10.3133/tm7C7>`_
+
 White, J.T. (2017), Forecast First: An Argument for Groundwater Modeling in Reverse. Groundwater, 55: 660-664. `<https://doi.org/10.1111/gwat.12558>`_
 
 White, J.T., Fienen, M.N., and Doherty, J.E., 2016, A python framework for environmental model uncertainty analysis: Environmental Modelling & Software, v. 85, p. 217–228. `<https://doi.org/10.1016/j.envsoft.2016.08.017>`_

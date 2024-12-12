@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Overview &mdash; modflow-obs 0.post94.dev0+gf0bc6f6 documentation</title>
+  <title>Overview &mdash; modflow-obs 0.post95.dev0+g524af0d documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5666e6cb"></script>
+      <script src="_static/documentation_options.js?v=7ab881d1"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
-    <link rel="prev" title="Modflow-obs 0.post94.dev0+gf0bc6f6" href="index.html" /> 
+    <link rel="prev" title="Modflow-obs 0.post95.dev0+g524af0d" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -59,6 +59,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#modflow-obs-in-a-parameter-estimation-workflow">Modflow-obs in a parameter estimation workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#previous-work">Previous work</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -181,13 +182,25 @@
 </a>
 </figure>
 </section>
+<section id="previous-work">
+<h2>Previous work<a class="headerlink" href="#previous-work" title="Link to this heading"></a></h2>
+<p>Modflow-obs is similar to TSPROC (Westenbroek and others, 2012) in that it</p>
+<ul class="simple">
+<li><p>Emphasizes observation processing to achieve a meaningful objective function</p></li>
+<li><p>Processes field data and model outputs in tandem</p></li>
+<li><p>Automates instruction file creation using contexts</p></li>
+</ul>
+<p>Modflow-obs substitutes the input file for TSPROC with a Python script where custom code can be added.</p>
+<p>Modflow-obs builds on the Python framework illustrated in the <a class="reference external" href="https://github.com/gmdsi/GMDSI_notebooks">GMDSI examples</a> by adding structure and reusable code.</p>
+<p>Like <a class="reference external" href="https://help.pesthomepage.org/observations2.html">MOD2OBS</a>, Modflow-obs automates alignment of field data and model outputs, but does not interpolate horizontally, and uses transmissivity-based weighting for vertical interpolation.</p>
+</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Modflow-obs 0.post94.dev0+gf0bc6f6" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="index.html" class="btn btn-neutral float-left" title="Modflow-obs 0.post95.dev0+g524af0d" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
