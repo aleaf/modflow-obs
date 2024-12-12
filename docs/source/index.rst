@@ -3,8 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-modflow-obs |version|
+Modflow-obs |version|
 =========================================
+
+A Python package for processing and managing PEST observations for MODFLOW and other models. 
+
+|Go to the GitHub Page|_
+
+.. |Go to the GitHub Page| replace:: **Go to the GitHub Page**
+.. _Go to the GitHub Page: https://github.com/aleaf/modflow-obs
 
 .. toctree::
    :maxdepth: 2
