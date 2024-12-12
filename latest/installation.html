@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; modflow-obs 0.post92.dev0+gc1e0ae8 documentation</title>
+  <title>Installation &mdash; modflow-obs 0.post95.dev0+gbf79ea2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7ee3c68e"></script>
+      <script src="_static/documentation_options.js?v=f55fdb99"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -25,7 +25,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="10 Minutes to PEST observations" href="10minutes.html" />
-    <link rel="prev" title="Philosophy" href="philosophy.html" /> 
+    <link rel="prev" title="Overview" href="overview.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,7 +49,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#python-dependencies">Python dependencies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-modflow-obs-using-pip">Installing Modflow-obs using pip</a></li>
@@ -108,10 +108,10 @@
 <h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
 <section id="python-dependencies">
 <h2>Python dependencies<a class="headerlink" href="#python-dependencies" title="Link to this heading"></a></h2>
-<p>Modflow-obs requires <a class="reference external" href="https://numpy.org/">numpy</a>, <a class="reference external" href="http://pandas.pydata.org">pandas</a> and the <a class="reference external" href="https://github.com/sgillies/affine">affine</a> library. The easiest way to
-install these is using conda and pip:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>numpy<span class="w"> </span>pandas
-pip<span class="w"> </span>install<span class="w"> </span>affine
+<p>Modflow-obs requires <a class="reference external" href="https://numpy.org/">numpy</a>, <a class="reference external" href="http://pandas.pydata.org">pandas</a> and the <a class="reference external" href="https://github.com/rasterio/affine">affine</a> library. Additionally, running the demonstration example requires Jupyter Notebooks. The easiest way to install these is using conda.</p>
+<p>Instructions for installing <a class="reference external" href="https://github.com/conda-forge/miniforge">Miniforge</a>, a minimal conda-based python distribution, can be found <a class="reference external" href="https://github.com/DOI-USGS/python-for-hydrology/blob/main/installation/README.md#python-installation-instructions">here</a>.</p>
+<p>The <cite>requirements.yml</cite> file included at the top level of this repository includes the necessary packages.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>requirements.yml
 </pre></div>
 </div>
 </section>
@@ -122,8 +122,11 @@ pip<span class="w"> </span>install<span class="w"> </span>affine
 </pre></div>
 </div>
 <p>Subsequent updates can then be made with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>git+git://github.com/aleaf/modflow-obs@master
+</pre></div>
+</div>
+<p>or by uninstalling and reinstalling. To uninstall:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>uninstall<span class="w"> </span>modflow-obs
-pip<span class="w"> </span>install<span class="w"> </span>git+git://github.com/aleaf/modflow-obs@master
 </pre></div>
 </div>
 </section>
@@ -154,7 +157,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="philosophy.html" class="btn btn-neutral float-left" title="Philosophy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="overview.html" class="btn btn-neutral float-left" title="Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="10minutes.html" class="btn btn-neutral float-right" title="10 Minutes to PEST observations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
@@ -162,7 +165,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 06, 2024.
+      <span class="lastupdated">Last updated on Dec 12, 2024.
       </span></p>
   </div>
 

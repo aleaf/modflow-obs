@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>modflow-obs 0.post92.dev0+gc1e0ae8 &mdash; modflow-obs 0.post92.dev0+gc1e0ae8 documentation</title>
+  <title>Modflow-obs 0.post95.dev0+gbf79ea2 &mdash; modflow-obs 0.post95.dev0+gbf79ea2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7ee3c68e"></script>
+      <script src="_static/documentation_options.js?v=f55fdb99"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -26,7 +26,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Philosophy" href="philosophy.html" /> 
+    <link rel="next" title="Overview" href="overview.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -50,7 +50,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="10minutes.html">10 minutes to PEST observations</a></li>
 </ul>
@@ -90,7 +90,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">modflow-obs 0.post92.dev0+gc1e0ae8</li>
+      <li class="breadcrumb-item active">Modflow-obs 0.post95.dev0+gbf79ea2</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -101,14 +101,17 @@
            <div itemprop="articleBody">
              
   <section id="modflow-obs-version">
-<h1>modflow-obs 0.post92.dev0+gc1e0ae8<a class="headerlink" href="#modflow-obs-version" title="Link to this heading"></a></h1>
+<h1>Modflow-obs 0.post95.dev0+gbf79ea2<a class="headerlink" href="#modflow-obs-version" title="Link to this heading"></a></h1>
+<p>A Python package for processing and managing PEST observations for MODFLOW and other models.</p>
+<p><a class="reference external" href="https://github.com/aleaf/modflow-obs"><strong>Go to the GitHub Page</strong></a></p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="philosophy.html">Philosophy</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="philosophy.html#motivation">Motivation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="philosophy.html#what-modflow-obs-does">What modflow-obs does</a></li>
-<li class="toctree-l2"><a class="reference internal" href="philosophy.html#what-modflow-obs-doesn-t-do">What modflow-obs doesn’t do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#motivation">Motivation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#what-modflow-obs-does">What Modflow-obs does</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#modflow-obs-in-a-parameter-estimation-workflow">Modflow-obs in a parameter estimation workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html#previous-work">Previous work</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
@@ -117,10 +120,7 @@
 <li class="toctree-l2"><a class="reference internal" href="installation.html#installing-the-modflow-obs-source-code-in-place">Installing the Modflow-obs source code in-place</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="10minutes.html">10 minutes to PEST observations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="10minutes.html#make-csv-files-of-observation-site-information-and-values">1) Make CSV files of observation site information and values</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="10minutes.html">10 minutes to PEST observations</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -170,14 +170,14 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="philosophy.html" class="btn btn-neutral float-right" title="Philosophy" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="overview.html" class="btn btn-neutral float-right" title="Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 06, 2024.
+      <span class="lastupdated">Last updated on Dec 12, 2024.
       </span></p>
   </div>
 
