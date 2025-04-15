@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post95.dev0+gbf79ea2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+  <title>mfobs.obs &mdash; modflow-obs 0.post96.dev0+g4793419 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f55fdb99"></script>
+      <script src="../../_static/documentation_options.js?v=f79b7d06"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -102,20 +102,20 @@
 <span class="sd">including base observations representing field measurements and simulated equivalents, </span>
 <span class="sd">and derivative observations that are created from the base observations.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">mfobs.checks</span> <span class="kn">import</span> <span class="n">check_obsnme_suffix</span>
-<span class="kn">from</span> <span class="nn">mfobs.fileio</span> <span class="kn">import</span> <span class="n">write_insfile</span><span class="p">,</span> <span class="n">get_insfile_observations</span>
-<span class="kn">from</span> <span class="nn">mfobs.sep</span> <span class="kn">import</span> <span class="n">ih_method</span>
-<span class="kn">from</span> <span class="nn">mfobs.utils</span> <span class="kn">import</span> <span class="n">fill_nats</span><span class="p">,</span> <span class="n">set_period_start_end_dates</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_obsnme_suffix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.fileio</span><span class="w"> </span><span class="kn">import</span> <span class="n">write_insfile</span><span class="p">,</span> <span class="n">get_insfile_observations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.sep</span><span class="w"> </span><span class="kn">import</span> <span class="n">ih_method</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">fill_nats</span><span class="p">,</span> <span class="n">set_period_start_end_dates</span>
 
 
 <div class="viewcode-block" id="get_base_obs">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_base_obs">[docs]</a>
-<span class="k">def</span> <span class="nf">get_base_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_base_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
             <span class="n">model_output</span><span class="p">,</span>
             <span class="n">observed_values_file</span><span class="p">,</span>
             <span class="n">variable_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -629,7 +629,7 @@
 
 <div class="viewcode-block" id="aggregrate_to_period">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.aggregrate_to_period">[docs]</a>
-<span class="k">def</span> <span class="nf">aggregrate_to_period</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">obsnme_suffix</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">aggregrate_to_period</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">obsnme_suffix</span><span class="p">,</span>
                          <span class="n">aggregrate_observed_values_method</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">,</span>
                          <span class="p">):</span>
 
@@ -667,7 +667,7 @@
 
 <div class="viewcode-block" id="get_spatial_differences">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_spatial_differences">[docs]</a>
-<span class="k">def</span> <span class="nf">get_spatial_differences</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spatial_differences</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
                             <span class="n">difference_sites</span><span class="p">,</span>
                             <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
                             <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
@@ -985,7 +985,7 @@
 
 <div class="viewcode-block" id="get_temporal_differences">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_temporal_differences">[docs]</a>
-<span class="k">def</span> <span class="nf">get_temporal_differences</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_temporal_differences</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> <span class="n">perioddata</span><span class="p">,</span>
                              <span class="n">obs_values_col</span><span class="o">=</span><span class="s1">&#39;obs_head&#39;</span><span class="p">,</span>
                              <span class="n">sim_values_col</span><span class="o">=</span><span class="s1">&#39;sim_head&#39;</span><span class="p">,</span>
                              <span class="n">variable</span><span class="o">=</span><span class="s1">&#39;head&#39;</span><span class="p">,</span>
@@ -1241,7 +1241,7 @@
 
 <div class="viewcode-block" id="get_annual_means">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_annual_means">[docs]</a>
-<span class="k">def</span> <span class="nf">get_annual_means</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_annual_means</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
                      <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y&#39;</span><span class="p">,</span>
                      <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;annual-mean&#39;</span><span class="p">,</span>
@@ -1362,7 +1362,7 @@
     
 <div class="viewcode-block" id="get_monthly_means">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_monthly_means">[docs]</a>
-<span class="k">def</span> <span class="nf">get_monthly_means</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_monthly_means</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
                       <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m&#39;</span><span class="p">,</span>
                       <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
                       <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;monthly-mean&#39;</span><span class="p">,</span>
@@ -1485,7 +1485,7 @@
 
 <div class="viewcode-block" id="get_mean_monthly">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_mean_monthly">[docs]</a>
-<span class="k">def</span> <span class="nf">get_mean_monthly</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mean_monthly</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
                      <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%b&#39;</span><span class="p">,</span>
                      <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;mean-monthly&#39;</span><span class="p">,</span>
@@ -1609,7 +1609,7 @@
 
 <div class="viewcode-block" id="get_log10_observations">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_log10_observations">[docs]</a>
-<span class="k">def</span> <span class="nf">get_log10_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_log10_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
                            <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-log&#39;</span><span class="p">,</span>
                            <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
                            <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span>
@@ -1720,7 +1720,7 @@
 
 <div class="viewcode-block" id="get_baseflow_observations">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_baseflow_observations">[docs]</a>
-<span class="k">def</span> <span class="nf">get_baseflow_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">get_baseflow_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
                               <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-bf&#39;</span><span class="p">,</span>
                               <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
                               <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;bf&#39;</span><span class="p">,</span>
@@ -1891,7 +1891,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 12, 2024.
+      <span class="lastupdated">Last updated on Apr 15, 2025.
       </span></p>
   </div>
 

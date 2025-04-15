@@ -5,8 +5,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post95.dev0+gbf79ea2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+  <title>mfobs.heads &mdash; modflow-obs 0.post96.dev0+g4793419 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f55fdb99"></script>
+      <script src="../../_static/documentation_options.js?v=f79b7d06"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -100,19 +100,19 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Functions for processing head observations</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">mfobs.checks</span> <span class="kn">import</span> <span class="n">check_obsnme_suffix</span>
-<span class="kn">from</span> <span class="nn">mfobs.fileio</span> <span class="kn">import</span> <span class="n">load_array</span><span class="p">,</span> <span class="n">write_insfile</span>
-<span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_mf6_single_variable_obs</span><span class="p">,</span> <span class="n">get_ij</span><span class="p">,</span> <span class="n">get_transmissivities</span>
-<span class="kn">from</span> <span class="nn">mfobs.utils</span> <span class="kn">import</span> <span class="n">fill_nats</span><span class="p">,</span> <span class="n">set_period_start_end_dates</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_obsnme_suffix</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.fileio</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_array</span><span class="p">,</span> <span class="n">write_insfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.modflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_mf6_single_variable_obs</span><span class="p">,</span> <span class="n">get_ij</span><span class="p">,</span> <span class="n">get_transmissivities</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">fill_nats</span><span class="p">,</span> <span class="n">set_period_start_end_dates</span>
 
 
 <div class="viewcode-block" id="get_head_obs">
 <a class="viewcode-back" href="../../api/mfobs.heads.html#mfobs.heads.get_head_obs">[docs]</a>
-<span class="k">def</span> <span class="nf">get_head_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span> <span class="n">modelgrid_transform</span><span class="p">,</span> <span class="n">model_output_file</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_head_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span> <span class="n">modelgrid_transform</span><span class="p">,</span> <span class="n">model_output_file</span><span class="p">,</span>
                  <span class="n">observed_values_file</span><span class="p">,</span>
                  <span class="n">gwf_obs_input_file</span><span class="p">,</span>
                  <span class="n">observed_values_metadata_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -943,7 +943,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 12, 2024.
+      <span class="lastupdated">Last updated on Apr 15, 2025.
       </span></p>
   </div>
 

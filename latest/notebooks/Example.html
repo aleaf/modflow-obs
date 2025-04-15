@@ -6,8 +6,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demo of modflow-obs &mdash; modflow-obs 0.post95.dev0+gbf79ea2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+  <title>Demo of modflow-obs &mdash; modflow-obs 0.post96.dev0+g4793419 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
       <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -16,14 +16,12 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=f55fdb99"></script>
+      <script src="../_static/documentation_options.js?v=f79b7d06"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
       <script src="../_static/copybutton.js?v=f281be69"></script>
       <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
-      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -162,9 +160,9 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <br/></pre></div>
 </div>
 </div>
@@ -189,7 +187,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">affine</span> <span class="kn">import</span> <span class="n">Affine</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">affine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Affine</span>
 
 <span class="c1"># model grid offset and spacing</span>
 <span class="n">lower_left_x</span> <span class="o">=</span> <span class="mf">500955.</span>
@@ -313,7 +311,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_perioddata</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.modflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_perioddata</span>
 
 <span class="n">perioddata</span> <span class="o">=</span> <span class="n">get_perioddata</span><span class="p">(</span><span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;mfsim.tdis&#39;</span><span class="p">,</span> <span class="n">data_path</span> <span class="o">/</span> <span class="s1">&#39;shellmound.sto&#39;</span><span class="p">)</span>
 <span class="n">perioddata</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
@@ -957,7 +955,7 @@ time,07288280,07288580,07288500,07281600
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.heads</span> <span class="kn">import</span> <span class="n">get_head_obs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.heads</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_head_obs</span>
 
 <span class="n">base_obs</span> <span class="o">=</span> <span class="n">get_head_obs</span><span class="p">(</span><span class="n">perioddata</span><span class="p">,</span>
                         <span class="n">modelgrid_transform</span><span class="o">=</span><span class="n">modelgrid_transform</span><span class="p">,</span>
@@ -991,7 +989,7 @@ time,07288280,07288580,07288500,07281600
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 reading model output from ../mfobs/tests/data/shellmound/shellmound.head.obs...
-took 0.02s
+took 0.01s
 
 Dropping 191 sites with no information
 </pre></div></div>
@@ -1051,30 +1049,6 @@ Dropping 191 sites with no information
   in_model_frac = (in_model_len / screen_len)
 /home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
   Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
-  in_model_frac = (in_model_len / screen_len)
-/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
-  Tr_frac = T / T.sum(axis=0)
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1084,6 +1058,37 @@ Dropping 191 sites with no information
 <div class="highlight"><pre>
 wrote 414 observations to output/processed_head_obs.dat
 wrote 414 observation instructions to output/processed_head_obs.dat.ins
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:648: RuntimeWarning: invalid value encountered in divide
+  in_model_frac = (in_model_len / screen_len)
+/home/runner/work/modflow-obs/modflow-obs/mfobs/heads.py:680: RuntimeWarning: invalid value encountered in divide
+  Tr_frac = T / T.sum(axis=0)
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1305,7 +1310,7 @@ l1 w w w w w w !usgs:333145090261901_201503! w w w w w w w w
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_temporal_differences</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.obs</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_temporal_differences</span>
 
 <span class="n">thead_diffs</span> <span class="o">=</span> <span class="n">get_temporal_differences</span><span class="p">(</span><span class="n">base_obs</span><span class="p">,</span>
                                        <span class="n">perioddata</span><span class="p">,</span>
@@ -1353,8 +1358,17 @@ wrote 354 observation instructions to output/processed_head_obs_tdiffs.dat.ins
 </section>
 <section id="Displacement-in-head-through-time">
 <h2>Displacement in head through time<a class="headerlink" href="#Displacement-in-head-through-time" title="Link to this heading"></a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also be used to compute displacement (total change) from a reference time, via the <code class="docutils literal notranslate"><span class="pre">get_displacement</span></code> flag. * Displacements are computed at sites with 2 or more observations. * The reference time is specified by the <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code> argument. * The first observation at each site that occurs on or after the reference time is then used as the datum in computing the displacements. * If no reference time is specified, the first observation is
-used as the datum for each site. * Displacement observations can help inform PEST about longer-term temporal trends in the observation data.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">get_temporal_differences</span></code> function can also be used to compute displacement (total change) from a reference time, via the <code class="docutils literal notranslate"><span class="pre">get_displacement</span></code> flag.</p>
+<ul class="simple">
+<li><p>Displacements are computed at sites with 2 or more observations.</p></li>
+<li><p>The reference time is specified by the <code class="docutils literal notranslate"><span class="pre">displacement_from</span></code> argument.</p>
+<ul>
+<li><p>The first observation at each site that occurs on or after the reference time is then used as the datum in computing the displacements.</p></li>
+<li><p>If no reference time is specified, the first observation is used as the datum for each site.</p></li>
+</ul>
+</li>
+<li><p>Displacement observations can help inform PEST about longer-term temporal trends in the observation data.</p></li>
+</ul>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
@@ -1690,7 +1704,7 @@ wrote 202 observation instructions to output/processed_head_obs_disp.dat.ins
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_spatial_differences</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.obs</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_spatial_differences</span>
 
 <span class="n">head_difference_sites</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;usgs:333904090123801&#39;</span><span class="p">:</span>  <span class="c1"># well in money, ms</span>
                          <span class="s1">&#39;usgs:333145090261901&#39;</span>  <span class="c1"># well approx. 15 mi southwest in cone of depression</span>
@@ -1930,8 +1944,8 @@ PosixPath(&#39;../mfobs/tests/data/shellmound/shellmound.sfr.obs.output.csv&#39;
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mfobs.obs</span> <span class="kn">import</span> <span class="n">get_base_obs</span>
-<span class="kn">from</span> <span class="nn">mfobs.modflow</span> <span class="kn">import</span> <span class="n">get_mf6_single_variable_obs</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.obs</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_base_obs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mfobs.modflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_mf6_single_variable_obs</span>
 
 <span class="c1"># first read the MF6 SFR package results into a dataframe</span>
 <span class="c1"># with the appropriate formatting for get_base_obs</span>
@@ -3188,7 +3202,7 @@ Text(0, 0.5, &#39;Gain in streamflow, $m^3/d$&#39;)
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Dec 12, 2024.
+      <span class="lastupdated">Last updated on Apr 15, 2025.
       </span></p>
   </div>
 
