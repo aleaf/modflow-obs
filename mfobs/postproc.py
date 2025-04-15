@@ -140,6 +140,7 @@ def get_obs_info_from_files(obsfiles):
         for c in req_columns:
             if c not in df.columns:
                 raise ValueError(f"Observation file {f} is missing an {c} column.")
+        df['file'] = str(f)
         dfs.append(df)
     df = pd.concat(dfs)
 
@@ -152,7 +153,7 @@ def get_obs_info_from_files(obsfiles):
         else:
             obstypes.append('meas')
     df['obstype'] = obstypes
-    df = df[['obsnme', 'obsprefix', 'obstype', 'datetime']]
+    df = df[['obsnme', 'obsprefix', 'obstype', 'datetime', 'min_layer', 'max_layer', 'file']]
     df.index = df['obsnme']
     df['datetime'] = pd.to_datetime(df['datetime'])
     return df
@@ -242,7 +243,9 @@ def get_summary_statistics(res_data, include_zero_weighted=False,
                 all_head_stats.name = col
                 all_head_stats_subsets.append(pd.DataFrame(all_head_stats).T)
         summary = pd.concat([summary] + all_head_stats_subsets)
-        summary['rmse_frac_range'] = summary['RMSE'] / summary['meas_range']
+        loc = summary['meas_range'] != 0
+        summary['rmse_frac_range'] = np.nan
+        summary.loc[loc, 'rmse_frac_range'] = summary.loc[loc, 'RMSE'] / summary.loc[loc, 'meas_range']
         processed_dfs.append(summary)
     df = pd.concat(processed_dfs)
     df['weighting'] = ['zero-weighted' if avg_weight == 0 else 'weighted' 
