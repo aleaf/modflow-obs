@@ -26,3 +26,7 @@ Published applications of Modflow-obs
 Leaf, A.T., Duncan, L.L., Haugh, C.J., Hunt, R.J., and Rigby, J.R., 2023, Simulating groundwater flow in the Mississippi Alluvial Plain with a focus on the Mississippi Delta: U.S. Geological Survey Scientific Investigations Report 2023–5100, 143 p. `<https://doi.org/10.3133/sir20235100>`_
 
 Leaf, A.T., Duncan, L.L, and Haugh, C.J., 2023, MODFLOW 6 models for simulating groundwater flow in the Mississippi Embayment with a focus on the Mississippi Delta: U.S. Geological Survey data release, `<https://doi.org/10.5066/P971LPOB>`_
+
+Leaf, A.T., Haserodt, M.J., Meyer, B.E., Westenbroek, S.M., and Koch, J.C., 2024, Simulating present and future
+groundwater/surface-water interactions and stream temperatures in Beaver Creek, Kenai Peninsula, Alaska:
+U.S. Geological Survey Scientific Investigations Report 2024–5126, 111 p., `<https://doi.org/10.3133/sir20245126>`_.
