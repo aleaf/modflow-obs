@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post97.dev0+gc1cc07a documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post98.dev0+ga7135b3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=97863ebd"></script>
+      <script src="../../_static/documentation_options.js?v=c1afbe99"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1113,7 +1113,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># group observations by site (prefix)</span>
@@ -1326,7 +1326,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1447,7 +1447,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1570,7 +1570,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1691,7 +1691,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="n">log_base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1812,7 +1812,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="n">bf_base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
