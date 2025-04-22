@@ -212,7 +212,7 @@ def get_mf6_single_variable_obs(perioddata,
                                 names_include_variable=False,
                                 abs=True,
                                 gwf_obs_block=None):
-    """Read raw MODFLOW-6 observation output from csv table with
+    r"""Read raw MODFLOW-6 observation output from csv table with
     times along the row axis and observations along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
     in each row. If there is more than one time in a stress period, retain only
@@ -494,7 +494,7 @@ def get_mf_gage_package_obs(perioddata,
                             gwf_obs_input_file=None,
                             variable='flow',
                             abs=True):
-    """Read raw MODFLOW gage package text file output with
+    r"""Read raw MODFLOW gage package text file output with
     times along the row axis and observations along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
     in each row. 

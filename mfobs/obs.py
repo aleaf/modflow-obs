@@ -578,7 +578,7 @@ def get_spatial_differences(base_data, perioddata,
                             use_gradients=False,
                             sep='-d-',
                             write_ins=False, outfile=None):
-    """Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates
+    r"""Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates
     spatial difference observations. Optionally writes an output csvfile
     and a PEST instruction file.
 
@@ -1145,7 +1145,7 @@ def get_annual_means(base_data,
                      obgnme_suffix='annual-mean',
                      outfile=None,
                      write_ins=False):
-    """Create observations of annual mean values for a set of 
+    r"""Create observations of annual mean values for a set of 
     base observations. Means are computed for all columns with 
     floating point data.
 
@@ -1263,7 +1263,7 @@ def get_monthly_means(base_data,
                       obgnme_suffix='monthly-mean',
                       outfile=None,
                       write_ins=False):
-    """Create observations of monthly mean values for a set of 
+    r"""Create observations of monthly mean values for a set of 
     base observations. Means are computed for all columns with 
     floating point data.
 
@@ -1383,7 +1383,7 @@ def get_mean_monthly(base_data,
                      obgnme_suffix='mean-monthly',
                      outfile=None,
                      write_ins=False):
-    """Create observations of mean monthly, or means for months of the year
+    r"""Create observations of mean monthly, or means for months of the year
     (for example, the mean for Jan. across all years). Means are computed for 
     all columns with floating point data.
 
@@ -1505,7 +1505,7 @@ def get_log10_observations(base_data,
                            fill_zeros_with=0,
                            outfile=None,
                            write_ins=False):
-    """Create observations of log values. Log values are computed for 
+    r"""Create observations of log values. Log values are computed for 
     all columns with floating point data.
 
     Parameters
@@ -1613,7 +1613,7 @@ def get_baseflow_observations(base_data,
                               missing_obs_fill_value=0.,
                               outfile=None,
                               write_ins=False, **kwargs):
-    """Create observations of base flow using the 
+    r"""Create observations of base flow using the 
     BFI/Institute of Hydrology hydrograph separation method (:func:`mfobs.sep.ih_method`).
     
     
