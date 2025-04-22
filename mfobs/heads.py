@@ -37,7 +37,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  forecast_start_date=None, forecast_end_date=None,
                  forecasts_only=False, forecast_sites_only=False,
                  min_open_interval_frac_in_model=0.5,
-                 write_ins=False, outfile=None):
+                 verbose=True, write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
     using get_mf6_single_variable_obs(). General paradigm is to include all model
@@ -262,6 +262,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         locations will be reported in dropped_head_observations_above_or_below_model.csv.
         by default, 0.5 (only retain observations with 50% 
         or more of their open interval within the model domain)
+    verbose : bool
+        Controls the verbosity of screen outputs. If True, warnings will be printed
+        when there are no observations within a stress period and forecast_sites is None
+        (meaning no observation results will be processed for that stress period).
+        by default, True
     outfile : str, optional
         CSV file to write output to.
         By default, None (no output written)
@@ -569,7 +574,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
         
         # No forecast observations and no observed values in period
-        if forecast_sites is None and len(observed_in_period) == 0:
+        if verbose and (forecast_sites is None) and (len(observed_in_period) == 0):
             warnings.warn(('Stress period {}: No observations between start and '
                            'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
@@ -754,10 +759,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # raise an error if there are duplicates- reindexing below will fail if this is the case
     if head_obs.index.duplicated().any():
+        duplicated = head_obs.loc[head_obs.index.duplicated(keep=False)].sort_index()
         msg = ('The following observations have duplicate names. There should only be'
                'one observation per site, for each time period implied by the '
-               'obsnme_date_suffix_format parameter.\n{}'
-               .format(head_obs.loc[head_obs.duplicated()]))
+               f'obsnme_date_suffix_format parameter.\n{duplicated}'
+               )
         raise ValueError(msg)
 
     # drop any observations in specified groups

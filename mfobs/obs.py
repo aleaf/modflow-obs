@@ -33,7 +33,7 @@ def get_base_obs(perioddata,
             steady_state_period_end=None, forecast_sites=None,
             forecast_start_date=None, forecast_end_date=None,
             forecasts_only=False, forecast_sites_only=False,
-            outfile=None,
+            outfile=None, verbose=True,
             write_ins=False):
     """Get a set of base observations from a tables of model output, observed 
     values, and model time discretizaton.
@@ -179,6 +179,14 @@ def get_base_obs(perioddata,
         with `forecast_sites` (has no effect if ``forecast_sites='all'``). If
         ``forecasts_only=False``, the output will include forecast and non-forecast
         observations (for a continuous time-series).
+    verbose : bool
+        Controls the verbosity of screen outputs. If True, warnings will be printed
+        when there are no observations within a stress period and forecast_sites is None, 
+        (meaning no observation results will be processed for that stress period), or when
+        supplied observations fall outside of the model timeframe. Within a workflow,
+        verbose can be set equal to write_ins for initial debugging, and the subsequently
+        set False during history matching runs.
+        by default, True
     outfile : str, optional
         [description], by default 'processed_flux_obs.dat'
     write_ins : bool, optional
@@ -392,7 +400,7 @@ def get_base_obs(perioddata,
             observed, start, end, 
             aggregrate_observed_values_method=aggregrate_observed_values_method,
             obsnme_suffix=suffix)
-        if forecast_sites is None and len(observed_in_period_rs) == 0:
+        if verbose and (forecast_sites is None) and (len(observed_in_period_rs) == 0):
             if per_column == 'per':
                 warnings.warn(('Stress period {}: No observations between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
@@ -405,7 +413,7 @@ def get_base_obs(perioddata,
             aggregrate_observed_values_method=aggregrate_observed_values_method,
             obsnme_suffix=suffix)
         
-        if sim_in_period_rs is None or len(sim_in_period_rs) == 0:
+        if verbose and (sim_in_period_rs is None) or (len(sim_in_period_rs) == 0):
             if per_column == 'per':
                 warnings.warn(('Stress period {}: No simulated equivalents between start and '
                                 'end dates of {} and {}!'.format(r['per'], start, end)))
@@ -418,7 +426,7 @@ def get_base_obs(perioddata,
             observed_in_period_rs['datetime'] = sim_in_period_rs['datetime'].values[0]
         any_simulated_obs = sim_in_period_rs.obsnme.isin(observed_in_period_rs.obsnme).any()
         
-        if not any_simulated_obs and (per_column == 'per'):
+        if verbose and not any_simulated_obs and (per_column == 'per'):
             warnings.warn(('Stress period {}: No observation/simulated equivalent pairs for start and '
                             'end dates of {} and {}!'.format(r['per'], start, end)))
             continue
