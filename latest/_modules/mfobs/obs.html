@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post96.dev0+g4793419 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post101.dev0+gd98c0e0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=f79b7d06"></script>
+      <script src="../../_static/documentation_options.js?v=8713cbbc"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -134,7 +134,7 @@
             <span class="n">steady_state_period_end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_sites</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">forecast_start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">forecasts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forecast_sites_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a set of base observations from a tables of model output, observed </span>
 <span class="sd">    values, and model time discretizaton.</span>
@@ -280,6 +280,14 @@
 <span class="sd">        with `forecast_sites` (has no effect if ``forecast_sites=&#39;all&#39;``). If</span>
 <span class="sd">        ``forecasts_only=False``, the output will include forecast and non-forecast</span>
 <span class="sd">        observations (for a continuous time-series).</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Controls the verbosity of screen outputs. If True, warnings will be printed</span>
+<span class="sd">        when there are no observations within a stress period and forecast_sites is None, </span>
+<span class="sd">        (meaning no observation results will be processed for that stress period), or when</span>
+<span class="sd">        supplied observations fall outside of the model timeframe. Within a workflow,</span>
+<span class="sd">        verbose can be set equal to write_ins for initial debugging, and the subsequently</span>
+<span class="sd">        set False during history matching runs.</span>
+<span class="sd">        by default, True</span>
 <span class="sd">    outfile : str, optional</span>
 <span class="sd">        [description], by default &#39;processed_flux_obs.dat&#39;</span>
 <span class="sd">    write_ins : bool, optional</span>
@@ -393,7 +401,10 @@
     <span class="c1"># cast datetimes to pandas datetimes</span>
     <span class="c1"># (observed data may not have a datetime col. if model is steady-state)</span>
     <span class="k">if</span> <span class="n">observed_values_datetime_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">&#39;datetime&#39;</span> <span class="ow">in</span> <span class="n">observed</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">observed</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;mixed&#39;</span><span class="p">)</span>
         <span class="c1"># not necessarily True</span>
         <span class="n">observed</span><span class="p">[</span><span class="s1">&#39;steady&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># flag for steady-state observations</span>
     <span class="k">elif</span> <span class="n">label_period_as_steady_state</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -490,7 +501,7 @@
             <span class="n">observed</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> 
             <span class="n">aggregrate_observed_values_method</span><span class="o">=</span><span class="n">aggregrate_observed_values_method</span><span class="p">,</span>
             <span class="n">obsnme_suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="p">(</span><span class="n">forecast_sites</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">per_column</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No observations between start and &#39;</span>
                                 <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
@@ -503,7 +514,7 @@
             <span class="n">aggregrate_observed_values_method</span><span class="o">=</span><span class="n">aggregrate_observed_values_method</span><span class="p">,</span>
             <span class="n">obsnme_suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="n">sim_in_period_rs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">sim_in_period_rs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sim_in_period_rs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sim_in_period_rs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">per_column</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No simulated equivalents between start and &#39;</span>
                                 <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
@@ -516,7 +527,7 @@
             <span class="n">observed_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sim_in_period_rs</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">any_simulated_obs</span> <span class="o">=</span> <span class="n">sim_in_period_rs</span><span class="o">.</span><span class="n">obsnme</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">observed_in_period_rs</span><span class="o">.</span><span class="n">obsnme</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
         
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">any_simulated_obs</span> <span class="ow">and</span> <span class="p">(</span><span class="n">per_column</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">any_simulated_obs</span> <span class="ow">and</span> <span class="p">(</span><span class="n">per_column</span> <span class="o">==</span> <span class="s1">&#39;per&#39;</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No observation/simulated equivalent pairs for start and &#39;</span>
                             <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
             <span class="k">continue</span>
@@ -674,7 +685,7 @@
                             <span class="n">use_gradients</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                             <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;-d-&#39;</span><span class="p">,</span>
                             <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Takes the base_data dataframe output by :func:`mfobs.obs.get_obs` and creates</span>
 <span class="sd">    spatial difference observations. Optionally writes an output csvfile</span>
 <span class="sd">    and a PEST instruction file.</span>
 
@@ -1110,7 +1121,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1"># group observations by site (prefix)</span>
@@ -1247,7 +1258,7 @@
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;annual-mean&#39;</span><span class="p">,</span>
                      <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of annual mean values for a set of </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Create observations of annual mean values for a set of </span>
 <span class="sd">    base observations. Means are computed for all columns with </span>
 <span class="sd">    floating point data.</span>
 
@@ -1323,7 +1334,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1368,7 +1379,7 @@
                       <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;monthly-mean&#39;</span><span class="p">,</span>
                       <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                       <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of monthly mean values for a set of </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Create observations of monthly mean values for a set of </span>
 <span class="sd">    base observations. Means are computed for all columns with </span>
 <span class="sd">    floating point data.</span>
 
@@ -1444,7 +1455,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1491,7 +1502,7 @@
                      <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;mean-monthly&#39;</span><span class="p">,</span>
                      <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                      <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of mean monthly, or means for months of the year</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Create observations of mean monthly, or means for months of the year</span>
 <span class="sd">    (for example, the mean for Jan. across all years). Means are computed for </span>
 <span class="sd">    all columns with floating point data.</span>
 
@@ -1567,7 +1578,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="c1"># only include times where there are both an observation and sim. equivalent</span>
@@ -1616,7 +1627,7 @@
                            <span class="n">fill_zeros_with</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of log values. Log values are computed for </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Create observations of log values. Log values are computed for </span>
 <span class="sd">    all columns with floating point data.</span>
 
 <span class="sd">    Parameters</span>
@@ -1688,7 +1699,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="n">log_base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1727,7 +1738,7 @@
                               <span class="n">missing_obs_fill_value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
                               <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create observations of base flow using the </span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Create observations of base flow using the </span>
 <span class="sd">    BFI/Institute of Hydrology hydrograph separation method (:func:`mfobs.sep.ih_method`).</span>
 <span class="sd">    </span>
 <span class="sd">    </span>
@@ -1809,7 +1820,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exclude_suffix</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">exclude_suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">exclude_suffix</span><span class="p">]</span>
     <span class="n">suffix</span> <span class="o">=</span> <span class="p">[</span><span class="n">obsnme</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">obsnme</span> <span class="ow">in</span> <span class="n">base_data</span><span class="o">.</span><span class="n">obsnme</span><span class="p">]</span>
-    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
+    <span class="n">keep</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">suffix</span><span class="p">,</span> <span class="n">exclude_suffix</span><span class="p">)</span>
     <span class="n">base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     
     <span class="n">bf_base_data</span> <span class="o">=</span> <span class="n">base_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1891,7 +1902,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Apr 15, 2025.
+      <span class="lastupdated">Last updated on Apr 22, 2025.
       </span></p>
   </div>
 
