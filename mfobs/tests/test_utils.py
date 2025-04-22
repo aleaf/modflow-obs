@@ -32,11 +32,20 @@ def test_set_period_start_end_dates(test_data_path):
     pd.testing.assert_series_equal(pd.to_datetime(perioddata['start_datetime']), 
                                    pd.to_datetime(perioddata['end_datetime']), 
                                    check_names=False)
+    # test with no initial steady-state period
+    # for example, if we truncate some number of initial periods
+    # so as not to generate observations for those
+    perioddata2 = perioddata.iloc[1:].copy()
+    perioddata2['time'] += 100
+    set_period_start_end_dates(perioddata2)
+    pd.testing.assert_series_equal(pd.to_datetime(perioddata2['start_datetime']), 
+                                   pd.to_datetime(perioddata2['end_datetime']), 
+                                   check_names=False)
     
     # test without time column
     perioddata = pd.DataFrame({
         'start_datetime': pd.date_range('2020-01-01', '2020-12-31', freq='MS'),
-        'end_datetime': pd.date_range('2020-01-01', '2020-12-31', freq='M')
+        'end_datetime': pd.date_range('2020-01-01', '2020-12-31', freq='ME')
     })
     set_period_start_end_dates(perioddata)
     assert 'time' in perioddata.columns

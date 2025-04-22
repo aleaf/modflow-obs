@@ -54,7 +54,6 @@ def set_period_start_end_dates(perioddata):
     -----
     Assumes time units of days.
     """
-    orig_perioddata = perioddata.copy()
     if 'time' not in perioddata.columns and perioddata.index.name != 'time':
         timedeltas = perioddata['end_datetime'] - perioddata['start_datetime'].min()
         perioddata['time'] = timedeltas.dt.days + 1
@@ -62,27 +61,40 @@ def set_period_start_end_dates(perioddata):
         perioddata.sort_index(inplace=True)
     else:
         perioddata.sort_values(by='time', inplace=True)
+    # set new end dates based on start dates and time
     start_datetimes = pd.to_datetime(perioddata['start_datetime'].values)
-    perlen = np.array(perioddata['time'].tolist()[:1] + perioddata['time'].diff().tolist()[1:])
+    # base initial period or timestep length on difference between start and end datetime
+    initial_end_datetime = pd.to_datetime(perioddata['end_datetime'].values[0])
+    initial_perlen = np.max([1, (initial_end_datetime - start_datetimes[0]).days])
+    perlen = np.array([initial_perlen] + perioddata['time'].diff().tolist()[1:])
     new_end_datetimes = start_datetimes + pd.to_timedelta(perlen - 1, unit='d')
+
     # fix any invalid end_datetimes resulting from the assumption above
     # (that perlen is between successive start dates)
     # there may be gaps between the periods, 
     # for example in a successive steady-state simulation
-    invalid_end_datetimes = new_end_datetimes[:-1] > perioddata['start_datetime'][1:]
-    if np.any(invalid_end_datetimes):
-        next_start_datetimes = perioddata['start_datetime'][1:][invalid_end_datetimes]
+    overlapping_datetimes = new_end_datetimes[:-1] > perioddata['start_datetime'][1:]
+    if np.any(overlapping_datetimes):
+        next_start_datetimes = perioddata['start_datetime'][1:][overlapping_datetimes]
         corr_end_datetimes = pd.to_datetime(next_start_datetimes) - pd.Timedelta(1, 'D')
         # make boolean vector of full length
         # (including last end datetime, which can't be invalid)
-        invalid_end_datetimes = invalid_end_datetimes.tolist() + [False]
+        overlapping_datetimes = overlapping_datetimes.tolist() + [False]
         # cast new_end_datetimes to a Series so that we can assign values via a slice
         new_end_datetimes = pd.Series(new_end_datetimes)
-        new_end_datetimes[invalid_end_datetimes] = corr_end_datetimes.tolist()
+        new_end_datetimes[overlapping_datetimes] = corr_end_datetimes.tolist()
         # recast to DateTimeIndex for consistnecy with no invalid_end_datetimes case
-        new_end_datetimes = pd.DatetimeIndex(new_end_datetimes)
+        new_end_datetimes = pd.DatetimeIndex(new_end_datetimes)        
     perioddata['start_datetime'] = start_datetimes.strftime('%Y-%m-%d')
     perioddata['end_datetime'] = new_end_datetimes.strftime('%Y-%m-%d')
+    # check for transient period end dates that overlap
+    if 'steady' in perioddata.columns:
+        overlapping_end_datetimes = ~(perioddata['steady'].values[:-1].astype(bool)) &\
+            ((new_end_datetimes.diff().days)[1:] < 1)
+        if np.any(overlapping_end_datetimes):
+            bad_datetimes = perioddata.iloc[1:][overlapping_end_datetimes]
+            raise ValueError("Overlapping stress periods or timesteps; "
+                            f"check perioddata input.\n{bad_datetimes}")
 
 
 def get_input_arguments(kwargs, function, verbose=False, warn=False, exclude=None):
