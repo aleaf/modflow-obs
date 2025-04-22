@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post98.dev0+ga7135b3 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post101.dev0+ge322aab documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=c1afbe99"></script>
+      <script src="../../_static/documentation_options.js?v=384fad8c"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -138,7 +138,7 @@
                  <span class="n">forecast_start_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">forecast_end_date</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">forecasts_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">forecast_sites_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">min_open_interval_frac_in_model</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-                 <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Post-processes model output to be read by PEST, and optionally,</span>
 <span class="sd">    writes a corresponding PEST instruction file. Reads model output</span>
 <span class="sd">    using get_mf6_single_variable_obs(). General paradigm is to include all model</span>
@@ -363,6 +363,11 @@
 <span class="sd">        locations will be reported in dropped_head_observations_above_or_below_model.csv.</span>
 <span class="sd">        by default, 0.5 (only retain observations with 50% </span>
 <span class="sd">        or more of their open interval within the model domain)</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Controls the verbosity of screen outputs. If True, warnings will be printed</span>
+<span class="sd">        when there are no observations within a stress period and forecast_sites is None</span>
+<span class="sd">        (meaning no observation results will be processed for that stress period).</span>
+<span class="sd">        by default, True</span>
 <span class="sd">    outfile : str, optional</span>
 <span class="sd">        CSV file to write output to.</span>
 <span class="sd">        By default, None (no output written)</span>
@@ -670,7 +675,7 @@
         <span class="n">observed_in_period</span> <span class="o">=</span> <span class="n">observed</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         
         <span class="c1"># No forecast observations and no observed values in period</span>
-        <span class="k">if</span> <span class="n">forecast_sites</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="p">(</span><span class="n">forecast_sites</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">observed_in_period</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">((</span><span class="s1">&#39;Stress period </span><span class="si">{}</span><span class="s1">: No observations between start and &#39;</span>
                            <span class="s1">&#39;end dates of </span><span class="si">{}</span><span class="s1"> and </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="s1">&#39;per&#39;</span><span class="p">],</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)))</span>
             <span class="k">continue</span>
@@ -855,10 +860,11 @@
 
     <span class="c1"># raise an error if there are duplicates- reindexing below will fail if this is the case</span>
     <span class="k">if</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">duplicated</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">head_obs</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="kc">False</span><span class="p">)]</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;The following observations have duplicate names. There should only be&#39;</span>
                <span class="s1">&#39;one observation per site, for each time period implied by the &#39;</span>
-               <span class="s1">&#39;obsnme_date_suffix_format parameter.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span>
-               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">head_obs</span><span class="o">.</span><span class="n">duplicated</span><span class="p">()]))</span>
+               <span class="sa">f</span><span class="s1">&#39;obsnme_date_suffix_format parameter.</span><span class="se">\n</span><span class="si">{</span><span class="n">duplicated</span><span class="si">}</span><span class="s1">&#39;</span>
+               <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="c1"># drop any observations in specified groups</span>
