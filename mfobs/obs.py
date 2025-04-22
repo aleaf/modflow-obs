@@ -1003,7 +1003,7 @@ def get_temporal_differences(base_data, perioddata,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
 
     # group observations by site (prefix)
@@ -1213,7 +1213,7 @@ def get_annual_means(base_data,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
     # only include times where there are both an observation and sim. equivalent
@@ -1331,7 +1331,7 @@ def get_monthly_means(base_data,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
     # only include times where there are both an observation and sim. equivalent
@@ -1451,7 +1451,7 @@ def get_mean_monthly(base_data,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
     # only include times where there are both an observation and sim. equivalent
@@ -1569,7 +1569,7 @@ def get_log10_observations(base_data,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
     log_base_data = base_data.copy()
@@ -1687,7 +1687,7 @@ def get_baseflow_observations(base_data,
     if isinstance(exclude_suffix, str):
         exclude_suffix = [exclude_suffix]
     suffix = [obsnme.split('_')[1] for obsnme in base_data.obsnme]
-    keep = ~np.in1d(suffix, exclude_suffix)
+    keep = ~np.isin(suffix, exclude_suffix)
     base_data = base_data.loc[keep].copy()
     
     bf_base_data = base_data.copy()
