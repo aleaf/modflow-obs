@@ -1039,7 +1039,7 @@ def get_temporal_differences(base_data, perioddata,
 
         # compute the differences
         if get_displacements:
-            values = values.loc[displacement_from:].copy()
+            values = values.sort_index().loc[displacement_from:].copy()
             
             # some sites may not have any measurements
             # after displacement datum; skip these
