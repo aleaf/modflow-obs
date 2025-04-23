@@ -945,7 +945,7 @@ def get_temporal_differences(base_data, perioddata,
         should be a decimal format in the "new-style" string format
         (e.g. '{:03d}', which would yield ``'001'`` for stress period 1.)
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     exclude_obs : list-like
@@ -1173,7 +1173,7 @@ def get_annual_means(base_data,
         Format for suffix of obsnmes.
         By default '%Y', which returns the 4-digit year
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     obgnme_suffix : str
@@ -1292,7 +1292,7 @@ def get_monthly_means(base_data,
         By default '%Y%m', which returns the year and month as consecutive integers, 
         e.g. 200101 for Jan, 2001.
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     obgnme_suffix : str
@@ -1411,7 +1411,7 @@ def get_mean_monthly(base_data,
         Format for suffix of obsnmes.
         By default '%b', which returns the abbreviated month name (e.g. 'Jan').
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     obgnme_suffix : str
@@ -1532,7 +1532,7 @@ def get_log10_observations(base_data,
         Format for suffix of obsnmes.
         By default ''%Y%m%d-log' (e.g. 20010101-log for Jan 1, 2001)
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     obgnme_suffix : str
@@ -1641,7 +1641,7 @@ def get_baseflow_observations(base_data,
         Format for suffix of obsnmes.
         By default ''%Y%m%d-log' (e.g. 20010101-log for Jan 1, 2001)
     exclude_suffix : str or list-like
-        Option to exclude observations from differencing by suffix;
+        Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
         By default, 'ss'
     obgnme_suffix : str
