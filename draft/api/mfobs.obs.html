@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The general observation processing module &mdash; modflow-obs 0.post101.dev0+gd98c0e0 documentation</title>
+  <title>The general observation processing module &mdash; modflow-obs 0.post104.dev0+g68b3426 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
@@ -15,7 +15,7 @@
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=8713cbbc"></script>
+      <script src="../_static/documentation_options.js?v=482d01a8"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -169,7 +169,7 @@ in addition to columns of floating point data to aggregate
 <dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
 By default ‘%Y’, which returns the 4-digit year</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
@@ -449,7 +449,7 @@ by default, True</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_baseflow_observations">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_baseflow_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d-bf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_obs_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_baseflow_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_baseflow_observations" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_baseflow_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_prefix_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'baseflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'baseflow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_obs_fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_baseflow_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_baseflow_observations" title="Link to this definition"></a></dt>
 <dd><p>Create observations of base flow using the 
 BFI/Institute of Hydrology hydrograph separation method (<a class="reference internal" href="mfobs.sep.html#mfobs.sep.ih_method" title="mfobs.sep.ih_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">mfobs.sep.ih_method()</span></code></a>).</p>
 <dl class="field-list">
@@ -483,16 +483,24 @@ in addition to columns of floating point data to aggregate
 <li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
 </ol>
 </dd>
-<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
-By default ‘’%Y%m%d-log’ (e.g. 20010101-log for Jan 1, 2001)</p>
+<dt><strong>obsnme_prefix_variable</strong><span class="classifier">str</span></dt><dd><p>Variable name indicating the type of observation. Is appended to the site number (site_no)
+to create new observation name prefixes (obsprefixes) in the format of &lt;site_no&gt;-&lt;variable&gt;.
+For example, by default, an observation prefix in base_data of ‘04026300-flow’ or ‘04026300’
+(both for a site_no of ‘04026300’), would result in a new observation prefix of
+‘04026300-baseflow’. A base flow computed from a total flow observation named ‘04026300-flow_20221103’ 
+or ‘04026300_20221103’ (at site ‘04026300’ on 2022/11/03) would be named ‘04026300-baseflow_20221103’.
+by default, ‘baseflow’.</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘%Y%m%d’ (e.g. 20010101 for Jan 1, 2001)</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
 <dt><strong>obgnme_suffix</strong><span class="classifier">str</span></dt><dd><p>Create new observation group names by appending this suffix to existing
 obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;
-by default, ‘annual-mean’</p>
+by default, ‘baseflow’</p>
 </dd>
 <dt><strong>missing_obs_fill_value</strong><span class="classifier">float</span></dt><dd><p>Baseflow observations are different from most other observation types in that
 they are produced by hydrograph separation, which can lead to different numbers
@@ -552,7 +560,7 @@ which now contain the aggregated values):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="mfobs.obs.get_log10_observations">
-<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_log10_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d-log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_zeros_with</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_log10_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_log10_observations" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">mfobs.obs.</span></span><span class="sig-name descname"><span class="pre">get_log10_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_prefix_variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsnme_suffix_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%Y%m%d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ss'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obgnme_suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'log10'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_zeros_with</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_ins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mfobs/obs.html#get_log10_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mfobs.obs.get_log10_observations" title="Link to this definition"></a></dt>
 <dd><p>Create observations of log values. Log values are computed for 
 all columns with floating point data.</p>
 <dl class="field-list">
@@ -586,10 +594,18 @@ in addition to columns of floating point data to aggregate
 <li><p>Assumed to be formatted &lt;obsprefix&gt;_&lt;<cite>obsnme_suffix_format</cite>&gt;</p></li>
 </ol>
 </dd>
-<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
-By default ‘’%Y%m%d-log’ (e.g. 20010101-log for Jan 1, 2001)</p>
+<dt><strong>obsnme_prefix_variable</strong><span class="classifier">str</span></dt><dd><p>Variable name indicating the type of observation. Is appended to the site number (site_no)
+to create new observation name prefixes (obsprefixes) in the format of &lt;site_no&gt;-&lt;variable&gt;.
+For example, by default, an observation prefix in base_data of ‘04026300-flow’ or ‘04026300’
+(both for a site_no of ‘04026300’), would result in a new observation prefix of
+‘04026300-flow-log10’. A log10 flow computed from an original flow observation named ‘04026300-flow_20221103’ 
+or ‘04026300_20221103’ (at site ‘04026300’ on 2022/11/03) would be named ‘04026300-flow-log10_20221103’.
+by default, ‘log10’.</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
+By default ‘’%Y%m%d’ (e.g. 20010101 for Jan 1, 2001)</p>
+</dd>
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
@@ -684,7 +700,7 @@ in addition to columns of floating point data to aggregate
 <dt><strong>obsnme_suffix_format</strong><span class="classifier">str, optional</span></dt><dd><p>Format for suffix of obsnmes.
 By default ‘%b’, which returns the abbreviated month name (e.g. ‘Jan’).</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
@@ -781,7 +797,7 @@ in addition to columns of floating point data to aggregate
 By default ‘%Y%m’, which returns the year and month as consecutive integers, 
 e.g. 200101 for Jan, 2001.</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
@@ -1066,7 +1082,7 @@ which would yield <code class="docutils literal notranslate"><span class="pre">'
 should be a decimal format in the “new-style” string format
 (e.g. ‘{:03d}’, which would yield <code class="docutils literal notranslate"><span class="pre">'001'</span></code> for stress period 1.)</p>
 </dd>
-<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from differencing by suffix;
+<dt><strong>exclude_suffix</strong><span class="classifier">str or list-like</span></dt><dd><p>Option to exclude observations from processing by suffix;
 e.g. ‘ss’ to include steady-state observations.
 By default, ‘ss’</p>
 </dd>
@@ -1107,7 +1123,7 @@ so a positive value indicates an increase.</p>
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Apr 22, 2025.
+      <span class="lastupdated">Last updated on Apr 24, 2025.
       </span></p>
   </div>
 
