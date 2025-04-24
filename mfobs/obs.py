@@ -1499,9 +1499,10 @@ def get_mean_monthly(base_data,
     
 
 def get_log10_observations(base_data, 
-                           obsnme_suffix_format='%Y%m%d-log',
+                           obsnme_prefix_variable='log10',
+                           obsnme_suffix_format='%Y%m%d',
                            exclude_suffix='ss',
-                           obgnme_suffix='log',
+                           obgnme_suffix='log10',
                            fill_zeros_with=0,
                            outfile=None,
                            write_ins=False):
@@ -1527,10 +1528,17 @@ def get_log10_observations(base_data,
         
         1) where obsprefix is assumed to be formatted as <site_no>-<variable> or simply <site_no>
         2) Assumed to be formatted <obsprefix>_<`obsnme_suffix_format`>
-        
+    obsnme_prefix_variable : str
+        Variable name indicating the type of observation. Is appended to the site number (site_no)
+        to create new observation name prefixes (obsprefixes) in the format of <site_no>-<variable>.
+        For example, by default, an observation prefix in base_data of '04026300-flow' or '04026300'
+        (both for a site_no of '04026300'), would result in a new observation prefix of
+        '04026300-flow-log10'. A log10 flow computed from an original flow observation named '04026300-flow_20221103' 
+        or '04026300_20221103' (at site '04026300' on 2022/11/03) would be named '04026300-flow-log10_20221103'.
+        by default, 'log10'.
     obsnme_suffix_format : str, optional
         Format for suffix of obsnmes.
-        By default ''%Y%m%d-log' (e.g. 20010101-log for Jan 1, 2001)
+        By default ''%Y%m%d' (e.g. 20010101 for Jan 1, 2001)
     exclude_suffix : str or list-like
         Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
@@ -1585,7 +1593,8 @@ def get_log10_observations(base_data,
     for c in data_cols:
         log_base_data[c] = np.log10(base_data[c])
         log_base_data.loc[base_data[c] == 0, c] = fill_zeros_with # handle zero values
-        
+    log_base_data['obsprefix'] = [f"{prefix}-{obsnme_prefix_variable}" 
+                               for prefix in log_base_data['obsprefix']]
     log_base_data['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}".lower() 
                             for prefix, dt in zip(log_base_data['obsprefix'], 
                                                   log_base_data['datetime'])]
@@ -1607,9 +1616,10 @@ def get_log10_observations(base_data,
     
 
 def get_baseflow_observations(base_data, 
-                              obsnme_suffix_format='%Y%m%d-bf',
+                              obsnme_prefix_variable='baseflow',
+                              obsnme_suffix_format='%Y%m%d',
                               exclude_suffix='ss',
-                              obgnme_suffix='bf',
+                              obgnme_suffix='baseflow',
                               missing_obs_fill_value=0.,
                               outfile=None,
                               write_ins=False, **kwargs):
@@ -1636,10 +1646,17 @@ def get_baseflow_observations(base_data,
         
         1) where obsprefix is assumed to be formatted as <site_no>-<variable> or simply <site_no>
         2) Assumed to be formatted <obsprefix>_<`obsnme_suffix_format`>
-        
+    obsnme_prefix_variable : str
+        Variable name indicating the type of observation. Is appended to the site number (site_no)
+        to create new observation name prefixes (obsprefixes) in the format of <site_no>-<variable>.
+        For example, by default, an observation prefix in base_data of '04026300-flow' or '04026300'
+        (both for a site_no of '04026300'), would result in a new observation prefix of
+        '04026300-baseflow'. A base flow computed from a total flow observation named '04026300-flow_20221103' 
+        or '04026300_20221103' (at site '04026300' on 2022/11/03) would be named '04026300-baseflow_20221103'.
+        by default, 'baseflow'.
     obsnme_suffix_format : str, optional
         Format for suffix of obsnmes.
-        By default ''%Y%m%d-log' (e.g. 20010101-log for Jan 1, 2001)
+        By default '%Y%m%d' (e.g. 20010101 for Jan 1, 2001)
     exclude_suffix : str or list-like
         Option to exclude observations from processing by suffix;
         e.g. 'ss' to include steady-state observations.
@@ -1647,7 +1664,7 @@ def get_baseflow_observations(base_data,
     obgnme_suffix : str
         Create new observation group names by appending this suffix to existing
         obgnmes, for example <existing obgnme>_<obgnme_suffix>
-        by default, 'annual-mean'
+        by default, 'baseflow'
     missing_obs_fill_value : float
         Baseflow observations are different from most other observation types in that
         they are produced by hydrograph separation, which can lead to different numbers
@@ -1716,10 +1733,11 @@ def get_baseflow_observations(base_data,
 
     # drop nan values
     bf_base_data.dropna(subset=['obsval', 'sim_obsval'], axis=0, inplace=True)
-
+    bf_base_data['obsprefix'] = [f"{site_no}-{obsnme_prefix_variable}" 
+                                 for site_no in bf_base_data['site_no']]
     bf_base_data['obsnme'] = [f"{prefix}_{dt:{obsnme_suffix_format}}".lower() 
-                            for prefix, dt in zip(bf_base_data['obsprefix'], 
-                                                  bf_base_data['datetime'])]
+                              for prefix, dt in zip(bf_base_data['obsprefix'],
+                                                    bf_base_data['datetime'])]
     bf_base_data['obgnme'] = [f"{prefix}_{obgnme_suffix}" 
                             for prefix in bf_base_data['obgnme']]
     cols = ['datetime', 'site_no', 'obsprefix', 'obsnme'] + data_cols + ['obgnme']
