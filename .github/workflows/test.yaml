@@ -50,7 +50,7 @@ jobs:
     - name: Test install from github
       shell: bash -l {0}
       run: |
-        pip install git+https://github.com/aleaf/modflow-obs@develop
+        pip install git+https://github.com/aleaf/modflow-obs
         pytest mfobs/tests/test_import.py
     - run: pip uninstall modflow-obs -y
     - name: Install Modflow-obs and ipykernel

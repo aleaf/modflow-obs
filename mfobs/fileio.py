@@ -164,5 +164,5 @@ def get_insfile_observations(insfile):
     instruction file (in order)."""
     with open(insfile) as src:
         text = src.read()
-        results = re.findall("(?<=\!).+?(?=\!)",text)
+        results = re.findall(r"(?<=\!).+?(?=\!)", text)
     return results
