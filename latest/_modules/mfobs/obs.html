@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post101.dev0+gd98c0e0 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post106.dev0+g4ac17d6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=8713cbbc"></script>
+      <script src="../../_static/documentation_options.js?v=6454dced"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -1055,7 +1055,7 @@
 <span class="sd">        should be a decimal format in the &quot;new-style&quot; string format</span>
 <span class="sd">        (e.g. &#39;{:03d}&#39;, which would yield ``&#39;001&#39;`` for stress period 1.)</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    exclude_obs : list-like</span>
@@ -1149,7 +1149,7 @@
 
         <span class="c1"># compute the differences</span>
         <span class="k">if</span> <span class="n">get_displacements</span><span class="p">:</span>
-            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">displacement_from</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">displacement_from</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             
             <span class="c1"># some sites may not have any measurements</span>
             <span class="c1"># after displacement datum; skip these</span>
@@ -1286,7 +1286,7 @@
 <span class="sd">        Format for suffix of obsnmes.</span>
 <span class="sd">        By default &#39;%Y&#39;, which returns the 4-digit year</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    obgnme_suffix : str</span>
@@ -1408,7 +1408,7 @@
 <span class="sd">        By default &#39;%Y%m&#39;, which returns the year and month as consecutive integers, </span>
 <span class="sd">        e.g. 200101 for Jan, 2001.</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    obgnme_suffix : str</span>
@@ -1530,7 +1530,7 @@
 <span class="sd">        Format for suffix of obsnmes.</span>
 <span class="sd">        By default &#39;%b&#39;, which returns the abbreviated month name (e.g. &#39;Jan&#39;).</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    obgnme_suffix : str</span>
@@ -1621,9 +1621,10 @@
 <div class="viewcode-block" id="get_log10_observations">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_log10_observations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_log10_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
-                           <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-log&#39;</span><span class="p">,</span>
+                           <span class="n">obsnme_prefix_variable</span><span class="o">=</span><span class="s1">&#39;log10&#39;</span><span class="p">,</span>
+                           <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
                            <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
-                           <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span>
+                           <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;log10&#39;</span><span class="p">,</span>
                            <span class="n">fill_zeros_with</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                            <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -1649,12 +1650,19 @@
 <span class="sd">        </span>
 <span class="sd">        1) where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</span>
 <span class="sd">        2) Assumed to be formatted &lt;obsprefix&gt;_&lt;`obsnme_suffix_format`&gt;</span>
-<span class="sd">        </span>
+<span class="sd">    obsnme_prefix_variable : str</span>
+<span class="sd">        Variable name indicating the type of observation. Is appended to the site number (site_no)</span>
+<span class="sd">        to create new observation name prefixes (obsprefixes) in the format of &lt;site_no&gt;-&lt;variable&gt;.</span>
+<span class="sd">        For example, by default, an observation prefix in base_data of &#39;04026300-flow&#39; or &#39;04026300&#39;</span>
+<span class="sd">        (both for a site_no of &#39;04026300&#39;), would result in a new observation prefix of</span>
+<span class="sd">        &#39;04026300-flow-log10&#39;. A log10 flow computed from an original flow observation named &#39;04026300-flow_20221103&#39; </span>
+<span class="sd">        or &#39;04026300_20221103&#39; (at site &#39;04026300&#39; on 2022/11/03) would be named &#39;04026300-flow-log10_20221103&#39;.</span>
+<span class="sd">        by default, &#39;log10&#39;.</span>
 <span class="sd">    obsnme_suffix_format : str, optional</span>
 <span class="sd">        Format for suffix of obsnmes.</span>
-<span class="sd">        By default &#39;&#39;%Y%m%d-log&#39; (e.g. 20010101-log for Jan 1, 2001)</span>
+<span class="sd">        By default &#39;&#39;%Y%m%d&#39; (e.g. 20010101 for Jan 1, 2001)</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    obgnme_suffix : str</span>
@@ -1707,7 +1715,8 @@
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data_cols</span><span class="p">:</span>
         <span class="n">log_base_data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">base_data</span><span class="p">[</span><span class="n">c</span><span class="p">])</span>
         <span class="n">log_base_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">base_data</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">fill_zeros_with</span> <span class="c1"># handle zero values</span>
-        
+    <span class="n">log_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">obsnme_prefix_variable</span><span class="si">}</span><span class="s2">&quot;</span> 
+                               <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">log_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]]</span>
     <span class="n">log_base_data</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dt</span><span class="si">:{</span><span class="n">obsnme_suffix_format</span><span class="si">}}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> 
                             <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">log_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">],</span> 
                                                   <span class="n">log_base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])]</span>
@@ -1732,9 +1741,10 @@
 <div class="viewcode-block" id="get_baseflow_observations">
 <a class="viewcode-back" href="../../api/mfobs.obs.html#mfobs.obs.get_baseflow_observations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_baseflow_observations</span><span class="p">(</span><span class="n">base_data</span><span class="p">,</span> 
-                              <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">-bf&#39;</span><span class="p">,</span>
+                              <span class="n">obsnme_prefix_variable</span><span class="o">=</span><span class="s1">&#39;baseflow&#39;</span><span class="p">,</span>
+                              <span class="n">obsnme_suffix_format</span><span class="o">=</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span>
                               <span class="n">exclude_suffix</span><span class="o">=</span><span class="s1">&#39;ss&#39;</span><span class="p">,</span>
-                              <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;bf&#39;</span><span class="p">,</span>
+                              <span class="n">obgnme_suffix</span><span class="o">=</span><span class="s1">&#39;baseflow&#39;</span><span class="p">,</span>
                               <span class="n">missing_obs_fill_value</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
                               <span class="n">outfile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                               <span class="n">write_ins</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1761,18 +1771,25 @@
 <span class="sd">        </span>
 <span class="sd">        1) where obsprefix is assumed to be formatted as &lt;site_no&gt;-&lt;variable&gt; or simply &lt;site_no&gt;</span>
 <span class="sd">        2) Assumed to be formatted &lt;obsprefix&gt;_&lt;`obsnme_suffix_format`&gt;</span>
-<span class="sd">        </span>
+<span class="sd">    obsnme_prefix_variable : str</span>
+<span class="sd">        Variable name indicating the type of observation. Is appended to the site number (site_no)</span>
+<span class="sd">        to create new observation name prefixes (obsprefixes) in the format of &lt;site_no&gt;-&lt;variable&gt;.</span>
+<span class="sd">        For example, by default, an observation prefix in base_data of &#39;04026300-flow&#39; or &#39;04026300&#39;</span>
+<span class="sd">        (both for a site_no of &#39;04026300&#39;), would result in a new observation prefix of</span>
+<span class="sd">        &#39;04026300-baseflow&#39;. A base flow computed from a total flow observation named &#39;04026300-flow_20221103&#39; </span>
+<span class="sd">        or &#39;04026300_20221103&#39; (at site &#39;04026300&#39; on 2022/11/03) would be named &#39;04026300-baseflow_20221103&#39;.</span>
+<span class="sd">        by default, &#39;baseflow&#39;.</span>
 <span class="sd">    obsnme_suffix_format : str, optional</span>
 <span class="sd">        Format for suffix of obsnmes.</span>
-<span class="sd">        By default &#39;&#39;%Y%m%d-log&#39; (e.g. 20010101-log for Jan 1, 2001)</span>
+<span class="sd">        By default &#39;%Y%m%d&#39; (e.g. 20010101 for Jan 1, 2001)</span>
 <span class="sd">    exclude_suffix : str or list-like</span>
-<span class="sd">        Option to exclude observations from differencing by suffix;</span>
+<span class="sd">        Option to exclude observations from processing by suffix;</span>
 <span class="sd">        e.g. &#39;ss&#39; to include steady-state observations.</span>
 <span class="sd">        By default, &#39;ss&#39;</span>
 <span class="sd">    obgnme_suffix : str</span>
 <span class="sd">        Create new observation group names by appending this suffix to existing</span>
 <span class="sd">        obgnmes, for example &lt;existing obgnme&gt;_&lt;obgnme_suffix&gt;</span>
-<span class="sd">        by default, &#39;annual-mean&#39;</span>
+<span class="sd">        by default, &#39;baseflow&#39;</span>
 <span class="sd">    missing_obs_fill_value : float</span>
 <span class="sd">        Baseflow observations are different from most other observation types in that</span>
 <span class="sd">        they are produced by hydrograph separation, which can lead to different numbers</span>
@@ -1841,10 +1858,11 @@
 
     <span class="c1"># drop nan values</span>
     <span class="n">bf_base_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">,</span> <span class="s1">&#39;sim_obsval&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
+    <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">site_no</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">obsnme_prefix_variable</span><span class="si">}</span><span class="s2">&quot;</span> 
+                                 <span class="k">for</span> <span class="n">site_no</span> <span class="ow">in</span> <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;site_no&#39;</span><span class="p">]]</span>
     <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">dt</span><span class="si">:{</span><span class="n">obsnme_suffix_format</span><span class="si">}}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> 
-                            <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">],</span> 
-                                                  <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])]</span>
+                              <span class="k">for</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">dt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">],</span>
+                                                    <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">])]</span>
     <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obgnme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">obgnme_suffix</span><span class="si">}</span><span class="s2">&quot;</span> 
                             <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">bf_base_data</span><span class="p">[</span><span class="s1">&#39;obgnme&#39;</span><span class="p">]]</span>
     <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_cols</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;obgnme&#39;</span><span class="p">]</span>
@@ -1902,7 +1920,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Apr 22, 2025.
+      <span class="lastupdated">Last updated on Apr 24, 2025.
       </span></p>
   </div>
 
