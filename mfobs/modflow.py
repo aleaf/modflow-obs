@@ -853,6 +853,12 @@ def get_transmissivities(heads, hk, top, botm,
         Transmissivities in each layer at each location
 
     """
+    heads = heads.copy()
+    if len(heads.shape) == 3:
+        heads = heads[:, i, j]
+    invalid_heads = (np.abs(heads) == 1e30) | (heads == nodata)
+    heads[invalid_heads] = np.nan
+    
     if i is not None and j is not None:
         pass
     elif x is not None and y is not None:
@@ -865,13 +871,13 @@ def get_transmissivities(heads, hk, top, botm,
     # (make nlayer x n sites arrays)
     hk2d = hk[:, i, j]
     botm2d = botm[:, i, j]
-    assert hk2d.shape == botm2d.shape, 'hk and bottom arrays must have consistent dimensions'
+    # remove head values in unsaturated cells (where heads are less than their respective cell bottoms)
+    heads[heads < botm2d] = np.nan
+    if hk2d.shape != botm2d.shape:
+        raise ValueError('hk and bottom arrays must have consistent dimensions')
 
-    if len(heads.shape) == 3:
-        heads = heads[:, i, j]
-
-    msg = 'Shape of heads array must be nlay x nhyd'
-    assert heads.shape == botm2d.shape, msg
+    if heads.shape != botm2d.shape:
+        raise ValueError('Shape of heads array must be nlay x nhyd')
 
     # set open interval tops/bottoms to model top/bottom if None
     if screen_top is None:
@@ -883,7 +889,11 @@ def get_transmissivities(heads, hk, top, botm,
     tops = np.empty_like(botm2d, dtype=float)
     tops[0, :] = top[i, j]
     tops[1:, :] = botm2d[:-1]
-
+    sat_thicknesses = np.abs(np.diff(np.concat([[tops[0]] + [b for b in botm2d]], axis=0), axis=0))
+    sat_thicknesses[(botm2d > heads) | np.isnan(heads)] = 0
+    partially_saturated = (heads < tops) & (heads > botm2d)
+    sat_thicknesses[partially_saturated] = (heads - botm2d)[partially_saturated]
+    
     # expand top and bottom arrays to be same shape as botm, thickness, etc.
     # (so we have an open interval value for each layer)
     sctoparr = np.zeros(botm2d.shape)
@@ -897,6 +907,7 @@ def get_transmissivities(heads, hk, top, botm,
     # (we only care about the saturated open interval)
     openinvtop = tops.copy()
     openinvtop[openinvtop > heads] = heads[openinvtop > heads]
+    openinvtop[np.isnan(heads)] = np.nan
     openinvtop[openinvtop > sctoparr] = sctoparr[openinvtop > screen_top]
 
     # start with layer bottoms
@@ -906,28 +917,34 @@ def get_transmissivities(heads, hk, top, botm,
     openinvbotm[openinvbotm < scbotarr] = scbotarr[openinvbotm < screen_botm]
     openinvbotm[scbotarr < botm2d] = botm2d[scbotarr < botm2d]
 
-    # compute thickness of open interval in each layer
+    # compute thickness of saturated open interval in each layer
     thick = openinvtop - openinvbotm
 
     # assign open intervals above or below model to closest cell in column
-    not_in_layer = np.sum(thick < 0, axis=0)
-    not_in_any_layer = not_in_layer == thick.shape[0]
-    for i, n in enumerate(not_in_any_layer):
-        if n:
-            closest = np.argmax(thick[:, i])
-            thick[closest, i] = 1.
-    thick[thick < 0] = 0
-    thick[heads == nodata] = 0  # exclude nodata cells
-    thick[np.isnan(heads)] = 0  # exclude cells with no head value (inactive cells)
+    not_in_layer = np.nansum(thick < 0, axis=0)
+    n_active_layers = (~np.isnan(thick)).sum(axis=0)
+    not_in_any_layer = not_in_layer == n_active_layers
+    highest_sat_layer = np.argmax((~np.isnan(heads)), axis=0)
+    closest_layer = np.nanargmax(thick, axis=0)
+    thick[closest_layer[not_in_any_layer], not_in_any_layer] =\
+        sat_thicknesses[closest_layer[not_in_any_layer], not_in_any_layer]
+    #for i, n in enumerate(not_in_any_layer):
+    #    if n:
+    #        closest = np.argmax(thick[:, i])
+    #        thick[closest, i] = 1.
+    thick[(thick < 0) | (np.isnan(thick))] = 0
 
-    # assign thickness of 1 to wells with no open interval
+    # assign layer thickness to wells with no open interval
     # (screen top == screen bottom)
     if screen_top is not None and screen_botm is not None\
         and include_zero_open_intervals:
         # locations of open intervals that are within a single layer
         in_single_layer = (screen_top < tops) & (screen_botm > botm2d)
         zero_thickness = thick == 0
-        thick[in_single_layer & zero_thickness] = 1.
+        thick[in_single_layer & zero_thickness] = sat_thicknesses[in_single_layer & zero_thickness]
+    
+    if np.any(thick.sum(axis=0) == 0):
+        raise ValueError('No saturated thickness for some locations')
     
     # compute transmissivities
     T = thick * hk2d

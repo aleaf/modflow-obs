@@ -12,7 +12,7 @@ from mfobs.modflow import get_mf6_single_variable_obs, get_ij, get_transmissivit
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
 
-def get_head_obs(perioddata, modelgrid_transform, model_output_file,
+def get_head_obs(perioddata, modelgrid_transform, model_output,
                  observed_values_file,
                  gwf_obs_input_file,
                  observed_values_metadata_file=None,
@@ -92,9 +92,34 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         `Modflow-setup <https://github.com/aleaf/modflow-setup>`_
         grid JSON file via the :func:`~mfobs.modflow.get_modelgrid_transform` function.
 
-    model_output_file : str
-        Modflow-6 head observation CSV output file.
-        Read by :func:`~mfobs.modflow.get_mf6_single_variable_obs`.
+    model_output : str or pathlike, or DataFrame
+        Either a Modflow-6 head observation CSV output file or pandas DataFrame 
+        with one head observation per row, with the following columns:
+
+        ======================= =============================================================
+        site_no                 unique identifier for each site
+        variable                variable name for the simulated values
+        obsprefix               prefix of observation name (<site_no>-<variable>)
+        simulated_values_column column with simulated values
+        datetime                pandas datetimes, based on stress period end date
+        layer                   zero-based model layer
+        obsnme                  observation name based on format of <obsprefix>_'%Y%m'
+        ======================= =============================================================
+        
+        Usually, a helper function such as :func:`mfobs.modflow.get_mf6_single_variable_obs`
+        or other custom code will be used to produce model_output from the 
+        raw model output files.
+        
+        Observation prefixes in the `obsprefix` column are assumed to be formated as
+        **<site_no>-<variable>**, where `site_no` is a unique identifier for a site
+        contained in `observed_values_file` and `variable` matches the `variable_name` argument
+        to this function (and is the variable name for the observed values in `observed_values_file`).
+        
+        All observation prefixes are assumed to be case-insensitive (obsprefixes in the model_output 
+        and obseved_values_files tables are all converted to lower case prior to matching).
+        
+        Modflow-6 head observation CSV output file are read by :func:`~mfobs.modflow.get_mf6_single_variable_obs`.
+                
     observed_values_file : str or DataFrame
         CSV file or DataFrame with observed values. Must have the following columns
         (default names are shown, other names can be specified with
@@ -345,14 +370,20 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         if col not in perioddata.columns:
             raise ValueError(f"perioddata must have '{col}' column")
     perioddata.index = perioddata['per']
-    results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output_file,
-                                          gwf_obs_input_file=gwf_obs_input_file,
-                                          #variable_name=variable_name,
-                                          #obsnme_date_suffix=obsnme_date_suffix,
-                                          #obsnme_suffix_format=obsnme_suffix_format,
-                                          #label_period_as_steady_state=label_period_as_steady_state,
-                                          gwf_obs_block=gwf_obs_block
-                                          )
+    if isinstance(model_output, str) or isinstance(model_output, Path):
+        results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output,
+                                            gwf_obs_input_file=gwf_obs_input_file,
+                                            #variable_name=variable_name,
+                                            #obsnme_date_suffix=obsnme_date_suffix,
+                                            #obsnme_suffix_format=obsnme_suffix_format,
+                                            #label_period_as_steady_state=label_period_as_steady_state,
+                                            gwf_obs_block=gwf_obs_block
+                                            )
+    elif isinstance(model_output, pd.DataFrame):
+        results = model_output.copy()
+    else:
+        raise ValueError('Unrecognized entry for model_output: '
+                         'supply either a path to MODFLOW 6 CSV output file or a pandas DataFrame')
 
     # rename columns to their defaults
     renames = {#observed_values_site_id_col: 'obsprefix',
@@ -543,7 +574,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             perioddata = perioddata[idx:idx+1]
     
     for i, r in perioddata.iterrows():
-
+        if r.per == 34:
+            j=2 
         # get the equivalent observed values
         start, end = str(r['start_datetime']), str(r['end_datetime'])
             
@@ -595,7 +627,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         data.index = data['obsnme']
         
         observed_in_period = observed.sort_index().loc[start:end].reset_index(drop=True)
-        
+       
         # No forecast observations and no observed values in period
         if verbose and (forecast_sites is None) and (len(observed_in_period) == 0):
             warnings.warn(('Stress period {}: No observations between start and '
@@ -628,7 +660,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                         for prefix in observed_in_period_rs.obsprefix]
             observed_in_period_rs['obsnme'] = obsnames
             observed_in_period_rs.index = observed_in_period_rs['obsnme']
-            
+
         # Forecast sites, but no observed data
         else:
             observed_in_period_rs = pd.DataFrame(columns=observed.columns)
@@ -654,26 +686,48 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             i, j = get_ij(modelgrid_transform, kwargs.pop('x'), kwargs.pop('y'))
             kwargs['i'] = i
             kwargs['j'] = j
-            
+
+            results_2d = data.pivot(columns='layer', values='sim_obsval', index='obsnme').T.values
+
+            heads_2d = None
             if head_results_file is not None:
-                raise NotImplementedError('still working on this')
                 # TODO: need to sort out how to identify which heads to use
                 # 1) case of steady-state gwf (use specified stress period, defaulting to last)
                 # 2) case of transient gwf with different or the same stress periods or timesteps 
                 #    (use datetimes from perioddata)
                 hf = HeadFile(head_results_file)
-                heads_3d = hf.get_data(totim=r['time'])
+                # Stress period-based observations
+                if per_column == 'per':
+                    valid_kstpkper = [(kstp, kper) for kstp, kper in hf.get_kstpkper() if kper <= r['per']]
+                    # if more than one timestep, take the last one
+                    if valid_kstpkper:
+                        kstpkper = valid_kstpkper[-1]
+                        print(f'Using heads from period {kstpkper[1]}, timestep {kstpkper[0]} '
+                              f'to compute transmissivities for transport period {r['per']}')
+                    else:
+                        raise ValueError(f"No saved head stress periods found that are =< {r['per']} "
+                                         "(current transport period)")
+                    heads_3d = hf.get_data(kstpkper=kstpkper)
+                elif per_column == 'unique_timestep':
+                    valid_times = [t for t in hf.get_times() if t <= r['time']]
+                    if valid_times:
+                        time = valid_times[-1]
+                        print(f'Using heads from MODFLOW time {time} to compute transmissivities for transport time {r['time']}')
+                    else:
+                        raise ValueError(f"No saved heads for MODFLOW times that are =< {r['time']} (current transport time)")
+                    heads_3d = hf.get_data(totim=time)
+                heads_2d = heads_3d[:, i, j]
             else:
-                heads_2d = data.pivot(columns='layer', values='sim_obsval', index='obsnme').T.values
+                heads_2d = results_2d.copy()
             obsnme = data.pivot(columns='layer', values='obsnme', index='obsnme').index.tolist()
 
-            # layers containing head values
-            # (in case there are any layers not represented in the head data)
-            head_layers = data['layer'].unique()
-            if heads_2d.shape[0] != botm.shape[0]:
-                heads_rs = np.ones((botm.shape[0], heads_2d.shape[1])) * np.nan
-                heads_rs[head_layers] = heads_2d
-                heads_2d = heads_rs
+            # layers containing observation output values
+            # (in case there are any layers not represented in the observation output [results])
+            results_layers = data['layer'].unique()
+            if results_2d.shape[0] != botm.shape[0]:
+                reshaped = np.ones((botm.shape[0], results_2d.shape[1])) * np.nan
+                reshaped[results_layers] = results_2d
+                results_2d = reshaped
             
             # cull observations to only those with >min_open_interval_pct_in_model 
             # of their open interval within the model
@@ -700,7 +754,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             drop_wells.to_csv(outpath / 'dropped_head_observations_above_or_below_model.csv', 
                               float_format='%.2f')
             obsnme = np.array(obsnme)[keep]
-            heads_2d = heads_2d[:, keep].copy()
+            results_2d = results_2d[:, keep].copy()
+            if heads_2d is not None:
+                heads_2d = heads_2d[:, keep].copy()
             for k, v in kwargs.items():
                 if isinstance(v, np.ndarray) and len(v) == len(keep):
                     kwargs[k] = v[keep]
@@ -719,7 +775,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             Tr_frac_df = pd.DataFrame(Tr_frac.transpose())
             Tr_frac_df['obsnme'] = obsnme
             Tr_frac_df.to_csv(outpath / 'obs_layer_transmissivities.csv', float_format='%.2f')
-            mean_t_weighted_heads = np.nansum((heads_2d * Tr_frac), axis=0)
+            mean_t_weighted_results = np.nansum((results_2d * Tr_frac), axis=0)
             # top layer of open interval
             kmin = np.argmax(Tr_frac > 0, axis=0)
             # bottom layer of open interval
@@ -728,18 +784,18 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             # in some cases, the open interval might be mis-matched with the layering
             # for example, an open interval might be primarily in layer 4,
             # in a location where layer 5 is the only active layer
-            # this would result in a mean_t_weighted_heads value of 0
+            # this would result in a mean_t_weighted_results value of 0
             # (from the zero transmissivity in that layer)
             # fill these instances with the mean of any valid heads at those locations
-            mean_heads = np.nanmean(heads_2d, axis=0)
-            misaligned = mean_t_weighted_heads == 0
-            mean_t_weighted_heads[misaligned] = mean_heads[misaligned]
+            mean_heads = np.nanmean(results_2d, axis=0)
+            misaligned = mean_t_weighted_results == 0
+            mean_t_weighted_results[misaligned] = mean_heads[misaligned]
 
             # verify that there are no nans in the extracted head values (one per obs)
-            assert not np.any(np.isnan(mean_t_weighted_heads))
+            assert not np.any(np.isnan(mean_t_weighted_results))
 
             # add the simulated heads onto the list for all periods
-            mean_t_weighted_heads_df = pd.DataFrame({sim_values_column: mean_t_weighted_heads, 
+            mean_t_weighted_results_df = pd.DataFrame({sim_values_column: mean_t_weighted_results, 
                                                      'i': i,
                                                      'j': j,
                                                      'min_layer': kmin,
@@ -753,7 +809,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 observed_in_period_rs['datetime'] = data['datetime'].values[0]
 
             for col in sim_values_column, 'min_layer', 'max_layer', 'i', 'j':
-                observed_in_period_rs[col] = mean_t_weighted_heads_df[col]
+                observed_in_period_rs[col] = mean_t_weighted_results_df[col]
             
 
         # Alternative option to get head values for specified layers
