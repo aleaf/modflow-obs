@@ -391,7 +391,7 @@ def test_get_baseflow_observations(gage_package_obs, test_data_path):
 
     base_obs_sim_0 = base_obs.copy()
     base_obs_sim_0['sim_obsval'] = 0
-    next_date = base_obs_sim_0['datetime'][-1] + pd.Timedelta(1, unit='d')
+    next_date = base_obs_sim_0['datetime'].iloc[-1] + pd.Timedelta(1, unit='d')
     base_obs_sim_0['datetime'] = pd.date_range(next_date, next_date + pd.Timedelta(len(base_obs_sim_0), unit='d'))[:len(base_obs_sim_0)]
 #
     # Check handling of zero flow periods
@@ -459,7 +459,7 @@ def test_fill_missing_obs(gage_package_obs, test_data_path,
     shutil.copy(test_data_path / 'br_missing_test_data2.dat.ins', 
                 test_output_folder)
     df = pd.read_csv(test_data_path / 'br_missing_test_data2.dat', 
-                     sep='\\s+')
+                     sep=r'\s+')
     outfile = test_data_path / 'br_missing_test_data2.dat'
     results3 = get_baseflow_observations(df, write_ins=False, 
                                          outfile=outfile)

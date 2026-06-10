@@ -45,7 +45,7 @@ def read_res_file(res_file):
             if ('measured' in line.lower()) and ('modelled' in line.lower()):
                 break
     # read the res file
-    res = pd.read_csv(res_file, sep='\\s+', skiprows=skiprows)
+    res = pd.read_csv(res_file, sep=r'\s+', skiprows=skiprows)
     res.columns = [c.lower() for c in res.columns]
     res.index = res['name']
     return res
@@ -136,7 +136,7 @@ def get_obs_info_from_files(obsfiles):
     req_columns = ['obsnme', 'obsprefix']
     dfs = []
     for f in obsfiles:
-        df = pd.read_csv(f, sep='\\s+', dtype={'obsprefix': object})
+        df = pd.read_csv(f, sep=r'\s+', dtype={'obsprefix': object})
         for c in req_columns:
             if c not in df.columns:
                 raise ValueError(f"Observation file {f} is missing an {c} column.")
@@ -228,7 +228,7 @@ def get_summary_statistics(res_data, include_zero_weighted=False,
                     obstype = 'head-spinup-all'
                 elif 'cal' in col:
                     obstype = 'head-post-spinup-all'
-                all_head_stats = pd.Series({
+                all_head_stats = pd.DataFrame({
                     'ME': group['residual'].mean(),
                     'MAE': group['residual'].abs().mean(),
                     'RMSE': np.sqrt(np.mean(group['residual']**2)),
@@ -239,10 +239,11 @@ def get_summary_statistics(res_data, include_zero_weighted=False,
                     'n': len(group),
                     'obstype': obstype,
                     'avg_weight': group['weight'].mean(),
-                        })
-                all_head_stats.name = col
-                all_head_stats_subsets.append(pd.DataFrame(all_head_stats).T)
+                        }, index=[col])
+                #all_head_stats.name = col
+                all_head_stats_subsets.append(pd.DataFrame(all_head_stats))
         summary = pd.concat([summary] + all_head_stats_subsets)
+        summary['n'] = summary['n'].astype(int)
         loc = summary['meas_range'] != 0
         summary['rmse_frac_range'] = np.nan
         summary.loc[loc, 'rmse_frac_range'] = summary.loc[loc, 'RMSE'] / summary.loc[loc, 'meas_range']
@@ -369,7 +370,7 @@ def export_residuals_shapefile(obs_output, obs_info, how='mean',
         Path(outfile_name_base).parent.mkdir(parents=True, exist_ok=True)
         
     if not isinstance(obs_output, pd.DataFrame):
-        df = pd.read_csv(obs_output, sep='\\s+', 
+        df = pd.read_csv(obs_output, sep=r'\s+', 
                              dtype={'obsprefix': object})
     else:
         df = obs_output
