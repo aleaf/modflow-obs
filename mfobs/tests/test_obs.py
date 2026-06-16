@@ -137,7 +137,14 @@ def test_get_flux_obs(flux_obs):
     assert len(set(results.obsnme)) == len(results)
     assert not results['obsval'].isna().any()
     assert not results.obsnme.str.isupper().any()
-
+    
+    expected_dtypes = {
+        'obsval': float,
+        'sim_obsval': float
+    }
+    for col, dtype in expected_dtypes.items():
+        assert results[col].dtype == dtype
+        
     # check sorting
     assert np.all(results.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)
 
@@ -152,6 +159,13 @@ def test_get_flux_obs_per_based_suffixes(flux_obs_per_based_suffixes):
     assert not results['obsval'].isna().any()
     assert not results.obsnme.str.isupper().any()
 
+    expected_dtypes = {
+        'obsval': float,
+        'sim_obsval': float
+    }
+    for col, dtype in expected_dtypes.items():
+        assert results[col].dtype == dtype
+        
     # check sorting
     assert np.all(results.reset_index(drop=True).groupby('obsprefix').per.diff().dropna() > 0)
     

@@ -514,6 +514,12 @@ def get_base_obs(perioddata,
         obsdata['obsval'] = obsdata[output_obs_values_column]
         columns.insert(-1, 'obsval')
 
+    set_dtypes = {
+        'obsval': float,
+        'sim_obsval': float
+    }
+    for col, dtype in set_dtypes.items():
+        obsdata[col] = obsdata[col].astype(dtype)
 
     # reorder the columns
     columns = [c for c in columns if c in obsdata.columns]
