@@ -813,7 +813,25 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         if forecast_sites_only:
             keep = keep & head_obs['obsprefix'].isin(forecast_sites)
         head_obs = head_obs.loc[keep].copy()
-
+        
+    set_dtypes = {
+        obs_values_column: float,
+        sim_values_column: float,
+        'per': int,
+        'n': int,
+        'uncertainty': float, 
+        'screen_top': float, 
+        'screen_botm': float, 
+        'layer': int, 
+        'min_layer': int, 
+        'max_layer': int, 
+        'i': int, 
+        'j': int
+    }
+    for col, dtype in set_dtypes.items():
+        if col in head_obs.columns:
+            head_obs[col] = head_obs[col].astype(dtype)
+        
     # reorder the columns
     columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
                obs_values_column, sim_values_column,
