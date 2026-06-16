@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.heads &mdash; modflow-obs 0.post108.dev0+gfd421d5 documentation</title>
+  <title>mfobs.heads &mdash; modflow-obs 0.post109.dev0+g0acc151 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=bd35e9aa"></script>
+      <script src="../../_static/documentation_options.js?v=9e968a66"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -914,7 +914,25 @@
         <span class="k">if</span> <span class="n">forecast_sites_only</span><span class="p">:</span>
             <span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span> <span class="o">&amp;</span> <span class="n">head_obs</span><span class="p">[</span><span class="s1">&#39;obsprefix&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">forecast_sites</span><span class="p">)</span>
         <span class="n">head_obs</span> <span class="o">=</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
+        
+    <span class="n">set_dtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">obs_values_column</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">sim_values_column</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="s1">&#39;per&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s1">&#39;n&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s1">&#39;uncertainty&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="s1">&#39;screen_top&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="s1">&#39;screen_botm&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="s1">&#39;layer&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="s1">&#39;min_layer&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="s1">&#39;max_layer&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="s1">&#39;i&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> 
+        <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">set_dtypes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">head_obs</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">head_obs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">head_obs</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        
     <span class="c1"># reorder the columns</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datetime&#39;</span><span class="p">,</span> <span class="s1">&#39;per&#39;</span><span class="p">,</span> <span class="s1">&#39;site_no&#39;</span><span class="p">,</span> <span class="s1">&#39;obsprefix&#39;</span><span class="p">,</span> <span class="s1">&#39;obsnme&#39;</span><span class="p">,</span> 
                <span class="n">obs_values_column</span><span class="p">,</span> <span class="n">sim_values_column</span><span class="p">,</span>
