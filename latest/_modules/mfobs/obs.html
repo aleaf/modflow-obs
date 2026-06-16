@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mfobs.obs &mdash; modflow-obs 0.post107.dev0+g8df6dc3 documentation</title>
+  <title>mfobs.obs &mdash; modflow-obs 0.post108.dev0+gfd421d5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
@@ -14,7 +14,7 @@
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=67acc22e"></script>
+      <script src="../../_static/documentation_options.js?v=bd35e9aa"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -615,6 +615,12 @@
         <span class="n">obsdata</span><span class="p">[</span><span class="s1">&#39;obsval&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">output_obs_values_column</span><span class="p">]</span>
         <span class="n">columns</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;obsval&#39;</span><span class="p">)</span>
 
+    <span class="n">set_dtypes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;obsval&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="s1">&#39;sim_obsval&#39;</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">dtype</span> <span class="ow">in</span> <span class="n">set_dtypes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">obsdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">obsdata</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
     <span class="c1"># reorder the columns</span>
     <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">obsdata</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span>
@@ -1920,7 +1926,7 @@
 
   <div role="contentinfo">
     <p>
-      <span class="lastupdated">Last updated on Jun 10, 2026.
+      <span class="lastupdated">Last updated on Jun 16, 2026.
       </span></p>
   </div>
 
