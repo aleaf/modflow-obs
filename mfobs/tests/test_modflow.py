@@ -138,7 +138,7 @@ def test_get_mf_gage_package_obs(test_data_path):
     perioddata = get_perioddata(test_data_path / 'mf2005/br_trans.dis', start_datetime='2000-01-01',
                                 end_datetime='2001-02-01', include_timesteps=True)
     gage_results = get_mf_gage_package_obs(perioddata, gage_file, variable='flow',
-                                           abs=True)
+                                           enfore_absolute_values=True)
     assert np.all(gage_results.columns ==
                 ['datetime', 'site_no', 'variable', 'obsprefix',
                 'sim_obsval', 'time', 'per']
@@ -164,7 +164,7 @@ def test_get_mf6_single_variable_obs(test_data_path, variable):
                                           model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           variable=variable,
-                                          abs=True)
+                                          enfore_absolute_values=True)
     assert np.all(results.columns ==
                 ['datetime', 'site_no', 'variable', 'obsprefix',
                 'sim_obsval', 'layer', 'time', 'per']
@@ -187,7 +187,7 @@ def test_get_mf6_single_variable_obs_daily(test_data_path, gwf_obs_input_file):
                                           model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           variable='head',
-                                          abs=True,
+                                          enfore_absolute_values=True,
                                           gwf_obs_block=None)
     # 1 steady-state period; 39 timesteps in transient period
     assert len(results.datetime.unique()) == 39

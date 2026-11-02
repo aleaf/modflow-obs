@@ -98,7 +98,7 @@ def gage_package_obs(test_data_path):
     perioddata = get_perioddata(test_data_path / 'mf2005/br_trans.dis', start_datetime='2000-01-01',
                                 end_datetime='2001-02-01', include_timesteps=True)
     gage_results = get_mf_gage_package_obs(perioddata, gage_file, variable='flow',
-                                           abs=True)
+                                           enfore_absolute_values=True)
     return gage_results, perioddata
     
     

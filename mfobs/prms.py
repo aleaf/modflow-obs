@@ -50,7 +50,7 @@ def get_prms_statvar_obs(perioddata,
                          statvar_sitenames=None,
                          obsnme_date_suffix=True,
                          obsnme_suffix_format='%Y%m%d',
-                         abs=False):
+                         enfore_absolute_values=False):
     """Read raw PRMS statvar observation output from text file table with
     times along the row axis and observation sites along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
@@ -84,7 +84,7 @@ def get_prms_statvar_obs(perioddata,
         (obsnme_date_suffix=True). If obsnme_date_suffix=False, obsnme_suffix_format
         should be a decimal format in the "new-style" string format
         (e.g. '{:03d}', which would yield ``'001'`` for an elapsed time of 1 day.)
-    abs : bool, optional
+    enfore_absolute_values : bool, optional
         Option to convert simulated values to absolute values
 
     Returns

@@ -7,6 +7,7 @@ from pathlib import Path
 from affine import Affine
 import numpy as np
 import pandas as pd
+import warnings
 try:
     import flopy
 except:
@@ -210,7 +211,7 @@ def get_mf6_single_variable_obs(perioddata,
                                 gwf_obs_input_file=None,
                                 variable=None,
                                 names_include_variable=False,
-                                abs=True,
+                                enfore_absolute_values=True,
                                 gwf_obs_block=None):
     r"""Read raw MODFLOW-6 observation output from csv table with
     times along the row axis and observations along the column axis. Reshape
@@ -230,6 +231,7 @@ def get_mf6_single_variable_obs(perioddata,
         time                modflow simulation time, in days\ :sup:`1`
         start_datetime      start date for each stress period
         end_datetime        end date for each stress period
+        per                 modflow stress period
         =================== =================================================================
         
         1) Times in the `time` column must correspond to times in the 
@@ -256,7 +258,7 @@ def get_mf6_single_variable_obs(perioddata,
         By default, False, in which case the MODFLOW observation names are assumed
         to be the site numbers. Observation prefixes will be formulated from the
         MODFLOW names and variable.
-    abs : bool, optional
+    enfore_absolute_values : bool, optional
         Option to convert simulated values to absolute values. For example,
         downstream-flow observations, which by convention are reported as 
         negative by MODFLOW 6, but will be compared to positive observed values.
@@ -345,7 +347,7 @@ def get_mf6_single_variable_obs(perioddata,
     stacked.index = stacked['time']
 
     # optionally convert simulated values to absolute values
-    if abs:
+    if enfore_absolute_values:
         stacked[simval_col] = stacked[simval_col].abs()
     
     # add dates
@@ -493,7 +495,7 @@ def get_mf_gage_package_obs(perioddata,
                             gage_package_output_files,
                             gwf_obs_input_file=None,
                             variable='flow',
-                            abs=True):
+                            enfore_absolute_values=True):
     r"""Read raw MODFLOW gage package text file output with
     times along the row axis and observations along the column axis. Reshape
     (stack) results to be n times x n sites rows, with a single observation value
@@ -532,7 +534,7 @@ def get_mf_gage_package_obs(perioddata,
         Input file to MODFLOW (hydmod or gage??) for observations.
     variable : str or sequence
         Variable(s) to read from gage package output.
-    abs : bool, optional
+    enfore_absolute_values : bool, optional
         Option to convert simulated values to absolute values
 
     Returns
@@ -601,7 +603,7 @@ def get_mf_gage_package_obs(perioddata,
     stacked = model_output
 
     # optionally convert simulated values to absolute values
-    if abs:
+    if enfore_absolute_values:
         stacked[simval_col] = stacked[simval_col].abs()
 
     # add dates
@@ -1182,4 +1184,8 @@ def add_timesteps_to_perioddata(perioddata):
         timestepdata[col] = timestepdata[col].astype(float)
     for col in 'per', 'nstp', 'timestep':
         timestepdata[col] = timestepdata[col].astype(int)
+    # iterrows/DataFrame(r).T casts everything to object dtype;
+    # restore steady to bool so it can be used as a boolean mask
+    if 'steady' in timestepdata.columns:
+        timestepdata['steady'] = timestepdata['steady'].astype(bool)
     return timestepdata        
