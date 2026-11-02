@@ -5,6 +5,7 @@ import warnings
 from pathlib import Path
 import numpy as np
 import pandas as pd
+from mfobs.binaryfile import HeadFile
 from mfobs.checks import check_obsnme_suffix
 from mfobs.fileio import load_array, write_insfile
 from mfobs.modflow import get_mf6_single_variable_obs, get_ij, get_transmissivities
@@ -31,12 +32,13 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                  aggregrate_observed_values_by='mean',
                  gwf_obs_block=None,
                  drop_groups=None,
-                 hk_arrays=None, top_array=None, botm_arrays=None,
+                 head_results_file=None, hk_arrays=None, top_array=None, botm_arrays=None,
                  label_period_as_steady_state=None, steady_state_period_start=None,
                  steady_state_period_end=None, forecast_sites=None,
                  forecast_start_date=None, forecast_end_date=None,
                  forecasts_only=False, forecast_sites_only=False,
                  min_open_interval_frac_in_model=0.5,
+                 unit_conversion_mult=None,
                  verbose=True, write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
@@ -61,10 +63,17 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     Parameters
     ----------
-    perioddata : str
-        Path to csv file with start/end dates for stress periods. Must have columns
-        'time' (modflow time, in days), 'start_datetime' (start date for the stress period)
-        and 'end_datetime' (end date for the stress period).
+    perioddata : str, pathlike or DataFrame
+        Path to csv file or pandas DataFrame with start/end dates for stress periods. 
+        Must have the following columns:
+        
+        =================== =================================================================
+        time                modflow simulation time, in days\ :sup:`1`
+        start_datetime      start date for each stress period
+        end_datetime        end date for each stress period
+        per                 modflow stress period
+        =================== =================================================================
+        
     modelgrid_transform : str
         An `affine.Affine <https://github.com/sgillies/affine>`_ object describing the orientation
         of the model grid. Modflow-setup :class:`~mfsetup.grid.MFsetupGrid` have this attached
@@ -198,6 +207,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         file). by default, None (All blocks)
     drop_groups : sequence, optional
         Observation groups to exclude from output, by default None
+    head_results_file : str or pathlike
+        MODFLOW binary head output file for use in determining saturated thicknesses
+        for the transmissivity-weighted averages. For example, if the values in model_output_file
+        are concentration results from a mass transport simulation. By default, None, in which
+        case the model output values supplied in model_output_file are assumed to be heads
+        and used to determine saturated thickness.
     hk_arrays : list-like of pathlikes or ndarray, optional
         File paths to text arrays with hydraulic conductivity values
         (ordered by model layer). Used in the transmissivity-weighted averaging.
@@ -262,6 +277,12 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         locations will be reported in dropped_head_observations_above_or_below_model.csv.
         by default, 0.5 (only retain observations with 50% 
         or more of their open interval within the model domain)
+    unit_conversion_mult : float
+        Option to apply unit conversion multiplier to model outputs. For example
+        if the outputs are concentrations in mg/m3 (for a transport model with mass 
+        units of mg and length units of meters), and desired unit is mg/L 
+        (for comparison with field data), a unit_conversion_mult of 0.001 would be supplied.
+        by default, None (no unit conversion applied).
     verbose : bool
         Controls the verbosity of screen outputs. If True, warnings will be printed
         when there are no observations within a stress period and forecast_sites is None
@@ -319,7 +340,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     perioddata = perioddata.copy()
     set_period_start_end_dates(perioddata)
-    perioddata.index = perioddata.per
+    
+    for col in {'per', 'time', 'start_datetime', 'end_datetime'}:
+        if col not in perioddata.columns:
+            raise ValueError(f"perioddata must have '{col}' column")
+    perioddata.index = perioddata['per']
     results = get_mf6_single_variable_obs(perioddata, model_output_file=model_output_file,
                                           gwf_obs_input_file=gwf_obs_input_file,
                                           #variable_name=variable_name,
@@ -521,8 +546,6 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
         # get the equivalent observed values
         start, end = str(r['start_datetime']), str(r['end_datetime'])
-        if start[:4] == '2010':
-            j=2
             
         # date-based suffix
         if obsnme_date_suffix:  
@@ -613,19 +636,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
         # Simulated equivalents
         # Option to get head values based on T-weighted average of open interval        
         if observed_values_layer_col is None:
+            
             # get a n layers x n sites array of simulated head observations
             data = data.reset_index(drop=True)
-            heads_2d = data.pivot(columns='layer', values='sim_obsval', index='obsnme').T.values
-            obsnme = data.pivot(columns='layer', values='obsnme', index='obsnme').index.tolist()
-
-            # layers containing head values
-            # (in case there are any layers not represented in the head data)
-            head_layers = data['layer'].unique()
-            if heads_2d.shape[0] != botm.shape[0]:
-                heads_rs = np.ones((botm.shape[0], heads_2d.shape[1])) * np.nan
-                heads_rs[head_layers] = heads_2d
-                heads_2d = heads_rs
-
             # x, y, screen_top and screen_botm have one value for each site
             kwargs = {}
             for arg in 'x', 'y', 'screen_top', 'screen_botm':
@@ -635,12 +648,32 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
                 # reduce pivoted data to just one value per site by taking the mean
                 # (values should be the same across columns, which represent layers)
                 kwargs[arg] = pivoted.mean(axis=1).values
-
+            
             # get the row, column indices of the observations here
             # so that we can include them in the output
             i, j = get_ij(modelgrid_transform, kwargs.pop('x'), kwargs.pop('y'))
             kwargs['i'] = i
             kwargs['j'] = j
+            
+            if head_results_file is not None:
+                raise NotImplementedError('still working on this')
+                # TODO: need to sort out how to identify which heads to use
+                # 1) case of steady-state gwf (use specified stress period, defaulting to last)
+                # 2) case of transient gwf with different or the same stress periods or timesteps 
+                #    (use datetimes from perioddata)
+                hf = HeadFile(head_results_file)
+                heads_3d = hf.get_data(totim=r['time'])
+            else:
+                heads_2d = data.pivot(columns='layer', values='sim_obsval', index='obsnme').T.values
+            obsnme = data.pivot(columns='layer', values='obsnme', index='obsnme').index.tolist()
+
+            # layers containing head values
+            # (in case there are any layers not represented in the head data)
+            head_layers = data['layer'].unique()
+            if heads_2d.shape[0] != botm.shape[0]:
+                heads_rs = np.ones((botm.shape[0], heads_2d.shape[1])) * np.nan
+                heads_rs[head_layers] = heads_2d
+                heads_2d = heads_rs
             
             # cull observations to only those with >min_open_interval_pct_in_model 
             # of their open interval within the model
@@ -749,6 +782,11 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
             observed_in_period_rs['i'] = j
             observed_in_period_rs[sim_values_column] = sim_values
 
+        if 'n' not in observed_in_period_rs.columns:
+            observed_in_period_rs['n'] = 0  # no observed values (forecasts only)
+        elif observed_in_period_rs['n'].isna().any():  # some sites without observed values
+            observed_in_period_rs['n'] = observed_in_period_rs['n'].fillna(0).astype(int)
+            
         # add stress period and observed values
         observed_in_period_rs['per'] = r['per']
         observed_in_period_rs[obs_values_column] = observed_in_period_rs[observed_values_obsval_col]
@@ -844,6 +882,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output_file,
 
     # fill NaT (not a time) datetimes
     fill_nats(head_obs, perioddata)
+    
+    if unit_conversion_mult is not None:
+        head_obs[sim_values_column] *= unit_conversion_mult
 
     head_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
