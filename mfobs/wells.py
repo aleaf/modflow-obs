@@ -838,7 +838,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
             i, j = get_ij(modelgrid_transform, observed_in_period_rs['x'], 
                           observed_in_period_rs['y'])
             observed_in_period_rs['i'] = i
-            observed_in_period_rs['i'] = j
+            observed_in_period_rs['j'] = j
             observed_in_period_rs[sim_values_column] = sim_values
 
         if 'n' not in observed_in_period_rs.columns:

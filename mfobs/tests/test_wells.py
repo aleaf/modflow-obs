@@ -435,3 +435,90 @@ def test_heads_module_deprecated():
         heads = importlib.import_module('mfobs.heads')
     assert heads.get_well_obs is mfobs.wells.get_well_obs
     assert heads.get_head_obs is mfobs.wells.get_head_obs
+
+
+@pytest.fixture
+def solute_obs_input(tmp_path):
+    """Small dataset similar to dissolved solute (chloride) concentrations
+    at two wells in three monthly stress periods. Simulated concentrations
+    (model output) are in mg/m3; observed concentrations are in mg/L.
+    Each well has one simulated layer, so no transmissivity weighting is needed."""
+    perioddata = pd.DataFrame({'per': [0, 1, 2],
+                               'start_datetime': ['2020-01-01', '2020-02-01', '2020-03-01'],
+                               'end_datetime': ['2020-01-31', '2020-02-29', '2020-03-31'],
+                               'time': [31., 60., 91.],
+                               'steady': False})
+    sites = ['well_a', 'well_b']
+    # simulated concentrations in mg/m3 (3 periods per site)
+    sim_mg_per_m3 = {'well_a': [1e4, 1e5, 1e6],
+                     'well_b': [1e3, 1e4, 1e5]}
+    model_output = pd.DataFrame(
+        [{'datetime': perioddata['end_datetime'][per], 'site_no': site, 'obsprefix': site,
+          'sim_obsval': sim_mg_per_m3[site][per], 'layer': 0,
+          'time': perioddata['time'][per], 'per': per}
+         for site in sites for per in range(3)])
+    # observed concentrations in mg/L, mid-month
+    observed = pd.DataFrame(
+        {'obsprefix': np.repeat(sites, 3),
+         'datetime': ['2020-01-15', '2020-02-15', '2020-03-15'] * 2,
+         'obsval': [12., 90., 1100., 1.2, 9., 120.],
+         'x': np.repeat([350., 750.], 3),  # columns 3 and 7 of the 100 x 100 grid below
+         'y': np.repeat([850., 450.], 3),  # rows 1 and 5
+         'layer': 0,
+         'obgnme': 'chloride'})
+
+    class SoluteObsInput:
+        def get_well_obs(self, **kwargs):
+            # copies, because get_well_obs modifies the observed values in place
+            return get_well_obs(perioddata, 
+                                modelgrid_transform=affine.Affine(100., 0., 0., 0., -100., 1000.),
+                                model_output=model_output.copy(),
+                                observed_values_file=observed.copy(),
+                                gwf_obs_input_file=None,
+                                observed_values_layer_col='layer',
+                                outfile=tmp_path / 'solute_obs.dat',
+                                verbose=False,
+                                **kwargs)
+        observed_values = observed['obsval'].values
+        # model output, in the same order as the get_well_obs output (sorted by site, period)
+        simulated_values = np.array(sim_mg_per_m3['well_a'] + sim_mg_per_m3['well_b'])
+    return SoluteObsInput()
+
+
+def test_get_well_obs_unit_conversion_mult(solute_obs_input):
+    """Simulated values (mg/m3) are converted to mg/L with unit_conversion_mult=0.001;
+    observed values are unchanged."""
+    unconverted = solute_obs_input.get_well_obs()
+    assert np.allclose(unconverted['sim_obsval'], solute_obs_input.simulated_values)
+    converted = solute_obs_input.get_well_obs(unit_conversion_mult=0.001)
+    assert np.allclose(converted['sim_obsval'], [10., 100., 1000., 1., 10., 100.])
+    assert np.allclose(converted['sim_obsval'], unconverted['sim_obsval'] * 0.001)
+    assert np.allclose(converted['obsval'], solute_obs_input.observed_values)
+    assert (converted['obsnme'] == unconverted['obsnme']).all()
+
+
+@pytest.mark.parametrize('unit_conversion_mult,expected_sim_obsval', (
+    # log10 of the simulated values, in the model output units (mg/m3)
+    (None, [4., 5., 6., 3., 4., 5.]),
+    # unit conversion is applied before the log transform (log10 of mg/L values)
+    (0.001, [1., 2., 3., 0., 1., 2.]),
+))
+def test_get_well_obs_log_results(solute_obs_input, unit_conversion_mult, expected_sim_obsval):
+    """Simulated values are log10-transformed with log_results=True;
+    observed values are unchanged."""
+    logged = solute_obs_input.get_well_obs(log_results=True,
+                                           unit_conversion_mult=unit_conversion_mult)
+    assert np.allclose(logged['sim_obsval'], expected_sim_obsval)
+    assert np.allclose(logged['obsval'], solute_obs_input.observed_values)
+    # default is no log transform
+    not_logged = solute_obs_input.get_well_obs(unit_conversion_mult=unit_conversion_mult)
+    assert np.allclose(not_logged['sim_obsval'], 10**np.array(expected_sim_obsval))
+
+
+def test_get_well_obs_row_column_indices(solute_obs_input):
+    """Row (i) and column (j) of each well are reported for specified-layer observations.
+    The fixture's grid has its upper left corner at 0, 1000, with 100 x 100 cells."""
+    result = solute_obs_input.get_well_obs()
+    # well_a at x=350, y=850; well_b at x=750, y=450
+    assert result['i'].tolist() == [1, 1, 1, 5, 5, 5]
+    assert result['j'].tolist() == [3, 3, 3, 7, 7, 7]
