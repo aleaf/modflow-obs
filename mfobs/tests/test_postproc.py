@@ -9,7 +9,7 @@ from mfobs.postproc import (
     plot_one_to_one,
     read_res_file
 )
-from .test_heads import shellmound_grid_transform, head_obs_input, head_obs
+from .test_wells import shellmound_grid_transform, head_obs_input, head_obs
 from .test_obs import flux_obs_input, flux_obs
 
 @pytest.mark.skip("incomplete")

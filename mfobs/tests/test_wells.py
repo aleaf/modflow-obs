@@ -1,5 +1,5 @@
 """
-Tests for the heads.py module
+Tests for the wells.py module
 
 """
 from datetime import datetime
@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import affine
-from mfobs.heads import get_head_obs
+from mfobs.wells import get_well_obs, get_head_obs
 from mfobs.modflow import (
     get_modelgrid_transform, 
     get_ij, 
@@ -16,6 +16,18 @@ from mfobs.modflow import (
 from mfobs.obs import (get_spatial_differences, 
                        get_temporal_differences, 
                        )
+
+def test_get_head_obs_deprecated(monkeypatch):
+    """get_head_obs is an alias for get_well_obs that issues a FutureWarning."""
+    import mfobs.wells
+    calls = []
+    monkeypatch.setattr(mfobs.wells, 'get_well_obs',
+                        lambda *args, **kwargs: calls.append((args, kwargs)) or 'result')
+    with pytest.warns(FutureWarning, match='get_head_obs has been renamed to get_well_obs'):
+        result = get_head_obs(1, 2, three=3)
+    assert result == 'result'
+    assert calls == [((1, 2), {'three': 3})]
+
 
 @pytest.fixture
 def shellmound_grid_transform(shellmound_data_path):
@@ -61,7 +73,7 @@ def head_obs_input(shellmound_data_path, shellmound_grid_transform,
 
 @pytest.fixture()
 def head_obs(head_obs_input):
-    head_obs = get_head_obs(head_obs_input.perioddata,
+    head_obs = get_well_obs(head_obs_input.perioddata,
                             modelgrid_transform=head_obs_input.modelgrid_transform,
                             model_output=head_obs_input.headobs_output_file,
                             observed_values_file=head_obs_input.head_obs_file,
@@ -87,7 +99,7 @@ def head_obs(head_obs_input):
                           ('layer', True, True, '%Y%m'),
                           ('layer', True, True, '%Y%m%d'),
                           ))
-def test_get_head_obs(test_data_path, head_obs_input, head_obs,
+def test_get_well_obs(test_data_path, head_obs_input, head_obs,
                       shellmound_output_path, observed_values_layer_col, steady,
                       obsnme_date_suffix, obsnme_suffix_format):
 
@@ -126,7 +138,7 @@ def test_get_head_obs(test_data_path, head_obs_input, head_obs,
         head_obs_input.steady_state_period_end = None
 
     # test write_ins=True
-    results = get_head_obs(head_obs_input.perioddata,
+    results = get_well_obs(head_obs_input.perioddata,
                            modelgrid_transform=head_obs_input.modelgrid_transform,
                            model_output=head_obs_input.headobs_output_file,
                            observed_values_file=head_obs_input.head_obs_file,
@@ -276,7 +288,7 @@ def test_get_forecast_head_obs(head_obs_input, forecast_sites,
     observed_values = pd.read_csv(head_obs_input.head_obs_file,
                                   dtype={'obsprefix': object})
     
-    head_obs = get_head_obs(head_obs_input.perioddata,
+    head_obs = get_well_obs(head_obs_input.perioddata,
                             modelgrid_transform=head_obs_input.modelgrid_transform,
                             model_output=head_obs_input.headobs_output_file,
                             observed_values_file=observed_values,
@@ -412,3 +424,14 @@ def test_t_weighted_head_averaging(test_data_path, head_obs_input, head_obs,
         sim_heads_list.append(T_weighted_head)
     # consideration of sat. thickness should be required to pass this
     assert np.allclose(head_obs_ml['sim_obsval'].values, sim_heads_list, rtol=1e-8, atol=1e-8)
+
+def test_heads_module_deprecated():
+    """Importing mfobs.heads warns, and re-exports the wells module's functions."""
+    import importlib
+    import sys
+    import mfobs.wells
+    sys.modules.pop('mfobs.heads', None)
+    with pytest.warns(FutureWarning, match='mfobs.heads has been renamed to mfobs.wells'):
+        heads = importlib.import_module('mfobs.heads')
+    assert heads.get_well_obs is mfobs.wells.get_well_obs
+    assert heads.get_head_obs is mfobs.wells.get_head_obs

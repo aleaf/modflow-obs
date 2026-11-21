@@ -979,7 +979,7 @@ def get_temporal_differences(base_data, perioddata,
     
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_head_obs', obsdata=base_data)
+                        function_name='get_temporal_differences', obsdata=base_data)
     if base_data.columns.duplicated().any():
         raise ValueError('Duplicate column names in base_data:\n'
                          f'{base_data.columns[base_data.columns.duplicated(keep=False)]}')
@@ -1220,7 +1220,7 @@ def get_annual_means(base_data,
     # validation checks
     #obsnme_date_suffix=True
     #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-    #                    function_name='get_head_obs', obsdata=base_data)
+    #                    function_name='get_annual_means', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs
@@ -1338,7 +1338,7 @@ def get_monthly_means(base_data,
     # validation checks
     #obsnme_date_suffix=True
     #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-    #                    function_name='get_head_obs', obsdata=base_data)
+    #                    function_name='get_monthly_means', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs
@@ -1458,7 +1458,7 @@ def get_mean_monthly(base_data,
     # validation checks
     #obsnme_date_suffix=True,
     #check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-    #                    function_name='get_head_obs', obsdata=base_data)
+    #                    function_name='get_mean_monthly', obsdata=base_data)
     base_data['datetime'] = pd.to_datetime(base_data['datetime'])
     
     # only compute statistics on transient obs

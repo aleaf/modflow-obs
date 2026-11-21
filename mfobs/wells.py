@@ -12,7 +12,7 @@ from mfobs.modflow import get_mf6_single_variable_obs, get_ij, get_transmissivit
 from mfobs.utils import fill_nats, set_period_start_end_dates
 
 
-def get_head_obs(perioddata, modelgrid_transform, model_output,
+def get_well_obs(perioddata, modelgrid_transform, model_output,
                  observed_values_file,
                  gwf_obs_input_file,
                  observed_values_metadata_file=None,
@@ -38,7 +38,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output,
                  forecast_start_date=None, forecast_end_date=None,
                  forecasts_only=False, forecast_sites_only=False,
                  min_open_interval_frac_in_model=0.5,
-                 unit_conversion_mult=None,
+                 unit_conversion_mult=None, log_results=False,
                  verbose=True, write_ins=False, outfile=None):
     """Post-processes model output to be read by PEST, and optionally,
     writes a corresponding PEST instruction file. Reads model output
@@ -308,6 +308,9 @@ def get_head_obs(perioddata, modelgrid_transform, model_output,
         units of mg and length units of meters), and desired unit is mg/L 
         (for comparison with field data), a unit_conversion_mult of 0.001 would be supplied.
         by default, None (no unit conversion applied).
+    log_results : float
+        Option to log-transform results (for example, concentration results).
+        by default, False.
     verbose : bool
         Controls the verbosity of screen outputs. If True, warnings will be printed
         when there are no observations within a stress period and forecast_sites is None
@@ -354,7 +357,7 @@ def get_head_obs(perioddata, modelgrid_transform, model_output,
     """
     # validation checks
     check_obsnme_suffix(obsnme_date_suffix, obsnme_suffix_format, 
-                        function_name='get_head_obs')
+                        function_name='get_well_obs')
     
     outpath = Path('.')
     if outfile is not None:
@@ -941,6 +944,8 @@ def get_head_obs(perioddata, modelgrid_transform, model_output,
     
     if unit_conversion_mult is not None:
         head_obs[sim_values_column] *= unit_conversion_mult
+    if log_results:
+        head_obs[sim_values_column] = np.log10(head_obs[sim_values_column])
 
     head_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
@@ -952,3 +957,10 @@ def get_head_obs(perioddata, modelgrid_transform, model_output,
             write_insfile(head_obs, str(outfile) + '.ins', obsnme_column='obsnme',
                           simulated_obsval_column=sim_values_column, index=False)
     return head_obs
+
+
+def get_head_obs(*args, **kwargs):
+    """Deprecated; renamed to :func:`get_well_obs`."""
+    warnings.warn('get_head_obs has been renamed to get_well_obs',
+                  FutureWarning, stacklevel=2)
+    return get_well_obs(*args, **kwargs)
