@@ -93,8 +93,8 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         grid JSON file via the :func:`~mfobs.modflow.get_modelgrid_transform` function.
 
     model_output : str or pathlike, or DataFrame
-        Either a Modflow-6 head observation CSV output file or pandas DataFrame 
-        with one head observation per row, with the following columns:
+        Either a Modflow-6 head or concentration (or similar) observation CSV output file or pandas DataFrame 
+        with one observation per row, with the following columns:
 
         ======================= =============================================================
         site_no                 unique identifier for each site
@@ -118,7 +118,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         All observation prefixes are assumed to be case-insensitive (obsprefixes in the model_output 
         and obseved_values_files tables are all converted to lower case prior to matching).
         
-        Modflow-6 head observation CSV output file are read by :func:`~mfobs.modflow.get_mf6_single_variable_obs`.
+        Modflow-6 observation CSV output is read by :func:`~mfobs.modflow.get_mf6_single_variable_obs`.
                 
     observed_values_file : str or DataFrame
         CSV file or DataFrame with observed values. Must have the following columns
@@ -298,8 +298,8 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         observations (for a continuous time-series).
     min_open_interval_frac_in_model : float ranging from 0 to 1, optional
         Option to cull observations with less than min_open_interval_frac_in_model
-        fraction of their open interval within the model domain. Dropped head observation
-        locations will be reported in dropped_head_observations_above_or_below_model.csv.
+        fraction of their open interval within the model domain. Dropped observation
+        locations will be reported in dropped_well_observations_above_or_below_model.csv.
         by default, 0.5 (only retain observations with 50% 
         or more of their open interval within the model domain)
     unit_conversion_mult : float
@@ -308,8 +308,10 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         units of mg and length units of meters), and desired unit is mg/L 
         (for comparison with field data), a unit_conversion_mult of 0.001 would be supplied.
         by default, None (no unit conversion applied).
-    log_results : float
-        Option to log-transform results (for example, concentration results).
+    log_results : bool
+        Option to log10-transform results (for example, concentration results).
+        Both the simulated values (``sim_obsval``, after any ``unit_conversion_mult``
+        is applied) and the observed values (``obsval``) are transformed.
         by default, False.
     verbose : bool
         Controls the verbosity of screen outputs. If True, warnings will be printed
@@ -495,7 +497,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
     # dump these out to a csv
     if len(no_info_sites) > 0:
         print('Dropping {} sites with no information'.format(len(no_info_sites)))
-        dropped_obs_outfile = outpath / 'dropped_head_observation_sites.csv'
+        dropped_obs_outfile = outpath / 'dropped_well_observation_sites.csv'
         results.loc[results.obsprefix.isin(no_info_sites)].to_csv(dropped_obs_outfile,
                                                               index=False)
         results = results.loc[~results.obsprefix.isin(no_info_sites)].copy()
@@ -518,7 +520,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         else:
             botm = botm_arrays
 
-    # get the x and y location and open interval corresponding to each head observation
+    # get the x and y location and open interval corresponding to each well observation
     if observed_values_metadata_file is not None:
         x = dict(zip(metadata['obsprefix'], metadata['x']))
         y = dict(zip(metadata['obsprefix'], metadata['y']))
@@ -528,7 +530,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
     results['x'] = [x[obsprefix] for obsprefix in results.obsprefix]
     results['y'] = [y[obsprefix] for obsprefix in results.obsprefix]
 
-    # get head values based on T-weighted average of open interval
+    # get values based on T-weighted average of open interval
     if observed_values_layer_col is None:
         if 'screen_top' in observed.columns:
             if observed_values_metadata_file is not None:
@@ -624,7 +626,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         if len(data) == 0:
             continue
         # kludge to assign obsnmes to model results
-        # until head obs handling gets refactored into obs.get_base_obs
+        # until well obs handling gets refactored into obs.get_base_obs
         data['obsnme'] = ['{}_{}'.format(prefix.lower(), suffix)
                           for prefix in data.obsprefix]
         data.index = data['obsnme']
@@ -669,10 +671,10 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
             observed_in_period_rs = pd.DataFrame(columns=observed.columns)
 
         # Simulated equivalents
-        # Option to get head values based on T-weighted average of open interval        
+        # Option to get values based on T-weighted average of open interval        
         if observed_values_layer_col is None:
             
-            # get a n layers x n sites array of simulated head observations
+            # get a n layers x n sites array of simulated observation values
             data = data.reset_index(drop=True)
             # x, y, screen_top and screen_botm have one value for each site
             kwargs = {}
@@ -705,8 +707,8 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
                     # if more than one timestep, take the last one
                     if valid_kstpkper:
                         kstpkper = valid_kstpkper[-1]
-                        print(f'Using heads from period {kstpkper[1]}, timestep {kstpkper[0]} '
-                              f'to compute transmissivities for transport period {r['per']}')
+                        print(f"Using heads from period {kstpkper[1]}, timestep {kstpkper[0]} "
+                              f"to compute transmissivities for transport period {r['per']}")
                     else:
                         raise ValueError(f"No saved head stress periods found that are =< {r['per']} "
                                          "(current transport period)")
@@ -754,7 +756,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
                 'model_botm': model_botm[~keep],
             })
             drop_wells['reason'] = f"<{min_open_interval_frac_in_model:.0%} of open interval in model"
-            drop_wells.to_csv(outpath / 'dropped_head_observations_above_or_below_model.csv', 
+            drop_wells.to_csv(outpath / 'dropped_well_observations_above_or_below_model.csv', 
                               float_format='%.2f')
             obsnme = np.array(obsnme)[keep]
             results_2d = results_2d[:, keep].copy()
@@ -773,7 +775,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
                                      modelgrid_transform=modelgrid_transform, **kwargs
                                      )
 
-            # compute transmissivity-weighted average heads
+            # compute transmissivity-weighted average values
             Tr_frac = T / T.sum(axis=0)
             Tr_frac_df = pd.DataFrame(Tr_frac.transpose())
             Tr_frac_df['obsnme'] = obsnme
@@ -789,15 +791,15 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
             # in a location where layer 5 is the only active layer
             # this would result in a mean_t_weighted_results value of 0
             # (from the zero transmissivity in that layer)
-            # fill these instances with the mean of any valid heads at those locations
-            mean_heads = np.nanmean(results_2d, axis=0)
+            # fill these instances with the mean of any valid values at those locations
+            mean_values = np.nanmean(results_2d, axis=0)
             misaligned = mean_t_weighted_results == 0
-            mean_t_weighted_results[misaligned] = mean_heads[misaligned]
+            mean_t_weighted_results[misaligned] = mean_values[misaligned]
 
-            # verify that there are no nans in the extracted head values (one per obs)
+            # verify that there are no nans in the extracted values (one per obs)
             assert not np.any(np.isnan(mean_t_weighted_results))
 
-            # add the simulated heads onto the list for all periods
+            # add the simulated values onto the list for all periods
             mean_t_weighted_results_df = pd.DataFrame({sim_values_column: mean_t_weighted_results, 
                                                      'i': i,
                                                      'j': j,
@@ -815,7 +817,7 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
                 observed_in_period_rs[col] = mean_t_weighted_results_df[col]
             
 
-        # Alternative option to get head values for specified layers
+        # Alternative option to get simulated observation values for specified layers
         # (or closest layer if the specified layer doesn't have obs output)
         else:
             any_simulated_obs = data.obsnme.isin(observed_in_period_rs.obsnme).any()
@@ -851,12 +853,12 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         observed_in_period_rs[obs_values_column] = observed_in_period_rs[observed_values_obsval_col]
         observed_simulated_combined.append(observed_in_period_rs)
 
-    # Combined DataFrame of observed heads and simulated equivalents
-    head_obs = pd.concat(observed_simulated_combined)
+    # Combined DataFrame of observed and simulated equivalents
+    well_obs = pd.concat(observed_simulated_combined)
 
     # raise an error if there are duplicates- reindexing below will fail if this is the case
-    if head_obs.index.duplicated().any():
-        duplicated = head_obs.loc[head_obs.index.duplicated(keep=False)].sort_index()
+    if well_obs.index.duplicated().any():
+        duplicated = well_obs.loc[well_obs.index.duplicated(keep=False)].sort_index()
         msg = ('The following observations have duplicate names. There should only be'
                'one observation per site, for each time period implied by the '
                f'obsnme_date_suffix_format parameter.\n{duplicated}'
@@ -865,41 +867,41 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
 
     # drop any observations in specified groups
     # (e.g. lake stages that should be compared with lake package output)
-    if drop_groups is not None and 'obgnme' in head_obs.columns:
-        head_obs = head_obs.loc[~head_obs.obgnme.isin(drop_groups)].copy()
+    if drop_groups is not None and 'obgnme' in well_obs.columns:
+        well_obs = well_obs.loc[~well_obs.obgnme.isin(drop_groups)].copy()
 
     # add standard obsval and obgmne columns
-    #head_obs['obsval'] = head_obs[obs_values_column]
-    if 'obgnme' not in head_obs.columns:
-        head_obs['obgnme'] = variable_name
+    #well_obs['obsval'] = well_obs[obs_values_column]
+    if 'obgnme' not in well_obs.columns:
+        well_obs['obgnme'] = variable_name
 
     # fill forecast obs with site info from observed dataframe
     if forecast_sites is not None:
         for k, v in site_info_dict.items():
-            head_obs[k] = [v[p] for p in head_obs['obsprefix']]
-        head_obs['obsnme'] = head_obs.index
+            well_obs[k] = [v[p] for p in well_obs['obsprefix']]
+        well_obs['obsnme'] = well_obs.index
     else:
         # nans are where sites don't have observation values for that period
         # or sites that are in other model (inset or parent)
-        head_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
+        well_obs.dropna(subset=[obs_values_column], axis=0, inplace=True)
 
     # label forecasts in own group
     if forecast_sites is not None:
-        is_forecast = head_obs[obs_values_column].isna()
-        head_obs.loc[is_forecast, 'obgnme'] += '-forecast'
+        is_forecast = well_obs[obs_values_column].isna()
+        well_obs.loc[is_forecast, 'obgnme'] += '-forecast'
     
         # cull forecasts to specified date window
         # and specific sites (if specified)
-        keep_forecasts = is_forecast.copy()  #np.array([True] * len(head_obs))
+        keep_forecasts = is_forecast.copy()  #np.array([True] * len(well_obs))
         if forecast_start_date is not None:
-            keep_forecasts = (head_obs['datetime'] >= forecast_start_date)
+            keep_forecasts = (well_obs['datetime'] >= forecast_start_date)
         if forecast_end_date is not None:
-            keep_forecasts &= (head_obs['datetime'] <= forecast_end_date)
+            keep_forecasts &= (well_obs['datetime'] <= forecast_end_date)
         #drop = drop & is_forecast
-        #head_obs = head_obs.loc[~drop].copy()
-        #is_forecast = head_obs[obs_values_column].isna()
+        #well_obs = well_obs.loc[~drop].copy()
+        #is_forecast = well_obs[obs_values_column].isna()
         if forecast_sites != 'all':
-            keep_forecasts &= head_obs['obsprefix'].isin(forecast_sites)
+            keep_forecasts &= well_obs['obsprefix'].isin(forecast_sites)
         # option to only include forecast obs
         # (those without observed equivalents)
         if forecasts_only:
@@ -908,8 +910,8 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
             keep = keep_forecasts | ~is_forecast
         # option to only include output from designated forecast sites
         if forecast_sites_only:
-            keep = keep & head_obs['obsprefix'].isin(forecast_sites)
-        head_obs = head_obs.loc[keep].copy()
+            keep = keep & well_obs['obsprefix'].isin(forecast_sites)
+        well_obs = well_obs.loc[keep].copy()
         
     set_dtypes = {
         obs_values_column: float,
@@ -926,37 +928,38 @@ def get_well_obs(perioddata, modelgrid_transform, model_output,
         'j': int
     }
     for col, dtype in set_dtypes.items():
-        if col in head_obs.columns:
-            head_obs[col] = head_obs[col].astype(dtype)
+        if col in well_obs.columns:
+            well_obs[col] = well_obs[col].astype(dtype)
         
     # reorder the columns
     columns = ['datetime', 'per', 'site_no', 'obsprefix', 'obsnme', 
                obs_values_column, sim_values_column,
                'n', 'uncertainty', 'screen_top', 'screen_botm', 'layer', 
                'min_layer', 'max_layer', 'i', 'j', 'obgnme']
-    columns = [c for c in columns if c in head_obs.columns]
-    head_obs = head_obs[columns].copy()
+    columns = [c for c in columns if c in well_obs.columns]
+    well_obs = well_obs[columns].copy()
     if 'layer' in columns:
-        head_obs['layer'] = head_obs['layer'].astype(int)
+        well_obs['layer'] = well_obs['layer'].astype(int)
 
     # fill NaT (not a time) datetimes
-    fill_nats(head_obs, perioddata)
+    fill_nats(well_obs, perioddata)
     
     if unit_conversion_mult is not None:
-        head_obs[sim_values_column] *= unit_conversion_mult
+        well_obs[sim_values_column] *= unit_conversion_mult
     if log_results:
-        head_obs[sim_values_column] = np.log10(head_obs[sim_values_column])
+        well_obs[obs_values_column] = np.log10(well_obs[obs_values_column])
+        well_obs[sim_values_column] = np.log10(well_obs[sim_values_column])
 
-    head_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
+    well_obs.sort_values(by=['obsprefix', 'per'], inplace=True)
     if outfile is not None:
-        head_obs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
-        print(f'wrote {len(head_obs):,} observations to {outfile}')
+        well_obs.fillna(-9999).to_csv(outfile, sep=' ', index=False)
+        print(f'wrote {len(well_obs):,} observations to {outfile}')
 
         # write the instruction file
         if write_ins:
-            write_insfile(head_obs, str(outfile) + '.ins', obsnme_column='obsnme',
+            write_insfile(well_obs, str(outfile) + '.ins', obsnme_column='obsnme',
                           simulated_obsval_column=sim_values_column, index=False)
-    return head_obs
+    return well_obs
 
 
 def get_head_obs(*args, **kwargs):

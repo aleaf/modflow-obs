@@ -504,15 +504,16 @@ def test_get_well_obs_unit_conversion_mult(solute_obs_input):
     (0.001, [1., 2., 3., 0., 1., 2.]),
 ))
 def test_get_well_obs_log_results(solute_obs_input, unit_conversion_mult, expected_sim_obsval):
-    """Simulated values are log10-transformed with log_results=True;
-    observed values are unchanged."""
+    """Simulated and observed values are log10-transformed with log_results=True.
+    The unit conversion applies only to the simulated values (the observed values are already in mg/L)."""
     logged = solute_obs_input.get_well_obs(log_results=True,
                                            unit_conversion_mult=unit_conversion_mult)
     assert np.allclose(logged['sim_obsval'], expected_sim_obsval)
-    assert np.allclose(logged['obsval'], solute_obs_input.observed_values)
+    assert np.allclose(logged['obsval'], np.log10(solute_obs_input.observed_values))
     # default is no log transform
     not_logged = solute_obs_input.get_well_obs(unit_conversion_mult=unit_conversion_mult)
     assert np.allclose(not_logged['sim_obsval'], 10**np.array(expected_sim_obsval))
+    assert np.allclose(not_logged['obsval'], solute_obs_input.observed_values)
 
 
 def test_get_well_obs_row_column_indices(solute_obs_input):
