@@ -97,8 +97,14 @@ def get_ij(transform, x, y):
     """Return the row and column of a point or sequence of points
     in real-world coordinates. Uses the affine package. Basically,
 
-    * to get an x, y: transform * (col, row)
-    * the inverse, ~transform * (x, y) returns a fractional i, j location on the grid
+    * applying the transform to a (col, row) location returns the x, y location
+    * applying the inverse, ``~transform``, to an (x, y) location returns the
+      fractional (col, row) location on the grid
+
+    (In affine 3.0 and later, the transform is applied to a location with the ``@`` operator;
+    in earlier versions, with the ``*`` operator, which is deprecated in affine 3.0.
+    This function applies the inverse transform using its coefficients,
+    so it works in both.)
 
     Parameters
     ----------
@@ -110,11 +116,21 @@ def get_ij(transform, x, y):
             modelgrid_transform=affine.Affine(1000.0, 0.0, 500955,
                                               0.0, -1000.0, 1205285)
 
-        for a uniform spacing of 1000 and upper left corner of 500955, 1205285
-        with a rotation of 45 degrees, counter-clockwise about the upper left corner::
+        for a uniform spacing of 1000 and upper left corner of 500955, 1205285.
+        For the same grid with a rotation of 45 degrees counter-clockwise
+        about the upper left corner (the MODFLOW ``angrot`` convention),
+        apply a rotation about the upper left corner to the grid transform,
+        after the cell sizes (``Affine.rotation`` is a class method that returns a rotation matrix only;
+        it doesn't rotate the transform that it is called from). Use the ``@``
+        operator in affine 3.0 and later, or ``*`` in earlier versions::
 
-            modelgrid_transform=affine.Affine(1000.0, 0.0, 500955,
-                                              0.0, -1000.0, 1205285).rotation(45.)
+            grid_transform = affine.Affine(1000.0, 0.0, 500955,
+                                           0.0, -1000.0, 1205285)
+            rotation = affine.Affine.rotation(45., pivot=(500955, 1205285))
+            modelgrid_transform = rotation @ grid_transform
+
+        (Rotating before applying the cell sizes would skew the grid
+        if the row and column spacings are different.)
 
         An ``affine.Affine`` instance can also be created from a
         `Modflow-setup <https://github.com/aleaf/modflow-setup>`_
@@ -133,7 +149,12 @@ def get_ij(transform, x, y):
     if not np.isscalar(y) and not isinstance(y, np.ndarray):
         y = np.array(y)
 
-    j, i = ~transform * (x, y)
+    # apply the inverse transform to get fractional column, row positions
+    # (uses the coefficients directly, because the ``Affine * (x, y)`` operation is deprecated
+    # in affine 3.0, and ``Affine @ (x, y)`` isn't supported by affine 2.x)
+    inverse = ~transform
+    j = inverse.a * x + inverse.b * y + inverse.c
+    i = inverse.d * x + inverse.e * y + inverse.f
     # decrement so that points within a cell (pixel)
     # round to the cell center
     # (transform returns fractional row/column positions 
@@ -740,7 +761,9 @@ def get_modelgrid_transform(grid_json_file, shift_to_cell_centers=False):
         the first cell in the model, and any conversions of x, y
         coordinates to pixels will be relative to upper left corners.
         If shift_to_cell_centers=True, x,y points will be referenced
-        to the nearest cell centers.
+        to the nearest cell centers. For a rotated grid, the shift
+        is half a cell along the (rotated) column and row directions of the grid,
+        so that the transform maps (col, row) = (0, 0) to the center of the first cell.
     """
     with open(grid_json_file) as f:
         cfg = json.load(f)
@@ -748,15 +771,27 @@ def get_modelgrid_transform(grid_json_file, shift_to_cell_centers=False):
     for dx in 'delr', 'delc':
         if not np.isscalar(cfg[dx]):
             cfg[dx] = cfg[dx][0]
-    xul = cfg['xul']
-    yul = cfg['yul']
-    if shift_to_cell_centers:
-        xul += 0.5 * cfg['delr']
-        yul -= 0.5 * cfg['delc']
 
-    transform = Affine(cfg['delr'], 0., xul,
-                       0., -cfg['delc'], yul) * \
-                Affine.rotation(-cfg['angrot'])
+    # The grid is rotated counter-clockwise about its upper left corner (the MODFLOW angrot convention).
+    # Each cell is delr wide (along the columns) and delc tall (along the rows),
+    # and these cell dimensions are applied to the rotated column and row directions
+    # (rotating the unit cell axes, then scaling by delr and delc).
+    # The coefficients are written out instead of composing Affine.rotation with a
+    # scaled grid transform, because the order of composition matters
+    # (scaling first, then rotating, skews the grid when delr != delc),
+    # and the Affine * Affine operation is deprecated in affine 3.0
+    # (while the @ operator isn't available in affine 2.x)
+    rotation = Affine.rotation(-cfg['angrot'])
+    transform = Affine(cfg['delr'] * rotation.a, cfg['delc'] * rotation.b, cfg['xul'],
+                       -cfg['delr'] * rotation.d, -cfg['delc'] * rotation.e, cfg['yul'])
+    if shift_to_cell_centers:
+        # shift the origin by half a cell along the column and row axes of the (rotated) grid
+        # (that is, to where the transform locates (col, row) = (0.5, 0.5);
+        # shifting xul and yul by half a cell before rotating would only work for unrotated grids)
+        transform = Affine(transform.a, transform.b,
+                           transform.a * 0.5 + transform.b * 0.5 + transform.c,
+                           transform.d, transform.e,
+                           transform.d * 0.5 + transform.e * 0.5 + transform.f)
     return transform
 
 

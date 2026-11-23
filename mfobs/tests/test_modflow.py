@@ -1,12 +1,15 @@
 """Tests for the modflow module.
 """
 from pathlib import Path
+import json
+import warnings
 import numpy as np
 import pandas as pd
 from affine import Affine
 import pytest
 from mfobs.modflow import (
     get_ij, 
+    get_modelgrid_transform,
     get_perioddata, 
     get_site_no,
     add_timesteps_to_perioddata,
@@ -44,6 +47,195 @@ def test_get_ij():
                   )
     assert (i, j) == (expected_i, expected_j)  
     
+
+def get_rotated_transform(angrot, xul=434955., yul=1342785., delr=500., delc=None):
+    """Make an Affine transform for a uniform grid with an upper left corner at xul, yul
+    and cells that are delr wide and delc tall (delc=delr by default),
+    rotated counter-clockwise about the upper left corner by angrot (degrees),
+    following the example in the get_ij docstring: the rotation about the upper left corner
+    is applied to the grid transform (after the cell sizes), so that the grid isn't skewed
+    when delr != delc. Affine.rotation is a classmethod that returns a rotation matrix only;
+    the transforms are composed with @ in affine >= 3.0, or * in earlier versions."""
+    delc = delr if delc is None else delc
+    grid_transform = Affine(delr, 0.0, xul, 0.0, -delc, yul)
+    rotation = Affine.rotation(angrot, pivot=(xul, yul))
+    if hasattr(Affine, '__matmul__'):
+        return rotation @ grid_transform
+    return rotation * grid_transform
+
+
+def assert_grid_axes(transform, angrot, delr, delc):
+    """Check that a transform's column and row axes have the expected lengths, are at right angles,
+    and are rotated counter-clockwise by angrot (the MODFLOW angrot convention)."""
+    column_axis = np.array([transform.a, transform.d])  # real-world displacement for one column
+    row_axis = np.array([transform.b, transform.e])  # real-world displacement for one row
+    assert np.isclose(np.hypot(*column_axis), delr)
+    assert np.isclose(np.hypot(*row_axis), delc)
+    assert np.isclose(column_axis @ row_axis, 0., atol=1e-6 * delr * delc)
+    # the column axis points angrot degrees counter-clockwise from east;
+    # the row axis (down the grid) points 90 degrees clockwise from the column axis
+    column_angle = np.degrees(np.arctan2(*column_axis[::-1]))
+    row_angle = np.degrees(np.arctan2(*row_axis[::-1]))
+    assert np.isclose((column_angle - angrot + 180) % 360 - 180, 0.)
+    assert np.isclose((column_angle - row_angle) % 360, 90.)
+
+
+@pytest.mark.parametrize('angrot,delr,delc', (
+    (0., 1000., 1000.),
+    (30., 1000., 1000.),
+    (45., 1000., 1000.),
+    (-20., 1000., 1000.),
+    # unequal row and column spacings
+    (0., 500., 800.),
+    (30., 500., 800.),
+    (-20., 800., 500.),
+))
+def test_rotated_transform_convention(angrot, delr, delc):
+    """The rotated transform described in the get_ij docstring retains the grid's
+    upper left corner and cell sizes, and rotates counter-clockwise (the MODFLOW angrot convention)."""
+    xul, yul = 500955., 1205285.
+    transform = get_rotated_transform(angrot, xul, yul, delr, delc)
+    # upper left corner is the pivot
+    assert np.allclose((transform.c, transform.f), (xul, yul))
+    assert_grid_axes(transform, angrot, delr, delc)
+
+
+def test_rotated_transform_first_cell_center():
+    """For a grid rotated 45 degrees counter-clockwise about its upper left corner,
+    the first cell center is directly east of the upper left corner
+    (the half-cell offsets down the first column and row cancel in y)."""
+    xul, yul, spacing = 500955., 1205285., 1000.
+    transform = get_rotated_transform(45., xul, yul, spacing)
+    x = transform.a * 0.5 + transform.b * 0.5 + transform.c
+    y = transform.d * 0.5 + transform.e * 0.5 + transform.f
+    assert np.isclose(y, yul)
+    assert np.isclose(x, xul + spacing * np.sqrt(2) / 2)
+    assert get_ij(transform, x, y) == (0, 0)
+
+
+def write_grid_json(path, angrot, xul=500955., yul=1205285., delr=1000., delc=1000.,
+                    nrow=3, ncol=4, scalar_spacing=False):
+    """Write a (minimal) modflow-setup style grid json file,
+    with delr and delc as lists (one value per column and row) or scalars."""
+    cfg = {'angrot': angrot, 'xul': xul, 'yul': yul,
+           'delr': delr if scalar_spacing else [delr] * ncol,
+           'delc': delc if scalar_spacing else [delc] * nrow,
+           'nrow': nrow, 'ncol': ncol}
+    with open(path, 'w') as dest:
+        json.dump(cfg, dest)
+    return path
+
+
+@pytest.mark.parametrize('angrot,delr,delc', (
+    (0., 1000., 1000.),
+    (30., 1000., 1000.),
+    (45., 1000., 1000.),
+    (-20., 1000., 1000.),
+    # unequal row and column spacings (the grid shouldn't be skewed when rotated)
+    (0., 500., 800.),
+    (30., 500., 800.),
+    (90., 500., 800.),
+    (-20., 800., 500.),
+))
+def test_get_modelgrid_transform(tmp_path, angrot, delr, delc):
+    """The transform from a grid json file is the grid rotated counter-clockwise
+    about its upper left corner (the MODFLOW angrot convention), including for cells
+    with different row and column spacings, without any warnings
+    (the Affine * Affine operation is deprecated in affine 3.0)."""
+    xul, yul = 500955., 1205285.
+    grid_file = write_grid_json(tmp_path / 'grid.json', angrot, xul, yul, delr, delc)
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        transform = get_modelgrid_transform(grid_file)
+    expected = get_rotated_transform(angrot, xul, yul, delr, delc)
+    assert np.allclose(tuple(transform), tuple(expected))
+    # same properties as the transform in the get_ij docstring
+    assert np.allclose((transform.c, transform.f), (xul, yul))
+    assert_grid_axes(transform, angrot, delr, delc)
+    # the transform locates the first cell center, and get_ij maps it back to row 0, column 0
+    x = transform.a * 0.5 + transform.b * 0.5 + transform.c
+    y = transform.d * 0.5 + transform.e * 0.5 + transform.f
+    assert get_ij(transform, x, y) == (0, 0)
+
+
+@pytest.mark.parametrize('scalar_spacing', (False, True))
+def test_get_modelgrid_transform_scalar_or_list_spacing(tmp_path, scalar_spacing):
+    """delr and delc can be lists or scalars."""
+    xul, yul, delr, delc = 500955., 1205285., 500., 800.
+    grid_file = write_grid_json(tmp_path / 'grid.json', 0., xul, yul, delr, delc,
+                                scalar_spacing=scalar_spacing)
+    transform = get_modelgrid_transform(grid_file)
+    assert np.allclose(tuple(transform), tuple(Affine(delr, 0., xul, 0., -delc, yul)))
+
+
+def apply_transform(transform, col, row):
+    """Real-world x, y of a (col, row) location (without the Affine * (col, row)
+    operation that is deprecated in affine 3.0)."""
+    col, row = np.asarray(col, dtype=float), np.asarray(row, dtype=float)
+    return (transform.a * col + transform.b * row + transform.c,
+            transform.d * col + transform.e * row + transform.f)
+
+
+@pytest.mark.parametrize('angrot,delr,delc', (
+    (0., 500., 500.),
+    (30., 500., 500.),
+    (45., 500., 500.),
+    (-20., 500., 500.),
+    (0., 500., 800.),
+    (30., 500., 800.),
+    (-20., 800., 500.),
+))
+def test_get_modelgrid_transform_shift_to_cell_centers(tmp_path, angrot, delr, delc):
+    """With shift_to_cell_centers=True, the transform locates (col, row) = (0, 0) at the center of
+    the first cell, whether or not the grid is rotated (the half cell shift follows the
+    rotated column and row directions). The grid orientation and cell sizes are unchanged."""
+    xul, yul = 500955., 1205285.
+    grid_file = write_grid_json(tmp_path / 'grid.json', angrot, xul, yul, delr, delc)
+    transform = get_modelgrid_transform(grid_file)
+    centered = get_modelgrid_transform(grid_file, shift_to_cell_centers=True)
+    # same orientation and cell sizes
+    assert np.allclose(tuple(centered)[:2] + tuple(centered)[3:5],
+                       tuple(transform)[:2] + tuple(transform)[3:5])
+    assert_grid_axes(centered, angrot, delr, delc)
+    # (col, row) in the centered transform is the center of cell col, row
+    # (in the unshifted transform, cell centers are at col + 0.5, row + 0.5)
+    cols, rows = np.array([0, 1, 3, 2]), np.array([0, 2, 1, 4])
+    assert np.allclose(apply_transform(centered, cols, rows),
+                       apply_transform(transform, cols + 0.5, rows + 0.5))
+    # the center of the first cell is half a column and half a row from the upper left corner
+    x0, y0 = apply_transform(centered, 0, 0)
+    assert np.isclose(np.hypot(x0 - xul, y0 - yul), 0.5 * np.hypot(delr, delc))
+    if angrot == 0.:
+        # unrotated: half a cell east, and half a cell south
+        assert np.allclose((x0, y0), (xul + delr / 2, yul - delc / 2))
+
+
+@pytest.mark.parametrize('angrot,delr,delc', (
+    (0., 500., 500.),
+    (30., 500., 500.),
+    (30., 500., 300.),
+))
+def test_get_ij_no_warnings_scalar_and_array(angrot, delr, delc):
+    """get_ij gives the row and column of cell centers for scalar and array inputs,
+    for rotated and unrotated grids with square and rectangular cells, without raising any warnings
+    (the Affine * (x, y) operation is deprecated in affine 3.0)."""
+    transform = get_rotated_transform(angrot, delr=delr, delc=delc)
+    rows = np.array([0, 3, 20, 7])
+    cols = np.array([0, 5, 2, 40])
+    # cell centers in real-world coordinates
+    # (written out with the transform coefficients, to avoid the deprecated operator)
+    x = transform.a * (cols + 0.5) + transform.b * (rows + 0.5) + transform.c
+    y = transform.d * (cols + 0.5) + transform.e * (rows + 0.5) + transform.f
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        i, j = get_ij(transform, x, y)
+        assert (i == rows).all() and (j == cols).all()
+        # sequences and scalars
+        i, j = get_ij(transform, list(x), list(y))
+        assert (i == rows).all() and (j == cols).all()
+        i, j = get_ij(transform, x[1], y[1])
+        assert (i, j) == (3, 5)
+
 
 @pytest.mark.parametrize('tdis_file,sto_file,start_date,end_date,time_units,include_timesteps',
                          (('mf2005/br_trans.dis', None, '2000-01-01', None, None, True),
